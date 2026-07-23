@@ -1,0 +1,122 @@
+<section class="screen" id="bHome">
+  <div class="top">
+    <div>
+      <h1>Ent.부문 Key Account 상품 침투율/매출 현황</h1><div class="accent"></div>
+      <div class="sub">Key Account 상품 침투율을 전체 관점과 고객/상품 관점으로 제공합니다.</div>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="bTaxonomyBtn">상품분류체계</button>
+      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv">
+      <div class="status" id="bStatus">DEFAULT: 메뉴판데이터2.1.xlsx</div>
+    </div>
+  </div>
+  <div class="modal-overlay hidden" id="bTaxModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <span>상품분류체계</span>
+        <button class="btn" id="bTaxClose">닫기</button>
+      </div>
+      <div class="modal-body">
+        <table class="tax">
+          <thead>
+            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>손익명</th></tr>
+          </thead>
+          <tbody id="bTaxBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="b-kpi">
+    <div class="k"><small>선택 기간 총매출<span class="b-period" id="bPeriod">2026 YTD</span></small><b id="bKpiRev">-</b></div>
+    <div class="k"><small>Key Account</small><b id="bKpiCust">-</b></div>
+    <div class="k"><small>평균 사용 상품수 / 고객</small><b id="bKpiAvg">-</b></div>
+  </div>
+
+  <div class="b-subnav" id="bNav">
+    <button data-p="ov">상품별 현황</button>
+    <button data-p="cust" class="active">고객별 현황</button>
+  </div>
+  <div class="b-yearrow">
+    <div class="seg" id="bYear"><button data-y="2026" class="active">2026 YTD(1~6월)</button><button data-y="2025">2025 연간</button></div>
+    <div class="seg" id="bMode"><button data-m="service" class="active">서비스 수 기준</button><button data-m="sales">매출 기준</button></div>
+  </div>
+
+  <!-- 합계 관점 -->
+  <div id="bOverviewPane" hidden>
+    <div class="b-controls">
+      <div class="seg" id="bGran"><button data-g="cat" class="active">카테고리</button><button data-g="svc">세부상품</button></div>
+      <div class="seg grow" id="bSort"><button data-s="cov" class="active">커버리지 높은순</button><button data-s="ws">낮은순(화이트스페이스)</button></div>
+    </div>
+    <!-- 40%는 .tabB.js의 0.4 기준과 하드코딩 중복 -->
+    <div class="ws-legend"><span class="ws-badge">화이트스페이스</span> 커버리지(사용 고객 비율)가 <b>40% 미만</b>인 항목에 표시됩니다 — 크로스셀 기회가 큰 영역입니다.</div>
+    <div class="cov-head"><span>상품</span><span>커버리지 (사용 고객 비율)</span><span style="text-align:right">사용/전체</span><span style="text-align:right">매출(억원)</span><span></span></div>
+    <div class="cov-list" id="bCovList"></div>
+    <div class="b-hint" id="bHint"></div>
+  </div>
+
+  <!-- 고객단위 관점 -->
+  <div id="bCustomersPane">
+    <div class="bc-controls">
+      <select id="bcInd"><option value="">전체 업종</option></select>
+      <select id="bcTier"><option value="">전체 Tier</option></select>
+      <input id="bcSearch" placeholder="고객명 검색">
+      <select id="bcSize"><option value="10">10개씩</option><option value="20" selected>20개씩</option><option value="30">30개씩</option><option value="50">50개씩</option></select>
+      <button class="btn expand-btn" id="bcExpandBtn"><span id="bcExpandIcon">▼</span><span id="bcExpandText">전체 펼치기</span></button>
+    </div>
+    <div class="bc-wrap"><table class="bc"><thead id="bcThead"></thead><tbody id="bcTbody"></tbody></table></div>
+    <div class="pager" id="bcPager"><button class="btn" id="bcPrev">← 이전</button><span id="bcPage">1 / 1</span><button class="btn" id="bcNext">다음 →</button></div>
+    <div class="b-hint" id="bcHint"></div>
+  </div>
+</section>
+
+<section class="screen hidden" id="bDetail">
+  <div class="label">고객 상세</div>
+  <div class="detail-head">
+    <button class="btn" id="bBack">← 목록</button>
+    <span class="name" id="bdName"></span><span class="tier" id="bdTier"></span><span id="bdIndustry"></span>
+    <span class="b-period" id="bdPeriod"></span>
+    <div class="detail-actions">
+      <button class="btn" id="bCompare">동종 업종과 비교</button>
+      <button class="btn" id="bPeerCompare" style="background:#b90064;color:#fff;border:0">동종 고객과 비교</button>
+    </div>
+  </div>
+  <div class="b-detail-cards">
+    <div class="card"><small>사용 중 상품</small><b id="bdUsed"></b></div>
+    <div class="card"><small>미사용 (크로스셀 여지)</small><b id="bdUnused"></b></div>
+    <div class="card"><small>추천 기회 상품</small><b id="bdReco"></b></div>
+    <div class="card dark"><small>선택 기간 매출</small><b id="bdSales"></b></div>
+  </div>
+  <div class="ws-legend" style="margin-bottom:14px">추천 로직 : 대상 고객 미사용 상품 중 ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택 · 추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
+  <div id="bBlocks"></div>
+</section>
+
+<section class="screen hidden" id="bSelect">
+  <div class="label">동종 고객 비교 대상 선택</div>
+  <div class="detail-head">
+    <button class="btn" id="bSelBack">← 고객 상세로</button>
+    <span class="name">비교 대상 선택 <small style="font-weight:400;color:#888">동종 업종 · 2~4개</small></span>
+    <button class="btn" id="bGo" style="margin-left:auto;background:#b90064;color:#fff;border:0">비교하기</button>
+  </div>
+  <div class="warn" id="bWarn" style="display:none;margin-top:8px">최소 2개, 최대 4개를 선택하세요.</div>
+  <div class="checklist" id="bChecks"></div>
+</section>
+
+<section class="screen hidden" id="bResult">
+  <div class="label">동종 고객 비교 (상품 × 고객 매트릭스)</div>
+  <div class="detail-head">
+    <button class="btn" id="bResBack">← 대상 선택으로</button>
+    <span class="name">동종 업계 고객간 비교</span><span class="b-period" id="brPeriod"></span>
+  </div>
+  <div class="b-hint" id="brSummary"></div>
+  <div class="b-hint">셀 = 상품별 매출(억원) · <b style="color:#b90064">■</b> 강조 열 = 기준 고객 · <span class="legend-chip common">초록 음영</span> = 공통 보유(선택 고객 전원 사용) · <span class="legend-chip partial">빨강 음영</span> = 차이 있음(일부만 보유) · 카테고리별 소계 포함.</div>
+  <div class="peer-compare-view" id="brPeerView"></div>
+</section>
+
+<section class="screen hidden" id="bIndustryResult">
+  <div class="label">업종-고객 비교</div>
+  <div class="detail-head">
+    <button class="btn" id="biBack">← 고객 상세로</button>
+    <span class="name">동종 업종과 비교</span>
+  </div>
+  <div class="industry-result" id="biView"></div>
+</section>

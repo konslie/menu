@@ -1,0 +1,692 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Enterprise 고객 상품 제안 메뉴판</title><style>
+:root{
+  --u-bg:#f4f3ef;--u-surface:#fff;--u-surface-sub:#fafaf9;--u-surface-head:#f5f0e8;
+  --u-carbon:#1c1b1b;--u-onvariant:#5c5a54;--u-outline:#8a8880;
+  --u-border:#e9e8e3;--u-border-strong:#d4d3cc;
+  --u-primary:#b90064;--u-primary-tint:rgba(185,0,100,.04);--u-primary-tint-strong:rgba(185,0,100,.08);
+  --u-on-primary:#faf9f5;
+  --u-dark:#1c1b1b;--u-darkest:#181715;--u-on-dark:#faf9f5;
+  --u-amber:#d97706;--u-amber-tint:#fdf6ee;
+  --u-teal:#0d9488;--u-teal-tint:#edf6f4;
+  --u-green:#15803d;
+  --customer-col-width:142px;
+}
+*{box-sizing:border-box}button,input,select,textarea,table{font-family:Pretendard,sans-serif}body{font-family:Pretendard,sans-serif;background:var(--u-bg);margin:0;padding:40px 24px;color:var(--u-carbon);font-size:16px}.screen{max-width:980px;margin:0 auto 48px;background:var(--u-surface);border-radius:16px;padding:32px 36px;box-shadow:0 1px 2px rgba(28,27,27,.03)}.screen.hidden{display:none}.top{display:flex;justify-content:space-between;gap:16px}.label{font-size:12px;color:var(--u-onvariant);margin-bottom:6px;font-weight:500}h1{font-size:22px;font-weight:700;margin:0 0 6px;color:var(--u-carbon);text-wrap:balance}.accent{height:3px;width:56px;background:var(--u-primary);margin-bottom:12px;border-radius:2px}.sub{font-size:14px;color:var(--u-onvariant);margin-bottom:14px}.top-actions{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}.top-actions .btn{height:34px;font-size:13px;color:var(--u-onvariant)}.btn,select,input{height:38px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;color:var(--u-carbon);transition:border-color .15s ease,background-color .15s ease}.btn{cursor:pointer}.btn:active{transform:scale(.97)}.btn,.expand-btn,.tabbtn,.seg button,select,input{outline:none}.btn:focus-visible,.expand-btn:focus-visible,.btn:focus,.expand-btn:focus{outline:2px solid var(--u-primary);outline-offset:2px;border-radius:8px}.upload{height:34px;font-size:13px;color:var(--u-onvariant)}.status{width:100%;font-size:12px;color:var(--u-outline);text-align:right}.toggle{display:inline-flex;border:1px solid var(--u-border);border-radius:8px;overflow:hidden}.toggle button{height:36px;border:0;border-right:1px solid var(--u-border);background:var(--u-surface);padding:0 14px;color:var(--u-onvariant);cursor:pointer}.toggle button.active{background:var(--u-dark);color:var(--u-on-dark);font-weight:700}.overview{display:inline-flex;align-items:baseline;gap:10px;margin:12px 0 0 12px;padding:10px 14px;background:var(--u-surface-sub);border-radius:8px}.overview span{font-size:13px;color:var(--u-onvariant)}.overview strong{font-size:22px}.controls{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}.expand-btn{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:0 14px;white-space:nowrap}.expand-btn.active{border-color:var(--u-primary);color:var(--u-primary);font-weight:700;background:var(--u-primary-tint)}.pager.hidden{display:none}.controls input{width:160px}table{width:100%;min-width:700px;border-collapse:collapse;font-size:14px;table-layout:fixed}.cust{width:var(--customer-col-width);max-width:var(--customer-col-width);display:grid!important;grid-template-columns:minmax(0,1fr) auto}.cust span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700}.col-resizer{position:absolute;top:0;right:-4px;width:8px;height:100%;cursor:col-resize;z-index:5;touch-action:none}.col-resizer::after{content:"";position:absolute;top:20%;bottom:20%;left:3.75px;width:.5px;border-radius:.5px;background:rgba(250,249,245,.35)}.col-resizer.dragging::after{background:var(--u-on-dark)}.resizing-column{cursor:col-resize!important;user-select:none!important}th{background:var(--u-surface-head);color:var(--u-onvariant);padding:12px 8px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;border-bottom:1px solid var(--u-border)}td{padding:8px;border-bottom:1px solid var(--u-border);font-variant-numeric:tabular-nums}.group td{background:var(--u-surface-sub);color:var(--u-onvariant);font-weight:700;padding:8px 12px}.cust{display:flex;align-items:center;gap:8px;padding:8px 12px!important;font-weight:600;cursor:pointer}.cust span:first-child{flex:1}.tier{font-size:11px;padding:2px 10px;border-radius:999px;font-weight:700}
+.cust .tier,table.bc td.cust .tier{margin-left:auto;flex:0 0 auto}.tier-1{background:#90004c;color:#fff}.tier-2{background:#b45309;color:#fff}.tier-3{background:#e2e0d8;color:#5c5a54}.cell{height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums;transition:filter .15s ease}.empty{border:1px solid var(--u-border)}.total{text-align:right;padding-right:16px!important;font-weight:700;font-variant-numeric:tabular-nums}.pager{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:16px}.hint,.legend{font-size:13px;color:var(--u-onvariant);margin-top:10px}.detail-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#bDetail .label{max-width:900px;margin:0 auto}#bDetail .detail-head{max-width:900px;margin:0 auto}#bDetail .ws-legend{max-width:900px;margin-left:auto;margin-right:auto}.name{font-size:20px;font-weight:700;color:var(--u-carbon)}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.card{background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:14px;padding:16px}.card.dark{background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}.card small{color:var(--u-onvariant);font-size:12px}.card.dark small{color:#c9c7c0}.card b{display:block;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}.block{margin-bottom:20px}.block h3{font-size:16px;font-weight:700;margin:0 0 9px;color:var(--u-carbon)}#bBlocks{max-width:900px;margin:0 auto}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.box{border:1px solid var(--u-border);border-radius:12px;overflow:hidden}.box-head{background:var(--u-surface-head);color:var(--u-onvariant);padding:9px 12px;font-size:12px;font-weight:700;border-bottom:1px solid var(--u-border)}.recommend-box{border-color:var(--u-border-strong)}.recommend-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.recommend-head small{font-weight:500;color:var(--u-outline)}.recommend-badge{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--u-primary);background:var(--u-primary-tint-strong);border-radius:999px;padding:2px 9px}.recommend-meta{font-size:11px;color:var(--u-outline);white-space:nowrap}.row{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;border-top:1px solid var(--u-border);font-size:14px}.cmp-box .row.diff{background:var(--u-amber-tint)}.cmp-box .row.missing span:last-child{color:var(--u-outline);font-style:italic}.cmp-box .row.missing span:first-child{color:var(--u-outline)}.cmp-box .row.subtotal{font-weight:700;font-size:15px;border-top:1px solid var(--u-border-strong)}.cmp-box .row.subtotal span:last-child{color:var(--u-primary)}.ax-major{border-left:3px solid var(--u-primary);padding-left:12px;margin-bottom:22px}.ax-major>h2{font-size:17px}.compare-grid{display:grid;gap:16px;overflow:auto}.panel{background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:12px;padding:16px;min-width:260px}#bSelect .label,#bSelect .detail-head,#bSelect .warn,#bResult .label,#bResult .detail-head,#bResult .b-hint,#bResult .mtx-wrap{max-width:900px;margin-left:auto;margin-right:auto}.checklist{border:1px solid var(--u-border);border-radius:12px;margin:16px auto;max-width:900px;display:grid;grid-template-columns:repeat(2,1fr)}.check{display:flex;align-items:center;gap:40px;padding:10px 14px;border-bottom:1px solid var(--u-border)}.check span:nth-child(2){font-weight:600;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.check span:last-child{color:var(--u-onvariant);text-align:right;font-variant-numeric:tabular-nums}.warn{color:#92400e;font-size:14px;font-weight:700;display:none;background:var(--u-amber-tint);border:1px solid var(--u-amber);border-radius:8px;padding:10px 14px}@media(max-width:720px){body{padding:16px 8px}.screen{padding:20px 16px}.top{flex-wrap:wrap}.summary,.grid{grid-template-columns:1fr}.checklist{max-width:100%}}
+
+
+/* ── 탭 B 공통 ── */
+#tabB-wrap .screen{max-width:1280px}
+.b-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0 4px}
+.b-kpi .k{background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:14px;padding:16px 18px}
+.b-kpi .k small{color:var(--u-onvariant);font-size:12px;font-weight:500}
+.b-kpi .k b{display:block;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}
+.b-kpi .k.dark{background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}
+.b-kpi .k.dark small{color:#c9c7c0}
+.b-period{font-size:11px;color:var(--u-primary);background:var(--u-primary-tint-strong);border-radius:999px;padding:3px 10px;display:inline-block;margin-left:8px;font-weight:700}
+
+.b-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:18px 0 14px}
+.b-controls .grow{margin-left:auto}
+.seg{display:inline-flex;border:1px solid var(--u-border);border-radius:10px;overflow:hidden;gap:6px;padding:3px;background:var(--u-surface)}
+.seg button{height:36px;border:0;background:none;padding:0 16px;color:var(--u-onvariant);cursor:pointer;font-size:13px;font-family:Pretendard,sans-serif;border-radius:8px;transition:background-color .15s ease,color .15s ease,box-shadow .15s ease}
+.seg button:active{transform:scale(.97)}
+.seg button:focus-visible,.seg button:focus{outline:2px solid var(--u-primary);outline-offset:-2px;border-radius:8px}
+.seg button.active{background:var(--u-surface);color:var(--u-primary);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--u-primary)}
+
+/* ── 커버리지/화이트스페이스 리스트 ── */
+.cov-head,.cov-row{display:grid;grid-template-columns:220px 1fr 100px 116px 40px;align-items:center;gap:14px}
+.cov-head{font-size:15px;color:var(--u-onvariant);font-weight:700;padding:13px 14px;line-height:1.4;background:var(--u-surface-head);border-bottom:1px solid var(--u-border);border-radius:10px 10px 0 0}
+.cov-list{border:1px solid var(--u-border);border-radius:12px;overflow:hidden}
+.cov-row{padding:11px 14px;border-bottom:1px solid var(--u-border);cursor:pointer;background:var(--u-surface);transition:background-color .15s ease}
+.cov-row:hover{background:var(--u-surface-sub)}
+.cov-row:last-child{border-bottom:0}
+.cov-name{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--u-carbon)}
+.cov-name small{color:var(--u-outline);font-weight:400;margin-left:4px}
+.cov-cat{font-size:12px;color:var(--u-onvariant)}
+.cov-bar{position:relative;height:20px;background:var(--u-border);border-radius:6px;overflow:hidden}
+.cov-bar>i{position:absolute;left:0;top:0;bottom:0;background:var(--u-primary);border-radius:6px}
+.cov-bar>span{position:absolute;left:8px;top:0;line-height:20px;font-size:12px;color:var(--u-on-primary);font-weight:700;font-variant-numeric:tabular-nums}
+.cov-count{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.cov-count b{font-size:14px}
+.cov-count small{color:var(--u-outline)}
+.cov-rev{font-size:13px;text-align:right;color:var(--u-carbon);font-variant-numeric:tabular-nums}
+.cov-flag{text-align:center;font-size:15px;color:var(--u-outline)}
+.cov-row.whitespace{background:var(--u-amber-tint)}
+.cov-row.whitespace .cov-bar>span{color:var(--u-on-primary);text-shadow:none}
+.ws-badge{font-size:10px;font-weight:700;color:var(--u-amber);background:#fdf1de;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.cov-detail{grid-column:1/-1;background:var(--u-surface-sub);border-radius:10px;padding:12px 14px;margin-top:8px;font-size:13px;line-height:1.9}
+.cov-detail b{color:var(--u-primary)}
+.cov-detail .chip{display:inline-block;background:var(--u-surface);border:1px solid var(--u-border-strong);border-radius:999px;padding:3px 11px;margin:2px 3px;font-size:12px;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.cov-detail .chip:hover{background:var(--u-primary);color:var(--u-on-primary);border-color:var(--u-primary)}
+.b-hint{font-size:13px;color:var(--u-onvariant);margin-top:10px}
+
+/* ── 비교 매트릭스 ── */
+.mtx-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;margin-top:14px}
+table.mtx{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+table.mtx th,table.mtx td{border-bottom:1px solid var(--u-border);padding:8px 12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.mtx th{background:var(--u-surface-head);color:var(--u-onvariant);font-weight:700;font-size:12px;position:sticky;top:0}
+table.mtx thead th.mtx-prod,table.mtx td.mtx-prod{text-align:left;position:sticky;left:0;background:var(--u-surface);z-index:1}
+table.mtx thead th.mtx-prod{background:var(--u-surface-head);z-index:3}
+table.mtx tbody td.mtx-prod{padding-left:26px}
+table.mtx tr.grp td{background:var(--u-surface-sub);color:var(--u-onvariant);font-weight:700;text-align:left;padding-left:12px;padding-top:12px;border-top:2px solid var(--u-border-strong)}
+table.mtx tr.grp:first-child td{border-top:0;padding-top:8px}
+table.mtx td.own{font-weight:700;color:var(--u-carbon)}
+table.mtx td.miss{color:var(--u-outline);font-style:italic}
+table.mtx th.me{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+table.mtx tr.partial td.mtx-prod{box-shadow:inset 3px 0 0 var(--u-primary)}
+table.mtx tr.subtotal td{border-top:1.5px solid var(--u-carbon);border-bottom:1.5px solid var(--u-carbon);font-weight:700;background:var(--u-surface-head)}
+table.mtx tr.subtotal td.mtx-prod{padding-left:12px}
+table.mtx tr.subtotal td:not(.mtx-prod){color:var(--u-primary)}
+.b-detail-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px auto;max-width:900px}
+.b-detail-cards .card b{font-size:24px}
+
+
+/* ── 탭 B 서브내비 & 고객별 현황 히트맵 ── */
+.b-subnav{display:flex;border-bottom:1px solid var(--u-border);margin:28px 0 0;gap:6px}
+.b-subnav>button{border:0;background:none;padding:10px 18px;font-size:14px;font-weight:700;color:var(--u-outline);cursor:pointer;font-family:Pretendard,sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s ease,border-color .15s ease}
+.b-subnav>button.active{color:var(--u-carbon);border-bottom-color:var(--u-primary)}
+.b-yearrow{display:flex;gap:12px;margin:18px 0 12px;flex-wrap:wrap}
+.bc-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:18px 0 14px}
+.bc-controls input,.bc-controls select{height:36px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;font-family:Pretendard,sans-serif}
+.bc-controls input{width:160px}
+.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:640px}
+table.bc{width:100%;min-width:900px;border-collapse:collapse;font-size:14px;table-layout:fixed}
+table.bc thead{background:var(--u-surface-head)}
+table.bc th{background:var(--u-surface-head);color:var(--u-onvariant);padding:8px;font-weight:700;font-size:14px;line-height:1.25;text-align:center;position:sticky;z-index:3;border-bottom:1px solid var(--u-border)}
+table.bc th.cust-h{text-align:left;padding-left:12px;width:var(--bc-cust-col-width,230px);left:0;top:0;z-index:4}
+.cust-h .col-resizer::after{background:rgba(28,27,27,.22)}
+.cust-h:hover .col-resizer::after,.cust-h .col-resizer.dragging::after{background:var(--u-primary)}
+table.bc th.total-h{width:76px;top:0}
+table.bc th.bc-h1{top:0}
+table.bc th.bc-h2{top:0;box-shadow:0 -1px 0 var(--u-border)}
+table.bc td{padding:8px;border-bottom:1px solid var(--u-border);font-variant-numeric:tabular-nums}
+table.bc td.cust{position:sticky;left:0;background:var(--u-surface);z-index:1;display:flex;align-items:center;gap:8px;padding:8px 4px 8px 26px!important;font-weight:600;cursor:pointer;width:var(--bc-cust-col-width,230px)}
+table.bc td.cust span:first-child{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700}
+table.bc td.total{width:76px}
+table.bc tr.group td{background:var(--u-surface-sub);color:var(--u-onvariant);font-weight:700;padding:8px 12px;position:sticky;left:0;z-index:1}
+table.bc .cell{height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+table.bc .empty{border:1px solid var(--u-border);background:repeating-linear-gradient(45deg,var(--u-surface-sub),var(--u-surface-sub) 3px,var(--u-bg) 3px,var(--u-bg) 6px)}
+table.bc td.total{text-align:center;font-weight:600}
+
+/* ── 비교 매트릭스: 고정폭 컬럼(고객수와 무관하게 균일) + 공통/차이 색 구분 ── */
+table.mtx{table-layout:fixed;width:auto}
+table.mtx th,table.mtx td{padding:8px 10px}
+table.mtx th{font-size:14px}
+col.mtx-col-prod{width:240px}
+col.mtx-col-cust{width:170px}
+table.mtx tr.common{background:var(--u-teal-tint)}
+table.mtx tr.common td.mtx-prod{box-shadow:inset 3px 0 0 var(--u-teal)}
+table.mtx tr.partial{background:var(--u-primary-tint)}
+table.mtx tr.partial td.mtx-prod{box-shadow:inset 3px 0 0 var(--u-primary)}
+.mtx-badge{display:inline-block;font-size:9px;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.mtx-badge.common{background:#dcf0ec;color:var(--u-teal)}
+.mtx-badge.partial{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+table.mtx tr.subtotal.grand-total td{background:var(--u-darkest);color:var(--u-on-dark);font-size:13px}
+table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-weight:700}
+.peer-compare-view{max-width:900px;margin:20px auto 0;border:1px solid var(--u-border);border-radius:12px;background:var(--u-surface-sub);padding:18px;overflow-x:auto}
+.peer-grid{width:var(--peer-width)}
+.peer-cat{border-top:1px solid var(--u-border-strong);padding-top:12px;margin-top:14px}
+.peer-cat:first-child{border-top:0;padding-top:0;margin-top:0}
+.peer-top,.peer-row{display:grid;grid-template-columns:var(--peer-cols);width:var(--peer-width);align-items:center}
+.peer-top{padding-bottom:8px;border-bottom:1px solid var(--u-border-strong)}
+.peer-top h4{margin:0;font-size:14px;color:var(--u-onvariant)}
+.peer-head{text-align:center;font-size:14px;font-weight:700;color:var(--u-outline)}
+.peer-head small{display:block;font-size:11px;margin-top:2px}
+.peer-head.me{color:var(--u-primary);font-size:15px}
+.peer-row{min-height:38px;border-bottom:1px solid var(--u-border);font-size:14px}
+.peer-row.common{background:var(--u-teal-tint)}
+.peer-row.partial{background:var(--u-primary-tint)}
+.peer-product{padding-left:18px}
+.peer-product small{color:var(--u-outline);font-size:11px;margin-left:3px}
+.peer-sales{text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.peer-sales.miss{color:var(--u-outline);font-style:italic;font-weight:400}
+.peer-subtotal{min-height:40px;border-top:1px solid var(--u-border-strong);border-bottom:1px solid var(--u-border-strong);font-weight:700;background:var(--u-surface-head)}
+.peer-subtotal>span:first-child{padding-left:12px}
+.peer-subtotal>span:not(:first-child){text-align:center;color:var(--u-primary);font-variant-numeric:tabular-nums}
+.peer-grand-total{width:var(--peer-width);margin-top:14px;background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}
+.peer-grand-total>span:not(:first-child){color:var(--u-on-dark)}
+.ax-major{border-left:0;padding-left:0}
+.industry-view{border:1px solid var(--u-border);border-radius:12px;background:var(--u-surface-sub);padding:18px;max-height:690px;overflow:auto}
+#bIndustryResult .label,#bIndustryResult .detail-head{max-width:900px;margin-left:auto;margin-right:auto}
+#bDetail .label,#bSelect .label,#bResult .label,#bIndustryResult .label,#detail .label,#select .label,#result .label{margin-bottom:14px}
+.industry-result{max-width:900px;margin:20px auto 0}
+.industry-result .industry-view{max-height:none}
+.detail-actions{display:flex;gap:8px;margin-left:auto}
+@media(max-width:760px){.detail-actions{margin-left:0;width:100%}.detail-head .detail-actions{flex-wrap:wrap}}
+.industry-view h3{font-size:18px;margin:0 0 5px;color:var(--u-carbon)}
+.industry-view .industry-meta{font-size:14px;color:var(--u-onvariant);margin-bottom:16px}
+.industry-view .industry-note{font-size:13px;color:var(--u-outline);line-height:1.55;margin-bottom:14px}
+.industry-cat{border-top:1px solid var(--u-border-strong);padding-top:12px;margin-top:14px}
+.industry-top{display:grid;grid-template-columns:240px 170px 170px;width:580px;gap:0;align-items:center;margin:0 0 2px;padding-bottom:8px;border-bottom:1px solid var(--u-border-strong)}
+.industry-cat h4{font-size:14px;color:var(--u-onvariant);margin:0}
+.industry-row{display:grid;grid-template-columns:240px 170px 170px;width:580px;gap:0;align-items:center;margin:0;padding:9px 0;border-bottom:1px solid var(--u-border);font-size:14px}
+.industry-row:last-child{border-bottom:0}
+.industry-product{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:18px}
+.industry-product small{color:var(--u-outline);font-size:11px;margin-left:3px}
+.industry-head{display:contents;font-size:14px;font-weight:700;color:var(--u-outline)}
+.industry-head span{text-align:center}
+.industry-target-head{color:var(--u-primary);font-size:15px}
+.industry-stats{text-align:center;white-space:nowrap;color:var(--u-onvariant);font-variant-numeric:tabular-nums}
+.industry-stats b{color:var(--u-carbon);font-size:13px}
+.industry-owned,.industry-missing{display:inline-block;border-radius:999px;padding:3px 7px;margin-left:4px;font-size:11px;font-weight:700}
+.industry-owned{background:var(--u-teal-tint);color:var(--u-teal)}
+.industry-missing{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+@media(max-width:760px){.industry-view{max-height:none}}
+.legend-chip{display:inline-block;font-size:10px;font-weight:700;border-radius:999px;padding:2px 9px;margin:0 2px}
+.legend-chip.common{background:#dcf0ec;color:var(--u-teal)}
+.legend-chip.partial{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+
+/* ── 추천 상품 클릭 시 사용 고객사 펼침 ── */
+.rec-row{cursor:pointer;flex-wrap:wrap}
+.rec-detail{width:100%;margin-top:8px;background:var(--u-surface-sub);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px}
+.rec-detail .chip{display:inline-block;background:var(--u-surface);border:1px solid var(--u-border-strong);border-radius:999px;padding:3px 11px;font-size:11px;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.rec-detail .chip:hover{background:var(--u-primary);color:var(--u-on-primary);border-color:var(--u-primary)}
+
+/* ── 개요 드릴다운(아코디언 트리) ── */
+.ws-legend{font-size:11px;color:var(--u-amber);background:var(--u-amber-tint);border-radius:10px;padding:8px 14px;margin-bottom:8px}
+.cov-row.drillable .cov-flag{color:var(--u-primary);font-weight:700}
+.cov-row.drillable:hover{background:var(--u-primary-tint)}
+.cov-children{margin:0 0 0 20px;border-left:2px solid var(--u-border);padding-left:0}
+
+.cov-children .cov-row{padding-left:22px}
+.cov-row.level-2{background:var(--u-surface-sub)}
+.cov-row.level-3{background:var(--u-bg)}
+
+/* ── 전 화면 최소 글자 크기 12px ── */
+#tabB-wrap small,#tabB-wrap .tier,.b-period,.ws-badge,.recommend-badge,.recommend-meta,
+.mtx-badge,.peer-head small,.peer-product small,.industry-product small,.industry-owned,.industry-missing,
+.legend-chip,.rec-detail .chip,.ws-legend{font-size:12px!important}
+
+/* ── 상품분류체계 팝업 ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(28,27,27,.45);z-index:100;display:flex;align-items:center;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-box{background:var(--u-surface);border-radius:16px;width:min(900px,92vw);max-height:82vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(28,27,27,.16)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--u-border);flex:0 0 auto}
+.modal-head span{font-size:16px;font-weight:700;color:var(--u-carbon)}
+.modal-body{overflow:auto;padding:0 22px 22px}
+table.tax{width:100%;border-collapse:collapse;font-size:14px}
+table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:left;position:sticky;top:0;z-index:1}
+table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
+table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
+table.tax th.tax-key{background:var(--u-primary);color:var(--u-on-primary)}
+table.tax tr:hover td{background:var(--u-surface-sub)}
+
+/* Customer cell: keep the table row geometry aligned with the heatmap cells. */
+table.bc td.cust{display:table-cell!important;vertical-align:middle;width:var(--bc-cust-col-width,230px)!important;max-width:var(--bc-cust-col-width,230px)!important;padding:8px 24px 8px 26px!important;position:sticky}
+table.bc td.cust span:first-child{display:block;min-width:0;padding-right:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transform:translateY(-50%)}
+
+</style></head><body>
+<div id="tabB-wrap">
+<section class="screen" id="bHome">
+  <div class="top">
+    <div>
+      <h1>Ent.부문 Key Account 상품 침투율/매출 현황</h1><div class="accent"></div>
+      <div class="sub">Key Account 상품 침투율을 전체 관점과 고객/상품 관점으로 제공합니다.</div>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="bTaxonomyBtn">상품분류체계</button>
+      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv">
+      <div class="status" id="bStatus">데이터 없음 · CSV 업로드로 실 데이터를 불러오세요</div>
+    </div>
+  </div>
+  <div class="modal-overlay hidden" id="bTaxModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <span>상품분류체계</span>
+        <button class="btn" id="bTaxClose">닫기</button>
+      </div>
+      <div class="modal-body">
+        <table class="tax">
+          <thead>
+            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>손익명</th></tr>
+          </thead>
+          <tbody id="bTaxBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="b-kpi">
+    <div class="k"><small>선택 기간 총매출<span class="b-period" id="bPeriod">2026 YTD</span></small><b id="bKpiRev">-</b></div>
+    <div class="k"><small>Key Account</small><b id="bKpiCust">-</b></div>
+    <div class="k"><small>평균 사용 상품수 / 고객</small><b id="bKpiAvg">-</b></div>
+  </div>
+
+  <div class="b-subnav" id="bNav">
+    <button data-p="ov">상품별 현황</button>
+    <button data-p="cust" class="active">고객별 현황</button>
+  </div>
+  <div class="b-yearrow">
+    <div class="seg" id="bYear"><button data-y="2026" class="active">2026 YTD(1~6월)</button><button data-y="2025">2025 연간</button></div>
+    <div class="seg" id="bMode"><button data-m="service" class="active">서비스 수 기준</button><button data-m="sales">매출 기준</button></div>
+  </div>
+
+  <!-- 합계 관점 -->
+  <div id="bOverviewPane" hidden>
+    <div class="b-controls">
+      <div class="seg" id="bGran"><button data-g="cat" class="active">카테고리</button><button data-g="svc">세부상품</button></div>
+      <div class="seg grow" id="bSort"><button data-s="cov" class="active">커버리지 높은순</button><button data-s="ws">낮은순(화이트스페이스)</button></div>
+    </div>
+    <!-- 40%는 .tabB.js의 0.4 기준과 하드코딩 중복 -->
+    <div class="ws-legend"><span class="ws-badge">화이트스페이스</span> 커버리지(사용 고객 비율)가 <b>40% 미만</b>인 항목에 표시됩니다 — 크로스셀 기회가 큰 영역입니다.</div>
+    <div class="cov-head"><span>상품</span><span>커버리지 (사용 고객 비율)</span><span style="text-align:right">사용/전체</span><span style="text-align:right">매출(억원)</span><span></span></div>
+    <div class="cov-list" id="bCovList"></div>
+    <div class="b-hint" id="bHint"></div>
+  </div>
+
+  <!-- 고객단위 관점 -->
+  <div id="bCustomersPane">
+    <div class="bc-controls">
+      <select id="bcInd"><option value="">전체 업종</option></select>
+      <select id="bcTier"><option value="">전체 Tier</option></select>
+      <input id="bcSearch" placeholder="고객명 검색">
+      <select id="bcSize"><option value="10">10개씩</option><option value="20" selected>20개씩</option><option value="30">30개씩</option><option value="50">50개씩</option></select>
+      <button class="btn expand-btn" id="bcExpandBtn"><span id="bcExpandIcon">▼</span><span id="bcExpandText">전체 펼치기</span></button>
+    </div>
+    <div class="bc-wrap"><table class="bc"><thead id="bcThead"></thead><tbody id="bcTbody"></tbody></table></div>
+    <div class="pager" id="bcPager"><button class="btn" id="bcPrev">← 이전</button><span id="bcPage">1 / 1</span><button class="btn" id="bcNext">다음 →</button></div>
+    <div class="b-hint" id="bcHint"></div>
+  </div>
+</section>
+
+<section class="screen hidden" id="bDetail">
+  <div class="label">고객 상세</div>
+  <div class="detail-head">
+    <button class="btn" id="bBack">← 목록</button>
+    <span class="name" id="bdName"></span><span class="tier" id="bdTier"></span><span id="bdIndustry"></span>
+    <span class="b-period" id="bdPeriod"></span>
+    <div class="detail-actions">
+      <button class="btn" id="bCompare">동종 업종과 비교</button>
+      <button class="btn" id="bPeerCompare" style="background:#b90064;color:#fff;border:0">동종 고객과 비교</button>
+    </div>
+  </div>
+  <div class="b-detail-cards">
+    <div class="card"><small>사용 중 상품</small><b id="bdUsed"></b></div>
+    <div class="card"><small>미사용 (크로스셀 여지)</small><b id="bdUnused"></b></div>
+    <div class="card"><small>추천 기회 상품</small><b id="bdReco"></b></div>
+    <div class="card dark"><small>선택 기간 매출</small><b id="bdSales"></b></div>
+  </div>
+  <div class="ws-legend" style="margin-bottom:14px">추천 로직 : 대상 고객 미사용 상품 중 ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택 · 추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
+  <div id="bBlocks"></div>
+</section>
+
+<section class="screen hidden" id="bSelect">
+  <div class="label">동종 고객 비교 대상 선택</div>
+  <div class="detail-head">
+    <button class="btn" id="bSelBack">← 고객 상세로</button>
+    <span class="name">비교 대상 선택 <small style="font-weight:400;color:#888">동종 업종 · 2~4개</small></span>
+    <button class="btn" id="bGo" style="margin-left:auto;background:#b90064;color:#fff;border:0">비교하기</button>
+  </div>
+  <div class="warn" id="bWarn" style="display:none;margin-top:8px">최소 2개, 최대 4개를 선택하세요.</div>
+  <div class="checklist" id="bChecks"></div>
+</section>
+
+<section class="screen hidden" id="bResult">
+  <div class="label">동종 고객 비교 (상품 × 고객 매트릭스)</div>
+  <div class="detail-head">
+    <button class="btn" id="bResBack">← 대상 선택으로</button>
+    <span class="name">동종 업계 고객간 비교</span><span class="b-period" id="brPeriod"></span>
+  </div>
+  <div class="b-hint" id="brSummary"></div>
+  <div class="b-hint">셀 = 상품별 매출(억원) · <b style="color:#b90064">■</b> 강조 열 = 기준 고객 · <span class="legend-chip common">초록 음영</span> = 공통 보유(선택 고객 전원 사용) · <span class="legend-chip partial">빨강 음영</span> = 차이 있음(일부만 보유) · 카테고리별 소계 포함.</div>
+  <div class="peer-compare-view" id="brPeerView"></div>
+</section>
+
+<section class="screen hidden" id="bIndustryResult">
+  <div class="label">업종-고객 비교</div>
+  <div class="detail-head">
+    <button class="btn" id="biBack">← 고객 상세로</button>
+    <span class="name">동종 업종과 비교</span>
+  </div>
+  <div class="industry-result" id="biView"></div>
+</section>
+
+</div>
+<script>
+
+let RAW=[];
+let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],tiers=[],currentId=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CORP=/\(주\)|㈜|주식회사|\(유\)|\(유한\)|유한회사|\(재\)|재단법인|\(사\)|사단법인|\(합\)|합자회사|합명회사/g;
+const cleanName=s=>String(s??'').replace(CORP,' ').replace(/\s+/g,' ').trim();
+const fmt=n=>(Number(n||0)/1e8).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1});
+const salesField=()=>year==='2026'?'sales2026':'sales2025';
+const serviceKey=r=>r.salesCode;
+const label=r=>r.salesName;
+const axKey=r=>`${r.axMajor}|||${r.axMiddle}`;
+const cat=r=>axKey(r);
+const catLabel=c=>c&&c.includes('|||')?c.split('|||')[1]:c;
+const INDUSTRY_ORDER=['금융','온라인/IT','제조','유통'];
+const industryRank=x=>{const i=INDUSTRY_ORDER.indexOf(x);return i<0?99:i;};
+
+function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,name:r.name,tier:r.tier,industry:r.industry}])).values()];industries=[...new Set(customers.map(x=>x.industry))].sort((a,b)=>industryRank(a)-industryRank(b)||a.localeCompare(b,'ko'));tiers=[...new Set(customers.map(x=>x.tier))].sort();}
+        function tierClass(t){const m=String(t??'').match(/\d/);return 'tier tier-'+(m?m[0]:'3')}
+        function cats(){return [...new Set(RAW.filter(r=>r.axMajor&&r.axMiddle).map(axKey))].sort((a,b)=>a.localeCompare(b,'ko'))}
+        function majors(){const m={};RAW.forEach(r=>{if(r.axMajor&&r.axMiddle)(m[r.axMajor]??=new Set()).add(r.axMiddle)});const order=['AX','Legacy'];return Object.entries(m).sort((a,b)=>(order.indexOf(a[0])<0?99:order.indexOf(a[0]))-(order.indexOf(b[0])<0?99:order.indexOf(b[0]))).map(([name,s])=>({name,children:[...s].sort().map(label=>({label,key:`${name}|||${label}`}))}))}
+        function universe(){const m=new Map;RAW.forEach(r=>{const k=serviceKey(r);if(k&&!m.has(k))m.set(k,{code:k,name:label(r),ax:axKey(r),major:r.major})});return [...m.values()]}
+        function cap(c){return new Set(RAW.filter(r=>cat(r)===c).map(serviceKey).filter(Boolean)).size}
+        function agg(id){const base=customers.find(x=>x.id===id),rs=RAW.filter(r=>r.customerId===id),field=salesField(),data={};cats().forEach(c=>{const map=new Map;rs.filter(r=>cat(r)===c&&serviceKey(r)).forEach(r=>{const k=serviceKey(r);if(!map.has(k))map.set(k,{code:k,name:label(r),sales:0});map.get(k).sales+=Number(r[field]||0)});const used=[...map.values()].filter(x=>x.sales!==0).sort((a,b)=>b.sales-a.sales);data[c]={used:used.length,cap:cap(c),sales:used.reduce((s,x)=>s+x.sales,0),items:used}});return {...base,data,usedTotal:Object.values(data).reduce((s,x)=>s+x.used,0),capTotal:Object.values(data).reduce((s,x)=>s+x.cap,0),salesTotal:rs.reduce((s,r)=>s+Number(r[field]||0),0)}}
+        function peerStats(c,peerList,targetUsed,field){const stats=new Map;peerList.forEach(peer=>{const byService=new Map;RAW.filter(x=>x.customerId===peer.id&&cat(x)===c&&serviceKey(x)).forEach(x=>{const k=serviceKey(x);if(!byService.has(k))byService.set(k,{code:k,name:label(x),sales:0});byService.get(k).sales+=Number(x[field]||0)});byService.forEach(x=>{if(x.sales===0||targetUsed.has(x.code))return;if(!stats.has(x.code))stats.set(x.code,{code:x.code,name:x.name,peerCount:0,peerSales:0,peers:[]});const s=stats.get(x.code);s.peerCount++;s.peerSales+=x.sales;s.peers.push({id:peer.id,name:peer.name,sales:x.sales})})});return stats}function recommended(c,r){const targetUsed=new Set(r.data[c].items.map(x=>x.code)),field=salesField(),same=[...peerStats(c,customers.filter(x=>x.industry===r.industry&&x.id!==r.id),targetUsed,field).values()],cross=[...peerStats(c,customers.filter(x=>x.industry!==r.industry),targetUsed,field).values()],avg=x=>x.peerSales/x.peerCount,result=[];const pick=(list,metric,source,priority)=>{const remain=list.filter(x=>!result.some(y=>y.code===x.code));if(!remain.length||result.length>=3)return;const best=Math.max(...remain.map(metric));remain.filter(x=>metric(x)===best).sort((a,b)=>a.name.localeCompare(b.name,'ko')).forEach(x=>{if(result.length<3)result.push({...x,source,priority});});};pick(same,x=>x.peerCount,'same',1);pick(same,avg,'same',2);pick(cross,x=>x.peerCount,'cross',3);pick(cross,avg,'cross',4);return result}
+        const REQ=['고객ID','고객명','Tier','업종','손익코드','손익명','매출코드','매출명','25년매출','26년매출','대분류','중분류','AX구분_대','AX구분_중','AI Stack'];function parseCsv(str){const rows=[];let row=[],field='',q=false;for(let i=0;i<str.length;i++){const c=str[i];if(q){if(c==='"'){if(str[i+1]==='"'){field+='"';i++;}else q=false;}else field+=c;}else{if(c==='"')q=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c==='\r'){/* skip; \r\n handled by \n */}else field+=c;}}if(field!==''||row.length){row.push(field);rows.push(row);}return rows;}async function parse(file){let str=await file.text();if(str.charCodeAt(0)===0xFEFF)str=str.slice(1);const matrix=parseCsv(str).filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');const h=matrix[0].map(x=>String(x??'').trim()),missing=REQ.filter(x=>!h.includes(x));if(missing.length)throw Error('필수 컬럼 누락: '+missing.join(', '));const ix=Object.fromEntries(h.map((x,i)=>[x,i])),t=v=>String(v??'').trim(),n=v=>Number(String(v??'').replace(/,/g,''))||0;return matrix.slice(1).filter(r=>t(r[ix['고객ID']])).map(r=>({customerId:t(r[ix['고객ID']]),name:cleanName(t(r[ix['고객명']])),tier:t(r[ix['Tier']]),industry:t(r[ix['업종']]),profitCode:t(r[ix['손익코드']]),profitName:t(r[ix['손익명']]),salesCode:t(r[ix['매출코드']]),salesName:t(r[ix['매출명']]),sales2025:n(r[ix['25년매출']]),sales2026:n(r[ix['26년매출']]),major:t(r[ix['대분류']]),middle:t(r[ix['중분류']]),axMajor:t(r[ix['AX구분_대']]),axMiddle:t(r[ix['AX구분_중']]),aiStack:t(r[ix['AI Stack']])}))}
+        REQ.pop(); // AI Stack 컬럼은 더 이상 업로드 필수값이 아니다.
+
+/* ══════════ 탭 B: 경영진 뷰 — 합계 관점(개요) + 고객단위 관점(히트맵). 계산은 공유 함수 재사용 ══════════ */
+let bYear='2026', bGran='cat', bSort='cov', bMode='service', bPane='cust', bCurrentId=null;
+const bExpanded=new Set();
+let bAggCache=[];
+
+const bYearLabel=()=>year==='2026'?'2026 YTD(1~6월)':'2025 연간';
+const bAxCatLabel=c=>String(c).replace('|||',' · ');
+function bSync(){view='ax';year=bYear;}                 // AX 구분 고정
+function bShow(id){['bHome','bDetail','bSelect','bResult','bIndustryResult'].forEach(x=>$(x).classList.toggle('hidden',x!==id));scrollTo(0,0);}
+function bRefresh(){bSync();bAggCache=customers.map(c=>agg(c.id));}
+
+/* ── KPI ── */
+// NOTE: 화이트스페이스 기준 40%(0.4)가 renderNode()·.tabB.html의 ws-legend 문구에 하드코딩됨 — 기준 변경 시 함께 동기화 필요
+function renderKpis(){
+  const N=customers.length,totalRev=RAW.reduce((s,r)=>s+Number(r[salesField()]||0),0);
+  const avg=(bAggCache.reduce((s,a)=>s+a.usedTotal,0)/Math.max(1,N)).toFixed(1);
+  $('bPeriod').textContent=year==='2026'?'2026 YTD':'2025 연간';
+  $('bKpiRev').textContent=fmt(totalRev)+'억원';
+  $('bKpiCust').textContent=N+'개사';
+  $('bKpiAvg').textContent=avg+'종';
+}
+
+/* ── 홈: KPI + 활성 서브뷰 ── */
+function renderHome(){
+  bRefresh();renderKpis();
+  bPane==='ov'?renderOverviewPane():renderCustomersPane();
+}
+
+/* ── 합계 관점: 커버리지 / 화이트스페이스 (AX 대분류 → 중분류 → 세부상품) ── */
+const bOpenNodes=new Set(); // 펼쳐진 비-리프 노드(레벨1/2) 키 집합
+
+// AX 구분 전용 (axKey = "대분류|||중분류", 예: "AX|||Infra")
+function axTopRows(){ // 대분류(AX/Legacy) 단위
+  const N=customers.length,subKeys=cats();
+  const majors=[...new Set(subKeys.map(c=>c.split('|||')[0]))];
+  return majors.map(mj=>{
+    const keys=subKeys.filter(c=>c.split('|||')[0]===mj);let rev=0;const owners=new Set();
+    bAggCache.forEach(a=>{let used=false;keys.forEach(k=>{const d=a.data[k];if(d){rev+=d.sales;if(d.used>0)used=true;}});if(used)owners.add(a.name);});
+    return {key:mj,name:mj,catName:'',used:owners.size,total:N,rev,unusedIds:bAggCache.filter(a=>!owners.has(a.name)).map(a=>a.name)};
+  });
+}
+function axMidRows(topKey){ // 중분류(Infra/Application, 해당 대분류 내) 단위
+  const N=customers.length,keys=cats().filter(c=>c.split('|||')[0]===topKey);
+  return keys.map(k=>{let used=0,rev=0;bAggCache.forEach(a=>{const d=a.data[k];if(d&&d.used>0)used++;if(d)rev+=d.sales;});
+    return {key:k,name:catLabel(k),catName:'',used,total:N,rev,unusedIds:bAggCache.filter(a=>!a.data[k]||a.data[k].used===0).map(a=>a.name)};});
+}
+function svcRowsInAxKey(axKeyFull){ // 대분류+중분류 안의 세부상품 단위
+  const N=customers.length,uni=universe().filter(u=>u.ax===axKeyFull);
+  const m=new Map(uni.map(u=>[u.code,{key:u.code,name:u.name,catName:'',used:0,rev:0,total:N,owners:new Set()}]));
+  bAggCache.forEach(a=>{const d=a.data[axKeyFull];if(!d)return;d.items.forEach(it=>{const x=m.get(it.code);if(x){x.used++;x.rev+=it.sales;x.owners.add(a.name);}});});
+  return [...m.values()].map(x=>({...x,unusedIds:bAggCache.filter(a=>!x.owners.has(a.name)).map(a=>a.name)}));
+}
+
+// 세부상품 단위(전체 카테고리 통합, 드릴 없음)
+function svcRowsFlat(){
+  const N=customers.length,uni=universe(),m=new Map(uni.map(u=>[u.code,{key:u.code,name:u.name,catName:u.ax.replace('|||','·'),used:0,rev:0,total:N,owners:new Set()}]));
+  bAggCache.forEach(a=>Object.values(a.data).forEach(d=>d.items.forEach(it=>{const x=m.get(it.code);if(x){x.used++;x.rev+=it.sales;x.owners.add(a.name);}})));
+  return [...m.values()].map(x=>({...x,unusedIds:bAggCache.filter(a=>!x.owners.has(a.name)).map(a=>a.name)}));
+}
+
+function sortRows(rows){return rows.slice().sort((a,b)=> bSort==='ws' ? (a.used-b.used)||(b.rev-a.rev) : (b.used-a.used)||(b.rev-a.rev));}
+function nodeKey(level,path){return level+':'+path.join('>');}
+function childrenOf(level,path){
+  if(level===1)return axMidRows(path[0]);
+  if(level===2)return svcRowsInAxKey(path[1]);
+  return [];
+}
+function covHint(unit,leaf){
+  const base=`AX 대>중 · ${unit} 단위 · 커버리지 = Key Account ${customers.length}개사 중 사용 비율.`;
+  return leaf?`${base} 행 클릭 시 미사용 고객(크로스셀 대상) 표시.`:`${base} 행 클릭 시 하위 항목 표시.`;
+}
+
+function renderNode(row,level,parentPath){
+  const path=[...parentPath,row.key],isLeaf=level===3;
+  const key=isLeaf?row.key:nodeKey(level,path);
+  const open=isLeaf?bExpanded.has(key):bOpenNodes.has(key);
+  const ratio=row.used/row.total,pct=Math.round(ratio*100),ws=ratio<0.4; // 0.4 = wsSvcCount()과 동일 기준(하드코딩 중복)
+  const opacity=Math.min(.28+ratio*1.1,.98); // 고객별 현황 히트맵과 같은 버건디 농도 단계
+  const bar=`<div class="cov-bar"><i style="width:${Math.max(pct,3)}%;background:rgba(155,9,80,${opacity})"></i><span>${pct}%</span></div>`;
+  const det=(isLeaf&&open)?`<div class="cov-detail">미사용 <b>${row.unusedIds.length}개사</b> (크로스셀 대상)${row.unusedIds.length?' · '+row.unusedIds.slice(0,40).map(n=>`<span class="chip" data-name="${esc(n)}">${esc(n)}</span>`).join(''):''}</div>`:'';
+  const rowHtml=`<div class="cov-row level-${level}${ws?' whitespace':''}${!isLeaf?' drillable':''}" data-level="${level}" data-path="${esc(path.join('>'))}">
+    <div class="cov-name">${esc(row.name)}${ws?'<span class="ws-badge">화이트스페이스</span>':''}${row.catName?`<br><span class="cov-cat">${esc(row.catName)}</span>`:''}</div>
+    ${bar}<div class="cov-count"><b>${row.used}</b><small>/${row.total}</small></div><div class="cov-rev">${fmt(row.rev)}</div>
+    <div class="cov-flag">${open?'▲':'▼'}</div>${det}</div>`;
+  let childrenHtml='';
+  if(open&&!isLeaf){
+    const kids=sortRows(childrenOf(level,path));
+    childrenHtml=`<div class="cov-children">${kids.map(k=>renderNode(k,level+1,path)).join('')}</div>`;
+  }
+  return rowHtml+childrenHtml;
+}
+function bindCovEvents(){
+  $('bCovList').onclick=e=>{
+    const chip=e.target.closest('.chip');
+    if(chip){bShowDetail(customers.find(c=>c.name===chip.dataset.name)?.id);return;}
+    const rowEl=e.target.closest('.cov-row');
+    if(!rowEl)return;
+    const level=Number(rowEl.dataset.level),path=rowEl.dataset.path.split('>');
+    if(level===3){const k=path[path.length-1];bExpanded.has(k)?bExpanded.delete(k):bExpanded.add(k);}
+    else{const k=nodeKey(level,path);bOpenNodes.has(k)?bOpenNodes.delete(k):bOpenNodes.add(k);}
+    renderOverviewPane();
+  };
+}
+function renderOverviewPane(){
+  if(bGran==='svc'){
+    const rows=sortRows(svcRowsFlat());
+    $('bCovList').innerHTML=rows.map(r=>renderNode(r,3,[])).join('');
+    bindCovEvents();
+    $('bHint').textContent=covHint('세부상품',true);
+    return;
+  }
+  const top=sortRows(axTopRows());
+  $('bCovList').innerHTML=top.map(r=>renderNode(r,1,[])).join('');
+  bindCovEvents();
+  $('bHint').textContent=covHint('AX 대분류',false);
+}
+
+/* ── 고객단위 관점: 고객 × 상품 히트맵 ── */
+function bHeadHtml(cs){
+  const totLabel=bMode==='service'?'총<br>사용상품':'총매출(억)';
+  const mj=majors();
+  return `<tr><th class="cust-h" rowspan="2">고객 (업종별)<span class="col-resizer" title="드래그하여 고객명 열 너비 조절"></span></th>${mj.map(m=>`<th class="bc-h1" colspan="${m.children.length}">${esc(m.name)}</th>`).join('')}<th class="total-h" rowspan="2">${totLabel}</th></tr><tr>${mj.flatMap(m=>m.children.map(c=>`<th class="bc-h2">${esc(c.label)}<br><small>${cap(c.key)}종</small></th>`)).join('')}</tr>`;
+}
+function bBindCustomerResizer(){const handle=document.querySelector('#bcThead .col-resizer');if(!handle)return;handle.onpointerdown=e=>{e.preventDefault();e.stopPropagation();handle.setPointerCapture?.(e.pointerId);const startX=e.clientX,startWidth=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bc-cust-col-width'))||230;handle.classList.add('dragging');document.body.classList.add('resizing-column');const move=ev=>{const next=Math.max(110,Math.min(320,startWidth+ev.clientX-startX));document.documentElement.style.setProperty('--bc-cust-col-width',`${Math.round(next)}px`)};const up=()=>{handle.classList.remove('dragging');document.body.classList.remove('resizing-column');handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',up);handle.removeEventListener('pointercancel',up)};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',up);handle.addEventListener('pointercancel',up)}}
+function bSyncHeaderSticky(){
+  requestAnimationFrame(()=>{
+    const rows=$('bcThead').querySelectorAll('tr');
+    if(rows.length<2){rows[0]?.querySelectorAll('th').forEach(th=>th.style.top='0px');return;}
+    const h=Math.ceil(rows[0].getBoundingClientRect().height)-1;
+    rows[0].querySelectorAll('th').forEach(th=>th.style.top='0px');
+    rows[1].querySelectorAll('th').forEach(th=>th.style.top=h+'px');
+  });
+}
+let bcPage=1, bcPageSize=20, bcExpanded=false;
+function renderCustomersPane(){
+  const cs=cats(),ind=$('bcInd').value,t=$('bcTier').value,q=$('bcSearch').value.trim().toLowerCase();
+  const max={};cs.forEach(c=>max[c]=Math.max(1,...bAggCache.map(a=>a.data[c].sales)));
+  let all=bAggCache.filter(a=>(!ind||a.industry===ind)&&(!t||a.tier===t)&&(!q||a.name.toLowerCase().includes(q)))
+    .sort((a,b)=>industryRank(a.industry)-industryRank(b.industry)||b.usedTotal-a.usedTotal||a.name.localeCompare(b.name,'ko'));
+  const pages=Math.max(1,Math.ceil(all.length/bcPageSize));
+  bcPage=Math.min(bcPage,pages);
+  const list=bcExpanded?all:all.slice((bcPage-1)*bcPageSize,bcPage*bcPageSize);
+  $('bcThead').innerHTML=bHeadHtml(cs);
+  bBindCustomerResizer();
+  bSyncHeaderSticky();
+  let last='';
+  $('bcTbody').innerHTML=list.map(r=>{
+    let g='';if(last!==r.industry){last=r.industry;g=`<tr class="group"><td colspan="${cs.length+2}">${esc(last)}</td></tr>`;}
+    const cells=cs.map(c=>{const d=r.data[c],v=bMode==='service'?d.used:d.sales;
+      if(v===0)return '<td><div class="cell empty"></div></td>';
+      const ratio=bMode==='service'?d.used/Math.max(1,d.cap):d.sales/max[c],a=Math.min(.28+ratio*1.1,.98);
+      const txt=bMode==='service'?`${d.used}/${d.cap}`:fmt(d.sales);
+      return `<td><div class="cell" data-id="${esc(r.id)}" style="background:rgba(155,9,80,${a});color:${a>.45?'#fff':'#9b0950'}">${txt}</div></td>`;}).join('');
+    return g+`<tr><td class="cust" data-id="${esc(r.id)}"><span>${esc(r.name)}</span><span class="${tierClass(r.tier)}">${esc(r.tier)}</span></td>${cells}<td class="total">${bMode==='service'?r.usedTotal+'종':fmt(r.salesTotal)}</td></tr>`;
+  }).join('');
+  $('bcTbody').querySelectorAll('[data-id]').forEach(e=>e.onclick=()=>bShowDetail(e.dataset.id));
+  $('bcPage').textContent=`${bcPage} / ${pages}`;
+  $('bcPrev').disabled=bcPage===1;$('bcNext').disabled=bcPage===pages;
+  $('bcPager').classList.toggle('hidden',bcExpanded);
+  $('bcExpandBtn').classList.toggle('active',bcExpanded);
+  $('bcExpandIcon').textContent=bcExpanded?'▲':'▼';
+  $('bcExpandText').textContent=bcExpanded?'접기':'전체 펼치기';
+  $('bcHint').textContent=`${all.length}개사 중 ${list.length}개 표시 · 셀=선택 기간 ${bMode==='service'?'사용 서비스수(사용/보유가능)':'매출(억원)'} · 빗금=미사용 · 고객 클릭 시 상세.`;
+}
+
+/* ── 고객 상세 (기회매출·기간라벨) ── */
+const bRecExpanded=new Set(); // 추천 상품 클릭 시 펼쳐지는 "쓰는 고객사 목록" 상태(상품코드 키)
+function bShowDetail(id){
+  if(!id)return;bCurrentId=id;bRefresh();bRecExpanded.clear();const r=agg(id);
+  $('bdName').textContent=r.name;$('bdTier').textContent=r.tier;$('bdTier').className=tierClass(r.tier);$('bdIndustry').textContent=r.industry;$('bdPeriod').textContent=bYearLabel();
+  const keys=[].concat(...majors().map(m=>m.children.map(c=>c.key)));
+  const recoTotal=keys.reduce((s,c)=>s+recommended(c,r).length,0);
+  $('bdUsed').textContent=`${r.usedTotal}종 / ${r.capTotal}종`;$('bdUnused').textContent=`${r.capTotal-r.usedTotal}종`;
+  $('bdReco').textContent=`${recoTotal}종`;$('bdSales').textContent=fmt(r.salesTotal)+'억원';
+  renderBBlocks(r);
+  bShow('bDetail');
+}
+function bShowIndustry(){
+  $('biView').innerHTML=bRenderIndustryView(bCurrentId);
+  bShow('bIndustryResult');
+}
+function renderBBlocks(r){
+  $('bBlocks').innerHTML=majors().map(m=>`<div class="ax-major"><h2>${esc(m.name)}</h2>${m.children.map(c=>bBlock(c.key,r)).join('')}</div>`).join('');
+  $('bBlocks').onclick=e=>{
+    const chip=e.target.closest('.chip');
+    if(chip){bShowDetail(chip.dataset.id);return;}
+    const row=e.target.closest('.rec-row');
+    if(!row)return;
+    const code=row.dataset.code;
+    bRecExpanded.has(code)?bRecExpanded.delete(code):bRecExpanded.add(code);
+    renderBBlocks(r);
+  };
+}
+function bBlock(c,r){
+  const d=r.data[c],rec=recommended(c,r);
+  const usedHtml=d.items.length?d.items.map(x=>`<div class="row"><span>${esc(x.name)} <small>${esc(x.code)}</small></span><span>${fmt(x.sales)}억원</span></div>`).join(''):'<div class="row">없음</div>';
+  const recHtml=rec.length?rec.map(x=>{const avgv=x.peerCount?x.peerSales/x.peerCount:0,open=bRecExpanded.has(x.code);
+    const peersHtml=open?`<div class="rec-detail">${x.peers.map(p=>`<span class="chip" data-id="${esc(p.id)}">${esc(p.name)} <small>${fmt(p.sales)}억</small></span>`).join('')}</div>`:'';
+    return `<div class="row rec-row" data-code="${esc(x.code)}"><span>${esc(x.name)} <small>${esc(x.code)}</small></span><span style="display:flex;align-items:center;gap:6px"><span class="recommend-meta">${x.priority}순위 · ${x.source==='cross'?'타업종':'동종'} ${x.peerCount}개사 · 평균 ${fmt(avgv)}억</span><span class="recommend-badge">기회</span><span class="cov-flag">${open?'▲':'▼'}</span></span>${peersHtml}</div>`;}).join(''):'<div class="row"><span>추천 가능한 미사용 상품 없음</span></div>';
+  return `<div class="block"><h3>${esc(catLabel(c))} <small>${d.used}/${d.cap}종 사용</small></h3><div class="grid">
+    <div class="box"><div class="box-head">사용 중 상품</div>${usedHtml}</div>
+    <div class="box recommend-box"><div class="box-head recommend-head"><span>추천상품</span></div>${recHtml}</div></div></div>`;
+}
+
+/* ── 동종 비교 ── */
+function bSelectPeers(){
+  bRefresh();const r=agg(bCurrentId),peers=customers.filter(x=>x.industry===r.industry);
+  $('bChecks').innerHTML=peers.map(x=>{const a=agg(x.id);
+    return `<label class="check"><input type="checkbox" value="${esc(x.id)}" ${x.id===bCurrentId?'checked':''}><span>${esc(x.name)}</span><span>${a.usedTotal}종 · ${fmt(a.salesTotal)}억원</span></label>`;}).join('');
+  bShow('bSelect');
+}
+function bRenderMatrix(ids){
+  bRefresh();const rs=ids.map(id=>agg(id)),n=rs.length;$('brPeriod').textContent=bYearLabel();
+  let body='',commonTotal=0,partialTotal=0;
+  cats().forEach(c=>{
+    const uni=new Map();rs.forEach(r=>r.data[c].items.forEach(x=>{if(!uni.has(x.code))uni.set(x.code,x.name);}));
+    if(!uni.size)return;
+    const rows=[...uni.entries()].map(([code,name])=>({code,name,owners:rs.filter(r=>r.data[c].items.some(x=>x.code===code)).length}));
+    const common=rows.filter(x=>x.owners===n), partial=rows.filter(x=>x.owners<n);
+    commonTotal+=common.length;partialTotal+=partial.length;
+    const rowHtml=(x,cls)=>{const cells=rs.map(r=>{const it=r.data[c].items.find(y=>y.code===x.code);return `<span class="peer-sales ${it?'own':'miss'}">${it?fmt(it.sales):'미침투'}</span>`;}).join('');
+      return `<div class="peer-row ${cls}"><span class="peer-product">${esc(x.name)} <small>${esc(x.code)}</small><span class="mtx-badge ${cls}">${x.owners}/${n}</span></span>${cells}</div>`;};
+    const headers=rs.map(r=>`<span class="peer-head ${r.id===bCurrentId?'me':''}">${esc(r.name)}<small>${esc(r.tier)}</small></span>`).join('');
+    body+=`<div class="peer-cat"><div class="peer-top"> <h4>${esc(bAxCatLabel(c))}</h4>${headers}</div>${common.map(x=>rowHtml(x,'common')).join('')+partial.map(x=>rowHtml(x,'partial')).join('')}<div class="peer-row peer-subtotal"><span>${esc(bAxCatLabel(c))} 소계</span>${rs.map(r=>`<span>${fmt(r.data[c].sales)}</span>`).join('')}</div></div>`;
+  });
+  body+=`<div class="peer-row peer-subtotal peer-grand-total"><span>총 매출(억원)</span>${rs.map(r=>`<span>${fmt(r.salesTotal)}</span>`).join('')}</div>`;
+  $('brPeerView').innerHTML=`<div class="peer-grid" style="--peer-cols:240px repeat(${n},170px);--peer-width:${240+n*170}px">${body}</div>`;
+  $('brSummary').textContent=`선택 고객 ${n}개사 · 공통 보유 상품 ${commonTotal}종 · 차이(일부만 보유) 상품 ${partialTotal}종`;
+  bShow('bResult');
+}
+
+function bRenderIndustryView(id){
+  const target=customers.find(x=>x.id===id), peers=customers.filter(x=>x.industry===target?.industry);
+  if(!target||!peers.length)return '';
+  const targetAgg=agg(target.id),rs=peers.map(x=>agg(x.id));
+  const blocks=cats().map(c=>{
+    const uni=new Map();RAW.filter(r=>cat(r)===c&&serviceKey(r)).forEach(r=>{const code=serviceKey(r);if(!uni.has(code))uni.set(code,{name:label(r),owners:0});});
+    const rows=[...uni.entries()].map(([code,x])=>{
+      const owners=rs.filter(r=>r.data[c].items.some(y=>y.code===code)).length;
+      const owned=targetAgg.data[c].items.some(y=>y.code===code);
+      return {code,name:x.name,owners,owned};
+    }).sort((a,b)=>b.owners-a.owners||a.name.localeCompare(b.name,'ko'));
+    if(!rows.length)return '';
+    return `<div class="industry-cat"><div class="industry-top"><h4>${esc(bAxCatLabel(c))}</h4><div class="industry-head"><span>업종공통</span><span class="industry-target-head">${esc(target.name)}</span></div></div>${rows.map(x=>`<div class="industry-row"><span class="industry-product">${esc(x.name)} <small>${esc(x.code)}</small></span><span class="industry-stats">${x.owners?`<b>${x.owners}/${rs.length}</b>`:'<span class="industry-missing">미침투</span>'}</span><span class="industry-stats">${x.owned?'<span class="industry-owned">침투</span>':'<span class="industry-missing">미침투</span>'}</span></div>`).join('')}</div>`;
+  }).join('');
+  return `<div class="industry-view"><h3>${esc(target.industry)} 업종 상품 현황</h3><div class="industry-meta">업종 고객 ${rs.length}개사 · 기준 고객 ${esc(target.name)}</div><div class="industry-note">업종공통은 해당 상품을 보유한 업종 고객 수입니다. 이 화면에서는 업종 내 아무도 보유하지 않은 상품도 함께 표시합니다.</div>${blocks}</div>`;
+}
+
+/* ── 이벤트 ── */
+function bSeg(segId,attr,setter){$(segId).querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+  $(segId).querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setter(btn.dataset[attr]);renderHome();});}
+bSeg('bYear','y',y=>bYear=y);
+bSeg('bGran','g',g=>{bGran=g;bOpenNodes.clear();});
+bSeg('bSort','s',s=>bSort=s);
+bSeg('bMode','m',m=>bMode=m);
+$('bNav').querySelectorAll('button[data-p]').forEach(btn=>btn.onclick=()=>{
+  $('bNav').querySelectorAll('button[data-p]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  bPane=btn.dataset.p;$('bOverviewPane').hidden=bPane!=='ov';$('bCustomersPane').hidden=bPane!=='cust';renderHome();});
+$('bcInd').onchange=$('bcTier').onchange=$('bcSearch').oninput=()=>{bcPage=1;renderCustomersPane();};
+$('bcSize').onchange=e=>{bcPageSize=Number(e.target.value);bcPage=1;renderCustomersPane();};
+$('bcExpandBtn').onclick=()=>{bcExpanded=!bcExpanded;if(!bcExpanded)bcPage=1;renderCustomersPane();};
+$('bcPrev').onclick=()=>{bcPage--;renderCustomersPane();};
+$('bcNext').onclick=()=>{bcPage++;renderCustomersPane();};
+$('bBack').onclick=()=>{bShow('bHome');renderHome();};
+ $('bCompare').onclick=bShowIndustry;$('bPeerCompare').onclick=bSelectPeers;$('biBack').onclick=()=>bShowDetail(bCurrentId);$('bSelBack').onclick=()=>bShowDetail(bCurrentId);$('bResBack').onclick=bSelectPeers;
+$('bGo').onclick=()=>{const ids=[...$('bChecks').querySelectorAll('input:checked')].map(x=>x.value);
+  if(ids.length<2||ids.length>4){$('bWarn').style.display='block';return;}$('bWarn').style.display='none';bRenderMatrix(ids);};
+
+/* ── 상품분류체계 팝업 ── */
+function bTaxonomyRows(){
+  const seen=new Set(),rows=[];
+  RAW.forEach(r=>{
+    const key=[r.axMajor,r.axMiddle,r.major,r.profitName].join('|||');
+    if(seen.has(key))return;
+    seen.add(key);
+    rows.push({axMajor:r.axMajor,axMiddle:r.axMiddle,major:r.major,profitName:r.profitName});
+  });
+  return rows.sort((a,b)=>
+    a.axMajor.localeCompare(b.axMajor,'ko')||a.axMiddle.localeCompare(b.axMiddle,'ko')||
+    a.major.localeCompare(b.major,'ko')||
+    a.profitName.localeCompare(b.profitName,'ko'));
+}
+function bRenderTaxonomy(){
+  $('bTaxBody').innerHTML=bTaxonomyRows().map(r=>
+    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.profitName)}</td></tr>`
+  ).join('');
+}
+$('bTaxonomyBtn').onclick=()=>{bRenderTaxonomy();$('bTaxModal').classList.remove('hidden');};
+$('bTaxClose').onclick=()=>$('bTaxModal').classList.add('hidden');
+$('bTaxModal').addEventListener('mousedown',e=>{if(e.target.id==='bTaxModal')$('bTaxModal').dataset.downOnOverlay='1';else delete $('bTaxModal').dataset.downOnOverlay;});
+$('bTaxModal').addEventListener('click',e=>{if(e.target.id==='bTaxModal'&&$('bTaxModal').dataset.downOnOverlay==='1')$('bTaxModal').classList.add('hidden');});
+
+/* ── CSV 업로드 ── */
+$('bUploadBtn').onclick=()=>$('bFile').click();
+$('bFile').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  $('bStatus').textContent='데이터 읽는 중...';
+  try{
+    RAW=await parse(f);
+    dims();
+    bOpenNodes.clear();bExpanded.clear();bcPage=1;bcExpanded=false;
+    bFillFilters();
+    $('bStatus').textContent=`${f.name} · ${customers.length}개 고객 적용`;
+    renderHome();
+  }catch(err){alert(err.message);$('bStatus').textContent='업로드 실패';}
+  e.target.value='';
+};
+
+/* ── 필터 채우기 ── */
+function bFillFilters(){
+  $('bcInd').innerHTML='<option value="">전체 업종</option>'+industries.map(x=>`<option>${esc(x)}</option>`).join('');
+  $('bcTier').innerHTML='<option value="">전체 Tier</option>'+tiers.map(x=>`<option>${esc(x)}</option>`).join('');
+}
+dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries/tiers 세팅)
+
+</script>
+</body>
+</html>

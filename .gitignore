@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# 과거 실험 산출물 (현재 기준 아님)
+mockup_variation/
+
+# 과거 계획 문서 (현재 상태는 HANDOFF.md가 대체)
+purring-dreaming-raven.md
+
+# 개인 스크린샷
+SCR-*.png
+
+# 정체불명 흔적 파일
+.verify
+
+# Claude Code 로컬 개인 설정 (홈 경로·개인 허용목록 포함)
+.claude/settings.local.json
