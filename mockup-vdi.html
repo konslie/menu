@@ -205,7 +205,7 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--u-border);flex:0 0 auto}
 .modal-head span{font-size:16px;font-weight:700;color:var(--u-carbon)}
 .modal-body{overflow:auto;padding:0 22px 22px}
-table.tax{width:100%;border-collapse:collapse;font-size:14px}
+table.tax{width:60%;margin:0 auto;border-collapse:collapse;font-size:14px}
 table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:left;position:sticky;top:0;z-index:1}
 table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
 table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
@@ -228,6 +228,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
     <div class="top-actions">
       <button class="btn" id="bTaxonomyBtn">상품분류체계</button>
       <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv">
+      <button class="btn" id="bSaveFileBtn">파일로 저장</button>
       <div class="status" id="bStatus">데이터 없음 · CSV 업로드로 실 데이터를 불러오세요</div>
     </div>
   </div>
@@ -244,6 +245,17 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
           </thead>
           <tbody id="bTaxBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay hidden" id="bUploadDoneModal">
+    <div class="modal-box" style="width:min(420px,92vw)">
+      <div class="modal-head">
+        <span>업로드 완료</span>
+        <button class="btn" id="bUploadDoneClose">확인</button>
+      </div>
+      <div class="modal-body">
+        <p>업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.</p>
       </div>
     </div>
   </div>
@@ -376,6 +388,7 @@ function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,
 let bYear='2026', bGran='cat', bSort='cov', bMode='service', bPane='cust', bCurrentId=null;
 const bExpanded=new Set();
 let bAggCache=[];
+const LS_KEY='menuRawData';
 
 const bYearLabel=()=>year==='2026'?'2026 YTD(1~6월)':'2025 연간';
 const bAxCatLabel=c=>String(c).replace('|||',' · ');
@@ -671,13 +684,28 @@ $('bFile').onchange=async e=>{
   $('bStatus').textContent='데이터 읽는 중...';
   try{
     RAW=await parse(f);
+    try{localStorage.setItem(LS_KEY,JSON.stringify(RAW));}catch(e){}
     dims();
     bOpenNodes.clear();bExpanded.clear();bcPage=1;bcExpanded=false;
     bFillFilters();
     $('bStatus').textContent=`${f.name} · ${customers.length}개 고객 적용`;
     renderHome();
+    $('bUploadDoneModal').classList.remove('hidden');
   }catch(err){alert(err.message);$('bStatus').textContent='업로드 실패';}
   e.target.value='';
+};
+$('bUploadDoneClose').onclick=()=>$('bUploadDoneModal').classList.add('hidden');
+$('bUploadDoneModal').addEventListener('mousedown',e=>{if(e.target.id==='bUploadDoneModal')$('bUploadDoneModal').dataset.downOnOverlay='1';else delete $('bUploadDoneModal').dataset.downOnOverlay;});
+$('bUploadDoneModal').addEventListener('click',e=>{if(e.target.id==='bUploadDoneModal'&&$('bUploadDoneModal').dataset.downOnOverlay==='1')$('bUploadDoneModal').classList.add('hidden');});
+$('bSaveFileBtn').onclick=()=>{
+  const html=document.documentElement.outerHTML;
+  const out=html.replace(/let RAW=\[[\s\S]*?\];/,'let RAW='+JSON.stringify(RAW)+';');
+  const blob=new Blob(['<!doctype html>\n'+out],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(document.title||'mockup').replace(/[\\/:*?"<>|]/g,'').trim()+'.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
 };
 
 /* ── 필터 채우기 ── */
@@ -685,7 +713,13 @@ function bFillFilters(){
   $('bcInd').innerHTML='<option value="">전체 업종</option>'+industries.map(x=>`<option>${esc(x)}</option>`).join('');
   $('bcTier').innerHTML='<option value="">전체 Tier</option>'+tiers.map(x=>`<option>${esc(x)}</option>`).join('');
 }
+let bRestored=false;
+try{
+  const saved=localStorage.getItem(LS_KEY);
+  if(saved){RAW=JSON.parse(saved);bRestored=true;}
+}catch(e){}
 dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries/tiers 세팅)
+if(bRestored)$('bStatus').textContent=`저장된 데이터 · ${customers.length}개 고객 적용`;
 
 </script>
 </body>

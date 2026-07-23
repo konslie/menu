@@ -9,9 +9,13 @@ purring-dreaming-raven.md
 
 # 개인 스크린샷
 SCR-*.png
+handoff_image/
 
 # 정체불명 흔적 파일
 .verify
 
 # Claude Code 로컬 개인 설정 (홈 경로·개인 허용목록 포함)
 .claude/settings.local.json
+
+#불필요 문서
+TEAM_HANDOFF.html

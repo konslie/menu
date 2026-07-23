@@ -121,7 +121,7 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--u-border);flex:0 0 auto}
 .modal-head span{font-size:16px;font-weight:700;color:var(--u-carbon)}
 .modal-body{overflow:auto;padding:0 22px 22px}
-table.tax{width:100%;border-collapse:collapse;font-size:14px}
+table.tax{width:60%;margin:0 auto;border-collapse:collapse;font-size:14px}
 table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:left;position:sticky;top:0;z-index:1}
 table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
 table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}

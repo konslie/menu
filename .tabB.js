@@ -2,6 +2,7 @@
 let bYear='2026', bGran='cat', bSort='cov', bMode='service', bPane='cust', bCurrentId=null;
 const bExpanded=new Set();
 let bAggCache=[];
+const LS_KEY='menuRawData';
 
 const bYearLabel=()=>year==='2026'?'2026 YTD(1~6월)':'2025 연간';
 const bAxCatLabel=c=>String(c).replace('|||',' · ');
@@ -297,13 +298,28 @@ $('bFile').onchange=async e=>{
   $('bStatus').textContent='데이터 읽는 중...';
   try{
     RAW=await parse(f);
+    try{localStorage.setItem(LS_KEY,JSON.stringify(RAW));}catch(e){}
     dims();
     bOpenNodes.clear();bExpanded.clear();bcPage=1;bcExpanded=false;
     bFillFilters();
     $('bStatus').textContent=`${f.name} · ${customers.length}개 고객 적용`;
     renderHome();
+    $('bUploadDoneModal').classList.remove('hidden');
   }catch(err){alert(err.message);$('bStatus').textContent='업로드 실패';}
   e.target.value='';
+};
+$('bUploadDoneClose').onclick=()=>$('bUploadDoneModal').classList.add('hidden');
+$('bUploadDoneModal').addEventListener('mousedown',e=>{if(e.target.id==='bUploadDoneModal')$('bUploadDoneModal').dataset.downOnOverlay='1';else delete $('bUploadDoneModal').dataset.downOnOverlay;});
+$('bUploadDoneModal').addEventListener('click',e=>{if(e.target.id==='bUploadDoneModal'&&$('bUploadDoneModal').dataset.downOnOverlay==='1')$('bUploadDoneModal').classList.add('hidden');});
+$('bSaveFileBtn').onclick=()=>{
+  const html=document.documentElement.outerHTML;
+  const out=html.replace(/let RAW=\[[\s\S]*?\];/,'let RAW='+JSON.stringify(RAW)+';');
+  const blob=new Blob(['<!doctype html>\n'+out],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(document.title||'mockup').replace(/[\\/:*?"<>|]/g,'').trim()+'.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
 };
 
 /* ── 필터 채우기 ── */
@@ -311,4 +327,10 @@ function bFillFilters(){
   $('bcInd').innerHTML='<option value="">전체 업종</option>'+industries.map(x=>`<option>${esc(x)}</option>`).join('');
   $('bcTier').innerHTML='<option value="">전체 Tier</option>'+tiers.map(x=>`<option>${esc(x)}</option>`).join('');
 }
+let bRestored=false;
+try{
+  const saved=localStorage.getItem(LS_KEY);
+  if(saved){RAW=JSON.parse(saved);bRestored=true;}
+}catch(e){}
 dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries/tiers 세팅)
+if(bRestored)$('bStatus').textContent=`저장된 데이터 · ${customers.length}개 고객 적용`;
