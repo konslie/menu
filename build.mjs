@@ -48,7 +48,7 @@ const CATALOG = [
 const sName = c => '세부상품' + c.s.slice(1);
 const pName = c => '상품군' + c.pg.slice(1);
 
-const INDUSTRIES = [{ name: '온라인/IT', n: 15 }, { name: '제조', n: 14 }, { name: '금융', n: 12 }, { name: '유통', n: 12 }];
+const INDUSTRIES = [{ name: '금융', n: 9 }, { name: '대기업', n: 9 }, { name: '온라인/IT', n: 9 }, { name: '글로벌', n: 9 }, { name: '공공', n: 9 }, { name: 'SME', n: 8 }];
 const customers = [];
 let idx = 0;
 for (const ind of INDUSTRIES) for (let k = 0; k < ind.n; k++) {
@@ -83,8 +83,8 @@ for (const c of customers) {
   for (const p of CATALOG) {
     let pop = p.pop;
     if (c.industry === '금융' && (p.ai === 'AI Platform' || p.ai === 'AI Model')) pop = Math.min(0.95, pop + 0.12);
-    if (c.industry === '제조' && p.ai === 'NW Infra') pop = Math.min(0.95, pop + 0.08);
-    if (c.industry === '유통' && p.ai === 'Application') pop = Math.min(0.95, pop + 0.1);
+    if (c.industry === '대기업' && p.ai === 'NW Infra') pop = Math.min(0.95, pop + 0.08);
+    if (c.industry === '글로벌' && p.ai === 'Application') pop = Math.min(0.95, pop + 0.1);
     if (r() > pop) continue;
     const base = p.scale * sizeFactor[c.tier] * (0.5 + r() * 1.1), annual = Math.round(base);
     const born26 = r() < 0.06, churn = r() < 0.08;
@@ -119,7 +119,7 @@ const label=r=>r.salesName;
 const axKey=r=>\`\${r.axMajor}|||\${r.axMiddle}\`;
 const cat=r=>axKey(r);
 const catLabel=c=>c&&c.includes('|||')?c.split('|||')[1]:c;
-const INDUSTRY_ORDER=['금융','온라인/IT','제조','유통'];
+const INDUSTRY_ORDER=['금융','대기업','온라인/IT','글로벌','공공','SME'];
 const industryRank=x=>{const i=INDUSTRY_ORDER.indexOf(x);return i<0?99:i;};
 `;
   const tabBHtmlForBuild = TAB_B_HTML.replace('DEFAULT: 메뉴판데이터2.1.xlsx', statusLabel);

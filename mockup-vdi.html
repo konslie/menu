@@ -90,7 +90,7 @@ table.mtx tr.subtotal td:not(.mtx-prod){color:var(--u-primary)}
 .bc-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:18px 0 14px}
 .bc-controls input,.bc-controls select{height:36px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;font-family:Pretendard,sans-serif}
 .bc-controls input{width:160px}
-.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:640px}
+.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:calc(100vh - 260px)}
 table.bc{width:100%;min-width:900px;border-collapse:collapse;font-size:14px;table-layout:fixed}
 table.bc thead{background:var(--u-surface-head)}
 table.bc th{background:var(--u-surface-head);color:var(--u-onvariant);padding:8px;font-weight:700;font-size:14px;line-height:1.25;text-align:center;position:sticky;z-index:3;border-bottom:1px solid var(--u-border)}
@@ -197,6 +197,7 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 #tabB-wrap small,#tabB-wrap .tier,.b-period,.ws-badge,.recommend-badge,.recommend-meta,
 .mtx-badge,.peer-head small,.peer-product small,.industry-product small,.industry-owned,.industry-missing,
 .legend-chip,.rec-detail .chip,.ws-legend{font-size:12px!important}
+.reco-legend{font-size:14px!important}
 
 /* ── 상품분류체계 팝업 ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(28,27,27,.45);z-index:100;display:flex;align-items:center;justify-content:center}
@@ -319,7 +320,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
     <div class="card"><small>추천 기회 상품</small><b id="bdReco"></b></div>
     <div class="card dark"><small>선택 기간 매출</small><b id="bdSales"></b></div>
   </div>
-  <div class="ws-legend" style="margin-bottom:14px">추천 로직 : 대상 고객 미사용 상품 중 ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택 · 추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
+  <div class="ws-legend reco-legend" style="margin-bottom:14px">추천 로직 : <b>Key Account <span id="bdRecoBase"></span>개 고객이 사용하고 있는 상품 중에서 추천합니다.</b><br>추천 우선순위 : ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택<br>추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
   <div id="bBlocks"></div>
 </section>
 
@@ -370,7 +371,7 @@ const label=r=>r.salesName;
 const axKey=r=>`${r.axMajor}|||${r.axMiddle}`;
 const cat=r=>axKey(r);
 const catLabel=c=>c&&c.includes('|||')?c.split('|||')[1]:c;
-const INDUSTRY_ORDER=['금융','온라인/IT','제조','유통'];
+const INDUSTRY_ORDER=['금융','대기업','온라인/IT','글로벌','공공','SME'];
 const industryRank=x=>{const i=INDUSTRY_ORDER.indexOf(x);return i<0?99:i;};
 
 function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,name:r.name,tier:r.tier,industry:r.industry}])).values()];industries=[...new Set(customers.map(x=>x.industry))].sort((a,b)=>industryRank(a)-industryRank(b)||a.localeCompare(b,'ko'));tiers=[...new Set(customers.map(x=>x.tier))].sort();}
@@ -381,7 +382,7 @@ function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,
         function cap(c){return new Set(RAW.filter(r=>cat(r)===c).map(serviceKey).filter(Boolean)).size}
         function agg(id){const base=customers.find(x=>x.id===id),rs=RAW.filter(r=>r.customerId===id),field=salesField(),data={};cats().forEach(c=>{const map=new Map;rs.filter(r=>cat(r)===c&&serviceKey(r)).forEach(r=>{const k=serviceKey(r);if(!map.has(k))map.set(k,{code:k,name:label(r),sales:0});map.get(k).sales+=Number(r[field]||0)});const used=[...map.values()].filter(x=>x.sales!==0).sort((a,b)=>b.sales-a.sales);data[c]={used:used.length,cap:cap(c),sales:used.reduce((s,x)=>s+x.sales,0),items:used}});return {...base,data,usedTotal:Object.values(data).reduce((s,x)=>s+x.used,0),capTotal:Object.values(data).reduce((s,x)=>s+x.cap,0),salesTotal:rs.reduce((s,r)=>s+Number(r[field]||0),0)}}
         function peerStats(c,peerList,targetUsed,field){const stats=new Map;peerList.forEach(peer=>{const byService=new Map;RAW.filter(x=>x.customerId===peer.id&&cat(x)===c&&serviceKey(x)).forEach(x=>{const k=serviceKey(x);if(!byService.has(k))byService.set(k,{code:k,name:label(x),sales:0});byService.get(k).sales+=Number(x[field]||0)});byService.forEach(x=>{if(x.sales===0||targetUsed.has(x.code))return;if(!stats.has(x.code))stats.set(x.code,{code:x.code,name:x.name,peerCount:0,peerSales:0,peers:[]});const s=stats.get(x.code);s.peerCount++;s.peerSales+=x.sales;s.peers.push({id:peer.id,name:peer.name,sales:x.sales})})});return stats}function recommended(c,r){const targetUsed=new Set(r.data[c].items.map(x=>x.code)),field=salesField(),same=[...peerStats(c,customers.filter(x=>x.industry===r.industry&&x.id!==r.id),targetUsed,field).values()],cross=[...peerStats(c,customers.filter(x=>x.industry!==r.industry),targetUsed,field).values()],avg=x=>x.peerSales/x.peerCount,result=[];const pick=(list,metric,source,priority)=>{const remain=list.filter(x=>!result.some(y=>y.code===x.code));if(!remain.length||result.length>=3)return;const best=Math.max(...remain.map(metric));remain.filter(x=>metric(x)===best).sort((a,b)=>a.name.localeCompare(b.name,'ko')).forEach(x=>{if(result.length<3)result.push({...x,source,priority});});};pick(same,x=>x.peerCount,'same',1);pick(same,avg,'same',2);pick(cross,x=>x.peerCount,'cross',3);pick(cross,avg,'cross',4);return result}
-        const REQ=['고객ID','고객명','Tier','업종','손익코드','손익명','매출코드','매출명','25년매출','26년매출','대분류','중분류','AX구분_대','AX구분_중','AI Stack'];function parseCsv(str){const rows=[];let row=[],field='',q=false;for(let i=0;i<str.length;i++){const c=str[i];if(q){if(c==='"'){if(str[i+1]==='"'){field+='"';i++;}else q=false;}else field+=c;}else{if(c==='"')q=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c==='\r'){/* skip; \r\n handled by \n */}else field+=c;}}if(field!==''||row.length){row.push(field);rows.push(row);}return rows;}async function parse(file){let str=await file.text();if(str.charCodeAt(0)===0xFEFF)str=str.slice(1);const matrix=parseCsv(str).filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');const h=matrix[0].map(x=>String(x??'').trim()),missing=REQ.filter(x=>!h.includes(x));if(missing.length)throw Error('필수 컬럼 누락: '+missing.join(', '));const ix=Object.fromEntries(h.map((x,i)=>[x,i])),t=v=>String(v??'').trim(),n=v=>Number(String(v??'').replace(/,/g,''))||0;return matrix.slice(1).filter(r=>t(r[ix['고객ID']])).map(r=>({customerId:t(r[ix['고객ID']]),name:cleanName(t(r[ix['고객명']])),tier:t(r[ix['Tier']]),industry:t(r[ix['업종']]),profitCode:t(r[ix['손익코드']]),profitName:t(r[ix['손익명']]),salesCode:t(r[ix['매출코드']]),salesName:t(r[ix['매출명']]),sales2025:n(r[ix['25년매출']]),sales2026:n(r[ix['26년매출']]),major:t(r[ix['대분류']]),middle:t(r[ix['중분류']]),axMajor:t(r[ix['AX구분_대']]),axMiddle:t(r[ix['AX구분_중']]),aiStack:t(r[ix['AI Stack']])}))}
+        const REQ=['고객ID','고객명','Tier','업종','손익코드','손익명','매출코드','매출명','25년매출','26년매출','대분류','중분류','AX구분_대','AX구분_중','AI Stack'];function parseCsv(str){const rows=[];let row=[],field='',q=false;for(let i=0;i<str.length;i++){const c=str[i];if(q){if(c==='"'){if(str[i+1]==='"'){field+='"';i++;}else q=false;}else field+=c;}else{if(c==='"')q=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c==='\r'){/* skip; \r\n handled by \n */}else field+=c;}}if(field!==''||row.length){row.push(field);rows.push(row);}return rows;}async function parse(file){let str=await file.text();if(str.charCodeAt(0)===0xFEFF)str=str.slice(1);const matrix=parseCsv(str).filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');const h=matrix[0].map(x=>String(x??'').trim()),missing=REQ.filter(x=>!h.includes(x));if(missing.length)throw Error('필수 컬럼 누락: '+missing.join(', '));const ix=Object.fromEntries(h.map((x,i)=>[x,i])),t=v=>String(v??'').trim(),n=v=>Number(String(v??'').replace(/,/g,''))||0;const LEADING_ZERO_FIX={'50':'050','80':'080','2':'002'};const fixName=v=>LEADING_ZERO_FIX[v]??v;return matrix.slice(1).filter(r=>t(r[ix['고객ID']])).map(r=>({customerId:t(r[ix['고객ID']]),name:cleanName(t(r[ix['고객명']])),tier:t(r[ix['Tier']]),industry:t(r[ix['업종']]),profitCode:t(r[ix['손익코드']]),profitName:t(r[ix['손익명']]),salesCode:t(r[ix['매출코드']]),salesName:fixName(t(r[ix['매출명']])),sales2025:n(r[ix['25년매출']]),sales2026:n(r[ix['26년매출']]),major:t(r[ix['대분류']]),middle:t(r[ix['중분류']]),axMajor:t(r[ix['AX구분_대']]),axMiddle:t(r[ix['AX구분_중']]),aiStack:t(r[ix['AI Stack']])}))}
         REQ.pop(); // AI Stack 컬럼은 더 이상 업로드 필수값이 아니다.
 
 /* ══════════ 탭 B: 경영진 뷰 — 합계 관점(개요) + 고객단위 관점(히트맵). 계산은 공유 함수 재사용 ══════════ */
@@ -523,7 +524,8 @@ function renderCustomersPane(){
   const cs=cats(),ind=$('bcInd').value,t=$('bcTier').value,q=$('bcSearch').value.trim().toLowerCase();
   const max={};cs.forEach(c=>max[c]=Math.max(1,...bAggCache.map(a=>a.data[c].sales)));
   let all=bAggCache.filter(a=>(!ind||a.industry===ind)&&(!t||a.tier===t)&&(!q||a.name.toLowerCase().includes(q)))
-    .sort((a,b)=>industryRank(a.industry)-industryRank(b.industry)||b.usedTotal-a.usedTotal||a.name.localeCompare(b.name,'ko'));
+    .sort((a,b)=>industryRank(a.industry)-industryRank(b.industry)||(bMode==='service'?b.usedTotal-a.usedTotal:b.salesTotal-a.salesTotal)||a.name.localeCompare(b.name,'ko'));
+  const industryCounts={};all.forEach(a=>{industryCounts[a.industry]=(industryCounts[a.industry]||0)+1;});
   const pages=Math.max(1,Math.ceil(all.length/bcPageSize));
   bcPage=Math.min(bcPage,pages);
   const list=bcExpanded?all:all.slice((bcPage-1)*bcPageSize,bcPage*bcPageSize);
@@ -532,7 +534,7 @@ function renderCustomersPane(){
   bSyncHeaderSticky();
   let last='';
   $('bcTbody').innerHTML=list.map(r=>{
-    let g='';if(last!==r.industry){last=r.industry;g=`<tr class="group"><td colspan="${cs.length+2}">${esc(last)}</td></tr>`;}
+    let g='';if(last!==r.industry){last=r.industry;g=`<tr class="group"><td colspan="${cs.length+2}">${esc(last)}(${industryCounts[last]})</td></tr>`;}
     const cells=cs.map(c=>{const d=r.data[c],v=bMode==='service'?d.used:d.sales;
       if(v===0)return '<td><div class="cell empty"></div></td>';
       const ratio=bMode==='service'?d.used/Math.max(1,d.cap):d.sales/max[c],a=Math.min(.28+ratio*1.1,.98);
@@ -558,7 +560,7 @@ function bShowDetail(id){
   const keys=[].concat(...majors().map(m=>m.children.map(c=>c.key)));
   const recoTotal=keys.reduce((s,c)=>s+recommended(c,r).length,0);
   $('bdUsed').textContent=`${r.usedTotal}종 / ${r.capTotal}종`;$('bdUnused').textContent=`${r.capTotal-r.usedTotal}종`;
-  $('bdReco').textContent=`${recoTotal}종`;$('bdSales').textContent=fmt(r.salesTotal)+'억원';
+  $('bdReco').textContent=`${recoTotal}종`;$('bdSales').textContent=fmt(r.salesTotal)+'억원';$('bdRecoBase').textContent=customers.length;
   renderBBlocks(r);
   bShow('bDetail');
 }

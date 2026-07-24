@@ -137,7 +137,8 @@ function renderCustomersPane(){
   const cs=cats(),ind=$('bcInd').value,t=$('bcTier').value,q=$('bcSearch').value.trim().toLowerCase();
   const max={};cs.forEach(c=>max[c]=Math.max(1,...bAggCache.map(a=>a.data[c].sales)));
   let all=bAggCache.filter(a=>(!ind||a.industry===ind)&&(!t||a.tier===t)&&(!q||a.name.toLowerCase().includes(q)))
-    .sort((a,b)=>industryRank(a.industry)-industryRank(b.industry)||b.usedTotal-a.usedTotal||a.name.localeCompare(b.name,'ko'));
+    .sort((a,b)=>industryRank(a.industry)-industryRank(b.industry)||(bMode==='service'?b.usedTotal-a.usedTotal:b.salesTotal-a.salesTotal)||a.name.localeCompare(b.name,'ko'));
+  const industryCounts={};all.forEach(a=>{industryCounts[a.industry]=(industryCounts[a.industry]||0)+1;});
   const pages=Math.max(1,Math.ceil(all.length/bcPageSize));
   bcPage=Math.min(bcPage,pages);
   const list=bcExpanded?all:all.slice((bcPage-1)*bcPageSize,bcPage*bcPageSize);
@@ -146,7 +147,7 @@ function renderCustomersPane(){
   bSyncHeaderSticky();
   let last='';
   $('bcTbody').innerHTML=list.map(r=>{
-    let g='';if(last!==r.industry){last=r.industry;g=`<tr class="group"><td colspan="${cs.length+2}">${esc(last)}</td></tr>`;}
+    let g='';if(last!==r.industry){last=r.industry;g=`<tr class="group"><td colspan="${cs.length+2}">${esc(last)}(${industryCounts[last]})</td></tr>`;}
     const cells=cs.map(c=>{const d=r.data[c],v=bMode==='service'?d.used:d.sales;
       if(v===0)return '<td><div class="cell empty"></div></td>';
       const ratio=bMode==='service'?d.used/Math.max(1,d.cap):d.sales/max[c],a=Math.min(.28+ratio*1.1,.98);
@@ -172,7 +173,7 @@ function bShowDetail(id){
   const keys=[].concat(...majors().map(m=>m.children.map(c=>c.key)));
   const recoTotal=keys.reduce((s,c)=>s+recommended(c,r).length,0);
   $('bdUsed').textContent=`${r.usedTotal}종 / ${r.capTotal}종`;$('bdUnused').textContent=`${r.capTotal-r.usedTotal}종`;
-  $('bdReco').textContent=`${recoTotal}종`;$('bdSales').textContent=fmt(r.salesTotal)+'억원';
+  $('bdReco').textContent=`${recoTotal}종`;$('bdSales').textContent=fmt(r.salesTotal)+'억원';$('bdRecoBase').textContent=customers.length;
   renderBBlocks(r);
   bShow('bDetail');
 }

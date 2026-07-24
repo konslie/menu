@@ -6,7 +6,7 @@
 .bc-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:18px 0 14px}
 .bc-controls input,.bc-controls select{height:36px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;font-family:Pretendard,sans-serif}
 .bc-controls input{width:160px}
-.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:640px}
+.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:calc(100vh - 260px)}
 table.bc{width:100%;min-width:900px;border-collapse:collapse;font-size:14px;table-layout:fixed}
 table.bc thead{background:var(--u-surface-head)}
 table.bc th{background:var(--u-surface-head);color:var(--u-onvariant);padding:8px;font-weight:700;font-size:14px;line-height:1.25;text-align:center;position:sticky;z-index:3;border-bottom:1px solid var(--u-border)}
@@ -113,6 +113,7 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 #tabB-wrap small,#tabB-wrap .tier,.b-period,.ws-badge,.recommend-badge,.recommend-meta,
 .mtx-badge,.peer-head small,.peer-product small,.industry-product small,.industry-owned,.industry-missing,
 .legend-chip,.rec-detail .chip,.ws-legend{font-size:12px!important}
+.reco-legend{font-size:14px!important}
 
 /* ── 상품분류체계 팝업 ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(28,27,27,.45);z-index:100;display:flex;align-items:center;justify-content:center}
