@@ -161,3 +161,4 @@ node --check verify_tax.mjs
 - 업종공통 칸은 값 길이(`6/9`~`6/9 (100%)`)가 들쭉날쭉해 기존 중앙정렬(`text-align:center`)로는 시작 위치가 흔들렸다. 업종공통 span에만 `industry-stats-common` 클래스를 추가해 좌측 정렬(`.tabx.css`)로 고정하고, 헤더 `업종공통` 라벨도 동일하게 좌측 정렬해 열을 맞췄다. 기준 고객 칸(침투/미침투 배지)은 기존 중앙정렬 그대로다.
 - `(백분율%)`는 `n/m`(13px, `<b>`)보다 1px 작은 12px로 별도 `<small>` 처리(`.industry-stats small`, 최소 글자 크기 12px 규칙과 정확히 일치).
 - `TEAM_HANDOFF.html`(git 추적 대상 아님, `.gitignore`)에 메인 타이틀과 `전체 흐름` 사이 `피드백 사항` 섹션 추가: ① 배포(Delivery) 방법 검토 필요(CEO가 주로 폰/패드로 확인), ② 로컬에서만 챗봇 동작하는 문제(팀즈 링크로 열 때 챗봇 동작 필요).
+- 위 ②번 카드의 스크린샷(VDI 네트워크/CORS 차단 오류)은 `<details class="err-toggle"><summary>오류메세지 확인</summary>...</details>`로 감싸 기본은 접힌 상태, 클릭 시 거의 원본 크기(`max-width:720px`)로 펼쳐지게 했다. JS 없이 네이티브 `<details>`로 구현.
