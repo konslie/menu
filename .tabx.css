@@ -84,6 +84,8 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .industry-head span{text-align:center}
 .industry-target-head{color:var(--u-primary);font-size:15px}
 .industry-stats{text-align:center;white-space:nowrap;color:var(--u-onvariant);font-variant-numeric:tabular-nums}
+.industry-stats-common{text-align:left;padding-left:18px}
+.industry-head span:first-child{text-align:left;padding-left:18px}
 .industry-stats b{color:var(--u-carbon);font-size:13px}
 .industry-owned,.industry-missing{display:inline-block;border-radius:999px;padding:3px 7px;margin-left:4px;font-size:11px;font-weight:700}
 .industry-owned{background:var(--u-teal-tint);color:var(--u-teal)}
