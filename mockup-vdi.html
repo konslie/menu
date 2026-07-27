@@ -60,6 +60,16 @@
 .cov-detail .chip{display:inline-block;background:var(--u-surface);border:1px solid var(--u-border-strong);border-radius:999px;padding:3px 11px;margin:2px 3px;font-size:12px;cursor:pointer;transition:background-color .15s ease,color .15s ease}
 .cov-detail .chip:hover{background:var(--u-primary);color:var(--u-on-primary);border-color:var(--u-primary)}
 .b-hint{font-size:13px;color:var(--u-onvariant);margin-top:10px}
+@media(max-width:720px){
+  .cov-head{display:none}
+  .cov-row{grid-template-columns:1fr auto;grid-template-areas:"name flag" "bar bar" "count rev";row-gap:8px;column-gap:10px}
+  .cov-name{grid-area:name}
+  .cov-bar{grid-area:bar}
+  .cov-count{grid-area:count;text-align:left}
+  .cov-rev{grid-area:rev}
+  .cov-flag{grid-area:flag}
+  .cov-detail{grid-column:1}
+}
 
 /* ── 비교 매트릭스 ── */
 .mtx-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;margin-top:14px}
@@ -80,7 +90,14 @@ table.mtx tr.subtotal td.mtx-prod{padding-left:12px}
 table.mtx tr.subtotal td:not(.mtx-prod){color:var(--u-primary)}
 .b-detail-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px auto;max-width:900px}
 .b-detail-cards .card b{font-size:24px}
+@media(max-width:720px){.b-detail-cards{grid-template-columns:repeat(2,1fr)}}
 
+
+/* ── 가로 스크롤 힌트(모바일) ── */
+.scroll-hint{position:relative}
+.scroll-hint::after{content:"";position:absolute;top:0;right:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(to right,transparent,rgba(28,27,27,.10));border-radius:0 12px 12px 0}
+.scroll-hint-text{display:none;font-size:12px;color:var(--u-outline);margin:6px 0 0}
+@media(max-width:760px){.scroll-hint-text{display:block}}
 
 /* ── 탭 B 서브내비 & 고객별 현황 히트맵 ── */
 .b-subnav{display:flex;border-bottom:1px solid var(--u-border);margin:28px 0 0;gap:6px}
@@ -300,7 +317,8 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
       <select id="bcSize"><option value="10">10개씩</option><option value="20" selected>20개씩</option><option value="30">30개씩</option><option value="50">50개씩</option></select>
       <button class="btn expand-btn" id="bcExpandBtn"><span id="bcExpandIcon">▼</span><span id="bcExpandText">전체 펼치기</span></button>
     </div>
-    <div class="bc-wrap"><table class="bc"><thead id="bcThead"></thead><tbody id="bcTbody"></tbody></table></div>
+    <div class="bc-wrap scroll-hint"><table class="bc"><thead id="bcThead"></thead><tbody id="bcTbody"></tbody></table></div>
+    <div class="scroll-hint-text">← 좌우로 스크롤하면 더 많은 항목을 볼 수 있습니다 →</div>
     <div class="pager" id="bcPager"><button class="btn" id="bcPrev">← 이전</button><span id="bcPage">1 / 1</span><button class="btn" id="bcNext">다음 →</button></div>
     <div class="b-hint" id="bcHint"></div>
   </div>
@@ -346,7 +364,8 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
   </div>
   <div class="b-hint" id="brSummary"></div>
   <div class="b-hint">셀 = 상품별 매출(억원) · <b style="color:#b90064">■</b> 강조 열 = 기준 고객 · <span class="legend-chip common">초록 음영</span> = 공통 보유(선택 고객 전원 사용) · <span class="legend-chip partial">빨강 음영</span> = 차이 있음(일부만 보유) · 카테고리별 소계 포함.</div>
-  <div class="peer-compare-view" id="brPeerView"></div>
+  <div class="peer-compare-view scroll-hint" id="brPeerView"></div>
+  <div class="scroll-hint-text">← 좌우로 스크롤하면 더 많은 고객을 볼 수 있습니다 →</div>
 </section>
 
 <section class="screen hidden" id="bIndustryResult">
@@ -356,6 +375,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
     <span class="name">동종 업종과 비교</span>
   </div>
   <div class="industry-result" id="biView"></div>
+  <div class="scroll-hint-text">← 좌우로 스크롤하면 더 많은 항목을 볼 수 있습니다 →</div>
 </section>
 
 </div>
@@ -635,7 +655,7 @@ function bRenderIndustryView(id){
     if(!rows.length)return '';
     return `<div class="industry-cat"><div class="industry-top"><h4>${esc(bAxCatLabel(c))}</h4><div class="industry-head"><span>업종공통</span><span class="industry-target-head">${esc(target.name)}</span></div></div>${rows.map(x=>`<div class="industry-row"><span class="industry-product">${esc(x.name)} <small>${esc(x.code)}</small></span><span class="industry-stats industry-stats-common">${x.owners?`<b>${x.owners}/${rs.length}</b> <small>(${Math.round(x.owners/rs.length*100)}%)</small>`:'<span class="industry-missing">미침투</span>'}</span><span class="industry-stats">${x.owned?'<span class="industry-owned">침투</span>':'<span class="industry-missing">미침투</span>'}</span></div>`).join('')}</div>`;
   }).join('');
-  return `<div class="industry-view"><h3>${esc(target.industry)} 업종 상품 현황</h3><div class="industry-meta">업종 고객 ${rs.length}개사 · 기준 고객 ${esc(target.name)}</div><div class="industry-note">업종공통은 해당 상품을 보유한 업종 고객 수입니다. 이 화면에서는 업종 내 아무도 보유하지 않은 상품도 함께 표시합니다.</div>${blocks}</div>`;
+  return `<div class="industry-view scroll-hint"><h3>${esc(target.industry)} 업종 상품 현황</h3><div class="industry-meta">업종 고객 ${rs.length}개사 · 기준 고객 ${esc(target.name)}</div><div class="industry-note">업종공통은 해당 상품을 보유한 업종 고객 수입니다. 이 화면에서는 업종 내 아무도 보유하지 않은 상품도 함께 표시합니다.</div>${blocks}</div>`;
 }
 
 /* ── 이벤트 ── */

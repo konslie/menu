@@ -245,7 +245,7 @@ function bRenderIndustryView(id){
     if(!rows.length)return '';
     return `<div class="industry-cat"><div class="industry-top"><h4>${esc(bAxCatLabel(c))}</h4><div class="industry-head"><span>업종공통</span><span class="industry-target-head">${esc(target.name)}</span></div></div>${rows.map(x=>`<div class="industry-row"><span class="industry-product">${esc(x.name)} <small>${esc(x.code)}</small></span><span class="industry-stats industry-stats-common">${x.owners?`<b>${x.owners}/${rs.length}</b> <small>(${Math.round(x.owners/rs.length*100)}%)</small>`:'<span class="industry-missing">미침투</span>'}</span><span class="industry-stats">${x.owned?'<span class="industry-owned">침투</span>':'<span class="industry-missing">미침투</span>'}</span></div>`).join('')}</div>`;
   }).join('');
-  return `<div class="industry-view"><h3>${esc(target.industry)} 업종 상품 현황</h3><div class="industry-meta">업종 고객 ${rs.length}개사 · 기준 고객 ${esc(target.name)}</div><div class="industry-note">업종공통은 해당 상품을 보유한 업종 고객 수입니다. 이 화면에서는 업종 내 아무도 보유하지 않은 상품도 함께 표시합니다.</div>${blocks}</div>`;
+  return `<div class="industry-view scroll-hint"><h3>${esc(target.industry)} 업종 상품 현황</h3><div class="industry-meta">업종 고객 ${rs.length}개사 · 기준 고객 ${esc(target.name)}</div><div class="industry-note">업종공통은 해당 상품을 보유한 업종 고객 수입니다. 이 화면에서는 업종 내 아무도 보유하지 않은 상품도 함께 표시합니다.</div>${blocks}</div>`;
 }
 
 /* ── 이벤트 ── */
