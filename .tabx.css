@@ -80,9 +80,9 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .industry-view .industry-meta{font-size:14px;color:var(--u-onvariant);margin-bottom:16px}
 .industry-view .industry-note{font-size:13px;color:var(--u-outline);line-height:1.55;margin-bottom:14px}
 .industry-cat{border-top:1px solid var(--u-border-strong);padding-top:12px;margin-top:14px}
-.industry-top{display:grid;grid-template-columns:240px 170px 170px;width:580px;gap:0;align-items:center;margin:0 0 2px;padding-bottom:8px;border-bottom:1px solid var(--u-border-strong)}
+.industry-top{display:grid;grid-template-columns:240px 170px 170px 170px;width:750px;gap:0;align-items:center;margin:0 0 2px;padding-bottom:8px;border-bottom:1px solid var(--u-border-strong)}
 .industry-cat h4{font-size:14px;color:var(--u-onvariant);margin:0}
-.industry-row{display:grid;grid-template-columns:240px 170px 170px;width:580px;gap:0;align-items:center;margin:0;padding:9px 0;border-bottom:1px solid var(--u-border);font-size:14px}
+.industry-row{display:grid;grid-template-columns:240px 170px 170px 170px;width:750px;gap:0;align-items:center;margin:0;padding:9px 0;border-bottom:1px solid var(--u-border);font-size:14px}
 .industry-row:last-child{border-bottom:0}
 .industry-product{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:18px}
 .industry-product small{color:var(--u-outline);font-size:11px;margin-left:3px}
@@ -91,7 +91,7 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .industry-target-head{color:var(--u-primary);font-size:15px}
 .industry-stats{text-align:center;white-space:nowrap;color:var(--u-onvariant);font-variant-numeric:tabular-nums}
 .industry-stats-common{text-align:left;padding-left:18px}
-.industry-head span:first-child{text-align:left;padding-left:18px}
+.industry-head span:nth-child(2){text-align:left;padding-left:18px}
 .industry-stats b{color:var(--u-carbon);font-size:13px}
 .industry-stats small{font-size:12px}
 .industry-owned,.industry-missing{display:inline-block;border-radius:999px;padding:3px 7px;margin-left:4px;font-size:11px;font-weight:700}
@@ -131,11 +131,12 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--u-border);flex:0 0 auto}
 .modal-head span{font-size:16px;font-weight:700;color:var(--u-carbon)}
 .modal-body{overflow:auto;padding:0 22px 22px}
-table.tax{width:60%;margin:0 auto;border-collapse:collapse;font-size:14px}
+table.tax{width:100%;margin:0 auto;border-collapse:collapse;font-size:14px}
 table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:left;position:sticky;top:0;z-index:1}
 table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
 table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
 table.tax th.tax-key{background:var(--u-primary);color:var(--u-on-primary)}
+table.tax th.tax-used,table.tax td.tax-used{text-align:center}
 table.tax tr:hover td{background:var(--u-surface-sub)}
 
 /* Customer cell: keep the table row geometry aligned with the heatmap cells. */

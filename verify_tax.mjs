@@ -9,7 +9,10 @@ const probe = `<div id="__t"></div><script>
   ok("modal_visible_after_click",!document.getElementById("bTaxModal").classList.contains("hidden"));
   const rows=document.querySelectorAll("#bTaxBody tr");
   ok("row_count",rows.length);
-  ok("first_row_html",rows[0]?rows[0].innerHTML.slice(0,200):"NONE");
+  ok("first_row_html",rows[0]?rows[0].innerHTML.slice(0,300):"NONE");
+  ok("col_count_th",document.querySelectorAll("table.tax thead th").length);
+  ok("checked_count",document.querySelectorAll("#bTaxBody input[type=checkbox]:checked").length);
+  ok("unchecked_count",document.querySelectorAll("#bTaxBody input[type=checkbox]:not(:checked)").length);
   ok("thead_th_position",getComputedStyle(document.querySelector("table.tax th")).position);
   ok("tax_key_th_count",document.querySelectorAll("table.tax th.tax-key").length);
   ok("tax_key_td_count",document.querySelectorAll("table.tax td.tax-key").length);

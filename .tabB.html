@@ -6,13 +6,13 @@
     </div>
     <div class="top-actions">
       <button class="btn" id="bTaxonomyBtn">상품분류체계</button>
-      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv">
+      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv"><input hidden type="file" id="bFileTaxo" accept=".csv">
       <button class="btn" id="bSaveFileBtn">파일로 저장</button>
       <div class="status" id="bStatus">DEFAULT: 메뉴판데이터2.1.xlsx</div>
     </div>
   </div>
   <div class="modal-overlay hidden" id="bTaxModal">
-    <div class="modal-box">
+    <div class="modal-box" style="width:min(1080px,94vw)">
       <div class="modal-head">
         <span>상품분류체계</span>
         <button class="btn" id="bTaxClose">닫기</button>
@@ -20,10 +20,22 @@
       <div class="modal-body">
         <table class="tax">
           <thead>
-            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>손익명</th></tr>
+            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>소분류</th><th>손익명</th><th>고객소통명</th><th class="tax-used">매출발생</th></tr>
           </thead>
           <tbody id="bTaxBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay hidden" id="bUploadChooseModal">
+    <div class="modal-box" style="width:min(380px,92vw)">
+      <div class="modal-head">
+        <span>업로드할 데이터 선택</span>
+        <button class="btn" id="bUploadChooseClose">닫기</button>
+      </div>
+      <div class="modal-body" style="display:flex;gap:10px">
+        <button class="btn upload" id="bUploadSalesBtn" style="flex:1">매출데이터</button>
+        <button class="btn upload" id="bUploadTaxoBtn" style="flex:1">상품체계</button>
       </div>
     </div>
   </div>
@@ -34,7 +46,7 @@
         <button class="btn" id="bUploadDoneClose">확인</button>
       </div>
       <div class="modal-body">
-        <p>업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.</p>
+        <p id="bUploadDoneMsg">업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.</p>
       </div>
     </div>
   </div>
@@ -45,8 +57,8 @@
   </div>
 
   <div class="b-subnav" id="bNav">
-    <button data-p="ov">상품별 현황</button>
     <button data-p="cust" class="active">고객별 현황</button>
+    <button data-p="ov">상품별 현황</button>
   </div>
   <div class="b-yearrow">
     <div class="seg" id="bYear"><button data-y="2026" class="active">2026 YTD(1~6월)</button><button data-y="2025">2025 연간</button></div>

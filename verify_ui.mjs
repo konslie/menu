@@ -12,6 +12,12 @@ const probe = `<div id="__t"></div><script>
   document.querySelector("#bMode button[data-m='sales']").click();
   ok("bMode_now",bMode);
   document.querySelector("#bMode button[data-m='service']").click();
+  ok("initial_expand_text",document.getElementById("bcExpandText").textContent);
+  ok("initial_pager_hidden",document.getElementById("bcPager").classList.contains("hidden"));
+  ok("initial_rows_all",document.querySelectorAll("#bcTbody td.cust").length);
+  document.getElementById("bcExpandBtn").click(); // 기본값(펼침) → 접기
+  ok("expand_text_after_collapse",document.getElementById("bcExpandText").textContent);
+  ok("pager_visible_after_collapse",!document.getElementById("bcPager").classList.contains("hidden"));
   ok("size_options",[...document.querySelectorAll("#bcSize option")].map(o=>o.value).join(","));
   document.getElementById("bcSize").value="10";document.getElementById("bcSize").dispatchEvent(new Event("change"));
   ok("rows_after_size10",document.querySelectorAll("#bcTbody td.cust").length);
@@ -19,7 +25,7 @@ const probe = `<div id="__t"></div><script>
   document.getElementById("bcNext").click();
   ok("page_after_next",document.getElementById("bcPage").textContent);
   ok("rows_page2",document.querySelectorAll("#bcTbody td.cust").length);
-  document.getElementById("bcExpandBtn").click();
+  document.getElementById("bcExpandBtn").click(); // 접기 → 펼침
   ok("expand_text",document.getElementById("bcExpandText").textContent);
   ok("rows_all",document.querySelectorAll("#bcTbody td.cust").length);
   ok("pager_hidden",document.getElementById("bcPager").classList.contains("hidden"));
@@ -32,11 +38,21 @@ const probe = `<div id="__t"></div><script>
   document.getElementById("bcInd").value="";document.getElementById("bcInd").dispatchEvent(new Event("change"));
   ok("upload_btn_exists",!!document.getElementById("bUploadBtn"));
   ok("file_input_exists",!!document.getElementById("bFile"));
+  ok("taxo_file_input_exists",!!document.getElementById("bFileTaxo"));
   ok("parse_is_function",typeof parse === "function");
+  ok("parseTaxo_is_function",typeof parseTaxo === "function");
   ok("dims_is_function",typeof dims === "function");
-  let clicked=false; document.getElementById("bFile").click=()=>{clicked=true;};
   document.getElementById("bUploadBtn").onclick();
-  ok("upload_btn_triggers_file_click",clicked);
+  ok("choose_modal_visible_after_upload_click",!document.getElementById("bUploadChooseModal").classList.contains("hidden"));
+  let salesClicked=false; document.getElementById("bFile").click=()=>{salesClicked=true;};
+  document.getElementById("bUploadSalesBtn").onclick();
+  ok("sales_choice_triggers_file_click",salesClicked);
+  ok("choose_modal_hidden_after_sales_choice",document.getElementById("bUploadChooseModal").classList.contains("hidden"));
+  document.getElementById("bUploadBtn").onclick();
+  let taxoClicked=false; document.getElementById("bFileTaxo").click=()=>{taxoClicked=true;};
+  document.getElementById("bUploadTaxoBtn").onclick();
+  ok("taxo_choice_triggers_file_click",taxoClicked);
+  ok("choose_modal_hidden_after_taxo_choice",document.getElementById("bUploadChooseModal").classList.contains("hidden"));
   // 기존 기능 회귀 확인 (개요 드릴다운, 상세)
   document.querySelector("#bNav button[data-p='ov']").click();
   document.querySelector("#bGran button[data-g='cat']").click();

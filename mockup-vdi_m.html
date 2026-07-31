@@ -226,12 +226,11 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--u-border);flex:0 0 auto}
 .modal-head span{font-size:16px;font-weight:700;color:var(--u-carbon)}
 .modal-body{overflow:auto;padding:0 22px 22px}
-table.tax{width:100%;margin:0 auto;border-collapse:collapse;font-size:14px}
+table.tax{width:60%;margin:0 auto;border-collapse:collapse;font-size:14px}
 table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:left;position:sticky;top:0;z-index:1}
 table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
 table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
 table.tax th.tax-key{background:var(--u-primary);color:var(--u-on-primary)}
-table.tax th.tax-used,table.tax td.tax-used{text-align:center}
 table.tax tr:hover td{background:var(--u-surface-sub)}
 
 /* Customer cell: keep the table row geometry aligned with the heatmap cells. */
@@ -249,13 +248,13 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
     </div>
     <div class="top-actions">
       <button class="btn" id="bTaxonomyBtn">상품분류체계</button>
-      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv"><input hidden type="file" id="bFileTaxo" accept=".csv">
+      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv">
       <button class="btn" id="bSaveFileBtn">파일로 저장</button>
       <div class="status" id="bStatus">데이터 없음 · CSV 업로드로 실 데이터를 불러오세요</div>
     </div>
   </div>
   <div class="modal-overlay hidden" id="bTaxModal">
-    <div class="modal-box" style="width:min(1080px,94vw)">
+    <div class="modal-box">
       <div class="modal-head">
         <span>상품분류체계</span>
         <button class="btn" id="bTaxClose">닫기</button>
@@ -263,22 +262,10 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
       <div class="modal-body">
         <table class="tax">
           <thead>
-            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>소분류</th><th>손익명</th><th>고객소통명</th><th class="tax-used">매출발생</th></tr>
+            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>손익명</th></tr>
           </thead>
           <tbody id="bTaxBody"></tbody>
         </table>
-      </div>
-    </div>
-  </div>
-  <div class="modal-overlay hidden" id="bUploadChooseModal">
-    <div class="modal-box" style="width:min(380px,92vw)">
-      <div class="modal-head">
-        <span>업로드할 데이터 선택</span>
-        <button class="btn" id="bUploadChooseClose">닫기</button>
-      </div>
-      <div class="modal-body" style="display:flex;gap:10px">
-        <button class="btn upload" id="bUploadSalesBtn" style="flex:1">매출데이터</button>
-        <button class="btn upload" id="bUploadTaxoBtn" style="flex:1">상품체계</button>
       </div>
     </div>
   </div>
@@ -289,7 +276,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
         <button class="btn" id="bUploadDoneClose">확인</button>
       </div>
       <div class="modal-body">
-        <p id="bUploadDoneMsg">업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.</p>
+        <p>업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.</p>
       </div>
     </div>
   </div>
@@ -300,8 +287,8 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
   </div>
 
   <div class="b-subnav" id="bNav">
-    <button data-p="cust" class="active">고객별 현황</button>
     <button data-p="ov">상품별 현황</button>
+    <button data-p="cust" class="active">고객별 현황</button>
   </div>
   <div class="b-yearrow">
     <div class="seg" id="bYear"><button data-y="2026" class="active">2026 YTD(1~6월)</button><button data-y="2025">2025 연간</button></div>
@@ -395,7 +382,6 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
 <script>
 
 let RAW=[];
-let TAXO=[{"axMajor":"Legacy","axMiddle":"Infra","major":"대분류1","middle":"소분류01","profitName":"상품군01","salesName":"세부상품01"},{"axMajor":"Legacy","axMiddle":"Infra","major":"대분류1","middle":"소분류02","profitName":"상품군02 서비스","salesName":"세부상품02"},{"axMajor":"Legacy","axMiddle":"Infra","major":"대분류1","middle":"소분류03","profitName":"상품군03","salesName":"세부상품03"},{"axMajor":"Legacy","axMiddle":"Infra","major":"대분류2","middle":"소분류04","profitName":"상품군04 서비스","salesName":"세부상품04"},{"axMajor":"Legacy","axMiddle":"Infra","major":"대분류2","middle":"소분류05","profitName":"상품군05","salesName":"세부상품05"},{"axMajor":"Legacy","axMiddle":"Infra","major":"대분류2","middle":"소분류06","profitName":"상품군06 서비스","salesName":"세부상품06"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류3","middle":"소분류07","profitName":"상품군07","salesName":"세부상품07"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류3","middle":"소분류08","profitName":"상품군08 서비스","salesName":"세부상품08"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류4","middle":"소분류09","profitName":"상품군09","salesName":"세부상품09"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류4","middle":"소분류10","profitName":"상품군10 서비스","salesName":"세부상품10"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류4","middle":"소분류11","profitName":"상품군11","salesName":"세부상품11"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류5","middle":"소분류12","profitName":"상품군12 서비스","salesName":"세부상품12"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류5","middle":"소분류13","profitName":"상품군13","salesName":"세부상품13"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류6","middle":"소분류14","profitName":"상품군14 서비스","salesName":"세부상품14"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류6","middle":"소분류15","profitName":"상품군15","salesName":"세부상품15"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류6","middle":"소분류16","profitName":"상품군16 서비스","salesName":"세부상품16"},{"axMajor":"AX","axMiddle":"Application","major":"대분류7","middle":"소분류17","profitName":"상품군17","salesName":"세부상품17"},{"axMajor":"AX","axMiddle":"Application","major":"대분류7","middle":"소분류18","profitName":"상품군18 서비스","salesName":"세부상품18"},{"axMajor":"AX","axMiddle":"Application","major":"대분류8","middle":"소분류19","profitName":"상품군19","salesName":"세부상품19"},{"axMajor":"AX","axMiddle":"Application","major":"대분류8","middle":"소분류20","profitName":"상품군20 서비스","salesName":"세부상품20"},{"axMajor":"AX","axMiddle":"Application","major":"대분류8","middle":"소분류21","profitName":"상품군21","salesName":"세부상품21"},{"axMajor":"Legacy","axMiddle":"Application","major":"대분류9","middle":"소분류22","profitName":"상품군22 서비스","salesName":"세부상품22"},{"axMajor":"Legacy","axMiddle":"Application","major":"대분류9","middle":"소분류23","profitName":"상품군23","salesName":"세부상품23"},{"axMajor":"AX","axMiddle":"Application","major":"대분류9","middle":"소분류24","profitName":"상품군24 서비스","salesName":"세부상품24"},{"axMajor":"AX","axMiddle":"Application","major":"대분류10","middle":"소분류25","profitName":"상품군25","salesName":"세부상품25"},{"axMajor":"AX","axMiddle":"Application","major":"대분류10","middle":"소분류26","profitName":"상품군26 서비스","salesName":"세부상품26"},{"axMajor":"AX","axMiddle":"Application","major":"대분류10","middle":"소분류27","profitName":"상품군27","salesName":"세부상품27"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류11","middle":"소분류신규1","profitName":"상품군신규1","salesName":"세부상품신규1"},{"axMajor":"Legacy","axMiddle":"Application","major":"대분류12","middle":"소분류신규2","profitName":"상품군신규2","salesName":"세부상품신규2"},{"axMajor":"AX","axMiddle":"Infra","major":"대분류13","middle":"소분류신규3","profitName":"상품군신규3","salesName":"세부상품신규3"}];
 let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],tiers=[],currentId=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -419,23 +405,14 @@ function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,
         function cap(c){return new Set(RAW.filter(r=>cat(r)===c).map(serviceKey).filter(Boolean)).size}
         function agg(id){const base=customers.find(x=>x.id===id),rs=RAW.filter(r=>r.customerId===id),field=salesField(),data={};cats().forEach(c=>{const map=new Map;rs.filter(r=>cat(r)===c&&serviceKey(r)).forEach(r=>{const k=serviceKey(r);if(!map.has(k))map.set(k,{code:k,name:label(r),sales:0});map.get(k).sales+=Number(r[field]||0)});const used=[...map.values()].filter(x=>x.sales!==0).sort((a,b)=>b.sales-a.sales);data[c]={used:used.length,cap:cap(c),sales:used.reduce((s,x)=>s+x.sales,0),items:used}});return {...base,data,usedTotal:Object.values(data).reduce((s,x)=>s+x.used,0),capTotal:Object.values(data).reduce((s,x)=>s+x.cap,0),salesTotal:rs.reduce((s,r)=>s+Number(r[field]||0),0)}}
         function peerStats(c,peerList,targetUsed,field){const stats=new Map;peerList.forEach(peer=>{const byService=new Map;RAW.filter(x=>x.customerId===peer.id&&cat(x)===c&&serviceKey(x)).forEach(x=>{const k=serviceKey(x);if(!byService.has(k))byService.set(k,{code:k,name:label(x),sales:0});byService.get(k).sales+=Number(x[field]||0)});byService.forEach(x=>{if(x.sales===0||targetUsed.has(x.code))return;if(!stats.has(x.code))stats.set(x.code,{code:x.code,name:x.name,peerCount:0,peerSales:0,peers:[]});const s=stats.get(x.code);s.peerCount++;s.peerSales+=x.sales;s.peers.push({id:peer.id,name:peer.name,sales:x.sales})})});return stats}function recommended(c,r){const targetUsed=new Set(r.data[c].items.map(x=>x.code)),field=salesField(),same=[...peerStats(c,customers.filter(x=>x.industry===r.industry&&x.id!==r.id),targetUsed,field).values()],cross=[...peerStats(c,customers.filter(x=>x.industry!==r.industry),targetUsed,field).values()],avg=x=>x.peerSales/x.peerCount,result=[];const pick=(list,metric,source,priority)=>{const remain=list.filter(x=>!result.some(y=>y.code===x.code));if(!remain.length||result.length>=3)return;const best=Math.max(...remain.map(metric));remain.filter(x=>metric(x)===best).sort((a,b)=>a.name.localeCompare(b.name,'ko')).forEach(x=>{if(result.length<3)result.push({...x,source,priority});});};pick(same,x=>x.peerCount,'same',1);pick(same,avg,'same',2);pick(cross,x=>x.peerCount,'cross',3);pick(cross,avg,'cross',4);return result}
-        const LEADING_ZERO_FIX={'50':'050','60':'060','80':'080','2':'002'};const fixLeadingZero=v=>LEADING_ZERO_FIX[v]??v;
-        const REQ=['고객ID','고객명','Tier','업종','손익코드','손익명','매출코드','매출명','25년매출','26년매출','대분류','중분류','AX구분_대','AX구분_중','AI Stack'];function parseCsv(str){const rows=[];let row=[],field='',q=false;for(let i=0;i<str.length;i++){const c=str[i];if(q){if(c==='"'){if(str[i+1]==='"'){field+='"';i++;}else q=false;}else field+=c;}else{if(c==='"')q=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c==='\r'){/* skip; \r\n handled by \n */}else field+=c;}}if(field!==''||row.length){row.push(field);rows.push(row);}return rows;}async function parse(file){let str=await file.text();if(str.charCodeAt(0)===0xFEFF)str=str.slice(1);const matrix=parseCsv(str).filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');const h=matrix[0].map(x=>String(x??'').trim()),missing=REQ.filter(x=>!h.includes(x));if(missing.length)throw Error('필수 컬럼 누락: '+missing.join(', '));const ix=Object.fromEntries(h.map((x,i)=>[x,i])),t=v=>String(v??'').trim(),n=v=>Number(String(v??'').replace(/,/g,''))||0;return matrix.slice(1).filter(r=>t(r[ix['고객ID']])).map(r=>({customerId:t(r[ix['고객ID']]),name:cleanName(t(r[ix['고객명']])),tier:t(r[ix['Tier']]),industry:t(r[ix['업종']]),profitCode:t(r[ix['손익코드']]),profitName:t(r[ix['손익명']]),salesCode:t(r[ix['매출코드']]),salesName:fixLeadingZero(t(r[ix['매출명']])),sales2025:n(r[ix['25년매출']]),sales2026:n(r[ix['26년매출']]),major:t(r[ix['대분류']]),middle:t(r[ix['중분류']]),axMajor:t(r[ix['AX구분_대']]),axMiddle:t(r[ix['AX구분_중']]),aiStack:t(r[ix['AI Stack']])}))}
+        const REQ=['고객ID','고객명','Tier','업종','손익코드','손익명','매출코드','매출명','25년매출','26년매출','대분류','중분류','AX구분_대','AX구분_중','AI Stack'];function parseCsv(str){const rows=[];let row=[],field='',q=false;for(let i=0;i<str.length;i++){const c=str[i];if(q){if(c==='"'){if(str[i+1]==='"'){field+='"';i++;}else q=false;}else field+=c;}else{if(c==='"')q=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c==='\r'){/* skip; \r\n handled by \n */}else field+=c;}}if(field!==''||row.length){row.push(field);rows.push(row);}return rows;}async function parse(file){let str=await file.text();if(str.charCodeAt(0)===0xFEFF)str=str.slice(1);const matrix=parseCsv(str).filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');const h=matrix[0].map(x=>String(x??'').trim()),missing=REQ.filter(x=>!h.includes(x));if(missing.length)throw Error('필수 컬럼 누락: '+missing.join(', '));const ix=Object.fromEntries(h.map((x,i)=>[x,i])),t=v=>String(v??'').trim(),n=v=>Number(String(v??'').replace(/,/g,''))||0;const LEADING_ZERO_FIX={'50':'050','80':'080','2':'002'};const fixName=v=>LEADING_ZERO_FIX[v]??v;return matrix.slice(1).filter(r=>t(r[ix['고객ID']])).map(r=>({customerId:t(r[ix['고객ID']]),name:cleanName(t(r[ix['고객명']])),tier:t(r[ix['Tier']]),industry:t(r[ix['업종']]),profitCode:t(r[ix['손익코드']]),profitName:t(r[ix['손익명']]),salesCode:t(r[ix['매출코드']]),salesName:fixName(t(r[ix['매출명']])),sales2025:n(r[ix['25년매출']]),sales2026:n(r[ix['26년매출']]),major:t(r[ix['대분류']]),middle:t(r[ix['중분류']]),axMajor:t(r[ix['AX구분_대']]),axMiddle:t(r[ix['AX구분_중']]),aiStack:t(r[ix['AI Stack']])}))}
         REQ.pop(); // AI Stack 컬럼은 더 이상 업로드 필수값이 아니다.
-
-        /* ── 상품체계 CSV(별도 업로드: AX구분(대)/AX구분(중)/대분류/소분류/손익명/고객소통명) ── */
-        const REQ_TAXO=['AX구분(대)','AX구분(중)','대분류','소분류','손익명','고객소통명'];async function parseTaxo(file){let str=await file.text();if(str.charCodeAt(0)===0xFEFF)str=str.slice(1);const matrix=parseCsv(str).filter(r=>r.length>1||(r.length===1&&r[0].trim()!==''));if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');const h=matrix[0].map(x=>String(x??'').trim()),missing=REQ_TAXO.filter(x=>!h.includes(x));if(missing.length)throw Error('필수 컬럼 누락: '+missing.join(', '));const ix=Object.fromEntries(h.map((x,i)=>[x,i])),t=v=>String(v??'').trim();return matrix.slice(1).filter(r=>t(r[ix['손익명']])).map(r=>({axMajor:t(r[ix['AX구분(대)']]),axMiddle:t(r[ix['AX구분(중)']]),major:t(r[ix['대분류']]),middle:fixLeadingZero(t(r[ix['소분류']])),profitName:t(r[ix['손익명']]),salesName:t(r[ix['고객소통명']])}))}
-
-        /* ── 손익명 유사도 매칭(매출데이터·상품체계데이터는 별도 관리되는 데이터라 표기가 완전히 같지 않을 수 있음) ── */
-        function normTax(s){return String(s??'').replace(/[\s()\-·・/]/g,'').toLowerCase();}
-        function taxSimilar(a,b){a=normTax(a);b=normTax(b);if(!a||!b)return false;if(a===b||a.includes(b)||b.includes(a))return true;const bg=s=>{const r=[];for(let i=0;i<s.length-1;i++)r.push(s.slice(i,i+2));return r;};const A=bg(a),B=bg(b);if(!A.length||!B.length)return false;const cnt=new Map();B.forEach(x=>cnt.set(x,(cnt.get(x)||0)+1));let inter=0;A.forEach(x=>{const c=cnt.get(x)||0;if(c>0){inter++;cnt.set(x,c-1);}});return 2*inter/(A.length+B.length)>=0.6;}
 
 /* ══════════ 탭 B: 경영진 뷰 — 합계 관점(개요) + 고객단위 관점(히트맵). 계산은 공유 함수 재사용 ══════════ */
 let bYear='2026', bGran='cat', bSort='cov', bMode='service', bPane='cust', bCurrentId=null;
 const bExpanded=new Set();
 let bAggCache=[];
 const LS_KEY='menuRawData';
-const LS_KEY_TAXO='menuTaxoData';
 
 const bYearLabel=()=>year==='2026'?'2026 YTD(1~6월)':'2025 연간';
 const bAxCatLabel=c=>String(c).replace('|||',' · ');
@@ -565,7 +542,7 @@ function bSyncHeaderSticky(){
     rows[1].querySelectorAll('th').forEach(th=>th.style.top=h+'px');
   });
 }
-let bcPage=1, bcPageSize=20, bcExpanded=true;
+let bcPage=1, bcPageSize=20, bcExpanded=false;
 function renderCustomersPane(){
   const cs=cats(),ind=$('bcInd').value,t=$('bcTier').value,q=$('bcSearch').value.trim().toLowerCase();
   const max={};cs.forEach(c=>max[c]=Math.max(1,...bAggCache.map(a=>a.data[c].sales)));
@@ -703,24 +680,23 @@ $('bBack').onclick=()=>{bShow('bHome');renderHome();};
 $('bGo').onclick=()=>{const ids=[...$('bChecks').querySelectorAll('input:checked')].map(x=>x.value);
   if(ids.length<2||ids.length>4){$('bWarn').style.display='block';return;}$('bWarn').style.display='none';bRenderMatrix(ids);};
 
-/* ── 상품분류체계 팝업(상품체계데이터=TAXO, 매출데이터=RAW와 별도 업로드/관리) ── */
+/* ── 상품분류체계 팝업 ── */
 function bTaxonomyRows(){
-  const usedNames=[...new Set(RAW.filter(r=>Number(r.sales2025||0)>0||Number(r.sales2026||0)>0).map(r=>r.profitName))];
   const seen=new Set(),rows=[];
-  TAXO.forEach(r=>{
-    const key=[r.axMajor,r.axMiddle,r.major,r.middle,r.profitName,r.salesName].join('|||');
+  RAW.forEach(r=>{
+    const key=[r.axMajor,r.axMiddle,r.major,r.profitName].join('|||');
     if(seen.has(key))return;
     seen.add(key);
-    rows.push({...r,used:usedNames.some(n=>taxSimilar(n,r.profitName))});
+    rows.push({axMajor:r.axMajor,axMiddle:r.axMiddle,major:r.major,profitName:r.profitName});
   });
   return rows.sort((a,b)=>
     a.axMajor.localeCompare(b.axMajor,'ko')||a.axMiddle.localeCompare(b.axMiddle,'ko')||
-    a.major.localeCompare(b.major,'ko')||a.middle.localeCompare(b.middle,'ko')||
-    a.profitName.localeCompare(b.profitName,'ko')||a.salesName.localeCompare(b.salesName,'ko'));
+    a.major.localeCompare(b.major,'ko')||
+    a.profitName.localeCompare(b.profitName,'ko'));
 }
 function bRenderTaxonomy(){
   $('bTaxBody').innerHTML=bTaxonomyRows().map(r=>
-    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.middle)}</td><td>${esc(r.profitName)}</td><td>${esc(r.salesName)}</td><td class="tax-used"><input type="checkbox" disabled ${r.used?'checked':''}></td></tr>`
+    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.profitName)}</td></tr>`
   ).join('');
 }
 $('bTaxonomyBtn').onclick=()=>{bRenderTaxonomy();$('bTaxModal').classList.remove('hidden');};
@@ -728,41 +704,21 @@ $('bTaxClose').onclick=()=>$('bTaxModal').classList.add('hidden');
 $('bTaxModal').addEventListener('mousedown',e=>{if(e.target.id==='bTaxModal')$('bTaxModal').dataset.downOnOverlay='1';else delete $('bTaxModal').dataset.downOnOverlay;});
 $('bTaxModal').addEventListener('click',e=>{if(e.target.id==='bTaxModal'&&$('bTaxModal').dataset.downOnOverlay==='1')$('bTaxModal').classList.add('hidden');});
 
-/* ── CSV 업로드(매출데이터/상품체계 중 선택) ── */
-function bShowUploadDone(label){
-  $('bUploadDoneMsg').innerHTML=`${esc(label)} 업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.`;
-  $('bUploadDoneModal').classList.remove('hidden');
-}
-$('bUploadBtn').onclick=()=>$('bUploadChooseModal').classList.remove('hidden');
-$('bUploadChooseClose').onclick=()=>$('bUploadChooseModal').classList.add('hidden');
-$('bUploadChooseModal').addEventListener('mousedown',e=>{if(e.target.id==='bUploadChooseModal')$('bUploadChooseModal').dataset.downOnOverlay='1';else delete $('bUploadChooseModal').dataset.downOnOverlay;});
-$('bUploadChooseModal').addEventListener('click',e=>{if(e.target.id==='bUploadChooseModal'&&$('bUploadChooseModal').dataset.downOnOverlay==='1')$('bUploadChooseModal').classList.add('hidden');});
-$('bUploadSalesBtn').onclick=()=>{$('bUploadChooseModal').classList.add('hidden');$('bFile').click();};
-$('bUploadTaxoBtn').onclick=()=>{$('bUploadChooseModal').classList.add('hidden');$('bFileTaxo').click();};
+/* ── CSV 업로드 ── */
+$('bUploadBtn').onclick=()=>$('bFile').click();
 $('bFile').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
-  $('bStatus').textContent='매출 데이터 읽는 중...';
+  $('bStatus').textContent='데이터 읽는 중...';
   try{
     RAW=await parse(f);
     try{localStorage.setItem(LS_KEY,JSON.stringify(RAW));}catch(e){}
     dims();
-    bOpenNodes.clear();bExpanded.clear();bcPage=1;bcExpanded=true;
+    bOpenNodes.clear();bExpanded.clear();bcPage=1;bcExpanded=false;
     bFillFilters();
     $('bStatus').textContent=`${f.name} · ${customers.length}개 고객 적용`;
     renderHome();
-    bShowUploadDone('매출 데이터');
-  }catch(err){alert(err.message);$('bStatus').textContent='매출 데이터 업로드 실패';}
-  e.target.value='';
-};
-$('bFileTaxo').onchange=async e=>{
-  const f=e.target.files[0];if(!f)return;
-  $('bStatus').textContent='상품체계 데이터 읽는 중...';
-  try{
-    TAXO=await parseTaxo(f);
-    try{localStorage.setItem(LS_KEY_TAXO,JSON.stringify(TAXO));}catch(e){}
-    $('bStatus').textContent=`${f.name} · 상품체계 ${TAXO.length}건 적용`;
-    bShowUploadDone('상품체계 데이터');
-  }catch(err){alert(err.message);$('bStatus').textContent='상품체계 데이터 업로드 실패';}
+    $('bUploadDoneModal').classList.remove('hidden');
+  }catch(err){alert(err.message);$('bStatus').textContent='업로드 실패';}
   e.target.value='';
 };
 $('bUploadDoneClose').onclick=()=>$('bUploadDoneModal').classList.add('hidden');
@@ -770,8 +726,7 @@ $('bUploadDoneModal').addEventListener('mousedown',e=>{if(e.target.id==='bUpload
 $('bUploadDoneModal').addEventListener('click',e=>{if(e.target.id==='bUploadDoneModal'&&$('bUploadDoneModal').dataset.downOnOverlay==='1')$('bUploadDoneModal').classList.add('hidden');});
 $('bSaveFileBtn').onclick=()=>{
   const html=document.documentElement.outerHTML;
-  let out=html.replace(/let RAW=\[[\s\S]*?\];/,'let RAW='+JSON.stringify(RAW)+';');
-  out=out.replace(/let TAXO=\[[\s\S]*?\];/,'let TAXO='+JSON.stringify(TAXO)+';');
+  const out=html.replace(/let RAW=\[[\s\S]*?\];/,'let RAW='+JSON.stringify(RAW)+';');
   const blob=new Blob(['<!doctype html>\n'+out],{type:'text/html'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -789,10 +744,6 @@ let bRestored=false;
 try{
   const saved=localStorage.getItem(LS_KEY);
   if(saved){RAW=JSON.parse(saved);bRestored=true;}
-}catch(e){}
-try{
-  const savedTaxo=localStorage.getItem(LS_KEY_TAXO);
-  if(savedTaxo)TAXO=JSON.parse(savedTaxo);
 }catch(e){}
 dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries/tiers 세팅)
 if(bRestored)$('bStatus').textContent=`저장된 데이터 · ${customers.length}개 고객 적용`;
