@@ -287,8 +287,11 @@ function bTaxonomyRows(){
     a.profitName.localeCompare(b.profitName,'ko')||a.salesName.localeCompare(b.salesName,'ko'));
 }
 function bRenderTaxonomy(){
-  $('bTaxBody').innerHTML=bTaxonomyRows().map(r=>
-    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.middle)}</td><td>${esc(r.profitName)}</td><td>${esc(r.salesName)}</td><td class="tax-used"><input type="checkbox" disabled ${r.used?'checked':''}></td></tr>`
+  const rows=bTaxonomyRows();
+  const uniq=f=>new Set(rows.map(f)).size,usedCount=rows.filter(r=>r.used).length;
+  $('bTaxThead').innerHTML=`<tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>소분류</th><th>손익명<br><small class="tax-count">(${uniq(r=>r.profitName)}종)</small></th><th>고객소통명<br><small class="tax-count">(${uniq(r=>r.salesName)}종)</small></th><th class="tax-used">KA여부<br><small class="tax-count">(${usedCount}건)</small></th></tr>`;
+  $('bTaxBody').innerHTML=rows.map(r=>
+    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.middle)}</td><td>${esc(r.profitName)}</td><td>${esc(r.salesName)}</td><td class="tax-used">${r.used?'<span class="tax-mark on">✓</span>':'<span class="tax-mark off"></span>'}</td></tr>`
   ).join('');
 }
 $('bTaxonomyBtn').onclick=()=>{bRenderTaxonomy();$('bTaxModal').classList.remove('hidden');};

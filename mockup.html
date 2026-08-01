@@ -227,11 +227,15 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .modal-head span{font-size:16px;font-weight:700;color:var(--u-carbon)}
 .modal-body{overflow:auto;padding:0 22px 22px}
 table.tax{width:100%;margin:0 auto;border-collapse:collapse;font-size:14px}
-table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:left;position:sticky;top:0;z-index:1}
+table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:center;position:sticky;top:0;z-index:1}
 table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
 table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
 table.tax th.tax-key{background:var(--u-primary);color:var(--u-on-primary)}
 table.tax th.tax-used,table.tax td.tax-used{text-align:center}
+table.tax th .tax-count{font-weight:500}
+.tax-mark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;font-weight:800;font-size:13px;line-height:1}
+.tax-mark.on{background:var(--u-primary);color:var(--u-on-primary)}
+.tax-mark.off{border:1px solid var(--u-border)}
 table.tax tr:hover td{background:var(--u-surface-sub)}
 
 /* Customer cell: keep the table row geometry aligned with the heatmap cells. */
@@ -262,9 +266,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
       </div>
       <div class="modal-body">
         <table class="tax">
-          <thead>
-            <tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>소분류</th><th>손익명</th><th>고객소통명</th><th class="tax-used">매출발생</th></tr>
-          </thead>
+          <thead id="bTaxThead"></thead>
           <tbody id="bTaxBody"></tbody>
         </table>
       </div>
@@ -719,8 +721,11 @@ function bTaxonomyRows(){
     a.profitName.localeCompare(b.profitName,'ko')||a.salesName.localeCompare(b.salesName,'ko'));
 }
 function bRenderTaxonomy(){
-  $('bTaxBody').innerHTML=bTaxonomyRows().map(r=>
-    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.middle)}</td><td>${esc(r.profitName)}</td><td>${esc(r.salesName)}</td><td class="tax-used"><input type="checkbox" disabled ${r.used?'checked':''}></td></tr>`
+  const rows=bTaxonomyRows();
+  const uniq=f=>new Set(rows.map(f)).size,usedCount=rows.filter(r=>r.used).length;
+  $('bTaxThead').innerHTML=`<tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>소분류</th><th>손익명<br><small class="tax-count">(${uniq(r=>r.profitName)}종)</small></th><th>고객소통명<br><small class="tax-count">(${uniq(r=>r.salesName)}종)</small></th><th class="tax-used">KA여부<br><small class="tax-count">(${usedCount}건)</small></th></tr>`;
+  $('bTaxBody').innerHTML=rows.map(r=>
+    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.middle)}</td><td>${esc(r.profitName)}</td><td>${esc(r.salesName)}</td><td class="tax-used">${r.used?'<span class="tax-mark on">✓</span>':'<span class="tax-mark off"></span>'}</td></tr>`
   ).join('');
 }
 $('bTaxonomyBtn').onclick=()=>{bRenderTaxonomy();$('bTaxModal').classList.remove('hidden');};
