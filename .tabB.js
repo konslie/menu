@@ -3,7 +3,6 @@ let bYear='2026', bGran='cat', bSort='cov', bMode='service', bPane='cust', bCurr
 const bExpanded=new Set();
 let bAggCache=[];
 const LS_KEY='menuRawData';
-const LS_KEY_TAXO='menuTaxoData';
 
 const bYearLabel=()=>year==='2026'?'2026 YTD(1~6월)':'2025 연간';
 const bAxCatLabel=c=>String(c).replace('|||',' · ');
@@ -271,50 +270,48 @@ $('bBack').onclick=()=>{bShow('bHome');renderHome();};
 $('bGo').onclick=()=>{const ids=[...$('bChecks').querySelectorAll('input:checked')].map(x=>x.value);
   if(ids.length<2||ids.length>4){$('bWarn').style.display='block';return;}$('bWarn').style.display='none';bRenderMatrix(ids);};
 
-/* ── 상품분류체계 팝업(상품체계데이터=TAXO, 매출데이터=RAW와 별도 업로드/관리) ── */
+/* ── 상품분류체계 팝업(상품체계데이터=TAXO, 매출데이터 RAW를 피벗해 생성) ── */
 function bTaxonomyRows(){
-  const usedNames=[...new Set(RAW.filter(r=>Number(r.sales2025||0)>0||Number(r.sales2026||0)>0).map(r=>r.profitName))];
-  const seen=new Set(),rows=[];
-  TAXO.forEach(r=>{
-    const key=[r.axMajor,r.axMiddle,r.major,r.middle,r.profitName,r.salesName].join('|||');
-    if(seen.has(key))return;
-    seen.add(key);
-    rows.push({...r,used:usedNames.some(n=>taxSimilar(n,r.profitName))});
-  });
-  return rows.sort((a,b)=>
-    a.axMajor.localeCompare(b.axMajor,'ko')||a.axMiddle.localeCompare(b.axMiddle,'ko')||
-    a.major.localeCompare(b.major,'ko')||a.middle.localeCompare(b.middle,'ko')||
-    a.profitName.localeCompare(b.profitName,'ko')||a.salesName.localeCompare(b.salesName,'ko'));
+  return TAXO;
 }
 function bRenderTaxonomy(){
   const rows=bTaxonomyRows();
-  const uniq=f=>new Set(rows.map(f)).size,usedCount=rows.filter(r=>r.used).length;
-  $('bTaxThead').innerHTML=`<tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>대분류</th><th>소분류</th><th>손익명<br><small class="tax-count">(${uniq(r=>r.profitName)}종)</small></th><th>고객소통명<br><small class="tax-count">(${uniq(r=>r.salesName)}종)</small></th><th class="tax-used">KA여부<br><small class="tax-count">(${usedCount}건)</small></th></tr>`;
-  $('bTaxBody').innerHTML=rows.map(r=>
-    `<tr><td class="tax-key">${esc(r.axMajor)}</td><td>${esc(r.axMiddle)}</td><td>${esc(r.major)}</td><td>${esc(r.middle)}</td><td>${esc(r.profitName)}</td><td>${esc(r.salesName)}</td><td class="tax-used">${r.used?'<span class="tax-mark on">✓</span>':'<span class="tax-mark off"></span>'}</td></tr>`
-  ).join('');
+  $('bTaxThead').innerHTML=`<tr><th class="tax-key">AX구분(대)</th><th>AX구분(중)</th><th>중분류</th><th>매출명</th><th>고객소통명</th></tr>`;
+  const majorSpan=[],middleSpan=[];
+  for(let i=0;i<rows.length;i++){
+    if(i>0&&rows[i].axMajor===rows[i-1].axMajor){majorSpan[i]=0;}
+    else{let n=1;while(i+n<rows.length&&rows[i+n].axMajor===rows[i].axMajor)n++;majorSpan[i]=n;}
+    if(i>0&&rows[i].axMajor===rows[i-1].axMajor&&rows[i].axMiddle===rows[i-1].axMiddle){middleSpan[i]=0;}
+    else{let n=1;while(i+n<rows.length&&rows[i+n].axMajor===rows[i].axMajor&&rows[i+n].axMiddle===rows[i].axMiddle)n++;middleSpan[i]=n;}
+  }
+  let stripe=false,prevKey=null;
+  $('bTaxBody').innerHTML=rows.map((r,i)=>{
+    const key=r.axMajor+'|||'+r.axMiddle;
+    if(key!==prevKey){stripe=!stripe;prevKey=key;}
+    const rowMajor='tax-row-'+(r.axMajor==='AX'?'ax':'legacy');
+    const majorClass='tax-key tax-major-'+(r.axMajor==='AX'?'ax':'legacy');
+    const majorCell=majorSpan[i]?`<td class="${majorClass}" rowspan="${majorSpan[i]}">${esc(r.axMajor)}</td>`:'';
+    const middleCell=middleSpan[i]?`<td rowspan="${middleSpan[i]}">${esc(r.axMiddle)}</td>`:'';
+    return `<tr class="${rowMajor}${stripe?' tax-stripe':''}">${majorCell}${middleCell}<td>${esc(r.middle)}</td><td>${esc(r.salesName)}</td><td>${esc(r.custComm)}</td></tr>`;
+  }).join('');
 }
 $('bTaxonomyBtn').onclick=()=>{bRenderTaxonomy();$('bTaxModal').classList.remove('hidden');};
 $('bTaxClose').onclick=()=>$('bTaxModal').classList.add('hidden');
 $('bTaxModal').addEventListener('mousedown',e=>{if(e.target.id==='bTaxModal')$('bTaxModal').dataset.downOnOverlay='1';else delete $('bTaxModal').dataset.downOnOverlay;});
 $('bTaxModal').addEventListener('click',e=>{if(e.target.id==='bTaxModal'&&$('bTaxModal').dataset.downOnOverlay==='1')$('bTaxModal').classList.add('hidden');});
 
-/* ── CSV 업로드(매출데이터/상품체계 중 선택) ── */
+/* ── CSV 업로드(매출데이터, 상품체계는 여기서 자동 피벗) ── */
 function bShowUploadDone(label){
   $('bUploadDoneMsg').innerHTML=`${esc(label)} 업로드 완료되었습니다.<br>우측 상단의 '파일로 저장' 버튼으로 다운받아 사용바랍니다.`;
   $('bUploadDoneModal').classList.remove('hidden');
 }
-$('bUploadBtn').onclick=()=>$('bUploadChooseModal').classList.remove('hidden');
-$('bUploadChooseClose').onclick=()=>$('bUploadChooseModal').classList.add('hidden');
-$('bUploadChooseModal').addEventListener('mousedown',e=>{if(e.target.id==='bUploadChooseModal')$('bUploadChooseModal').dataset.downOnOverlay='1';else delete $('bUploadChooseModal').dataset.downOnOverlay;});
-$('bUploadChooseModal').addEventListener('click',e=>{if(e.target.id==='bUploadChooseModal'&&$('bUploadChooseModal').dataset.downOnOverlay==='1')$('bUploadChooseModal').classList.add('hidden');});
-$('bUploadSalesBtn').onclick=()=>{$('bUploadChooseModal').classList.add('hidden');$('bFile').click();};
-$('bUploadTaxoBtn').onclick=()=>{$('bUploadChooseModal').classList.add('hidden');$('bFileTaxo').click();};
+$('bUploadBtn').onclick=()=>$('bFile').click();
 $('bFile').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
   $('bStatus').textContent='매출 데이터 읽는 중...';
   try{
     RAW=await parse(f);
+    TAXO=pivotTaxo(RAW);
     try{localStorage.setItem(LS_KEY,JSON.stringify(RAW));}catch(e){}
     dims();
     bOpenNodes.clear();bExpanded.clear();bcPage=1;bcExpanded=true;
@@ -323,17 +320,6 @@ $('bFile').onchange=async e=>{
     renderHome();
     bShowUploadDone('매출 데이터');
   }catch(err){alert(err.message);$('bStatus').textContent='매출 데이터 업로드 실패';}
-  e.target.value='';
-};
-$('bFileTaxo').onchange=async e=>{
-  const f=e.target.files[0];if(!f)return;
-  $('bStatus').textContent='상품체계 데이터 읽는 중...';
-  try{
-    TAXO=await parseTaxo(f);
-    try{localStorage.setItem(LS_KEY_TAXO,JSON.stringify(TAXO));}catch(e){}
-    $('bStatus').textContent=`${f.name} · 상품체계 ${TAXO.length}건 적용`;
-    bShowUploadDone('상품체계 데이터');
-  }catch(err){alert(err.message);$('bStatus').textContent='상품체계 데이터 업로드 실패';}
   e.target.value='';
 };
 $('bUploadDoneClose').onclick=()=>$('bUploadDoneModal').classList.add('hidden');
@@ -361,9 +347,6 @@ try{
   const saved=localStorage.getItem(LS_KEY);
   if(saved){RAW=JSON.parse(saved);bRestored=true;}
 }catch(e){}
-try{
-  const savedTaxo=localStorage.getItem(LS_KEY_TAXO);
-  if(savedTaxo)TAXO=JSON.parse(savedTaxo);
-}catch(e){}
+TAXO=pivotTaxo(RAW);
 dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries/tiers 세팅)
 if(bRestored)$('bStatus').textContent=`저장된 데이터 · ${customers.length}개 고객 적용`;

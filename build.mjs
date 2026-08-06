@@ -76,7 +76,7 @@ for (const c of customers) {
   const r = rng(9000 + c.idx * 13), rows = [];
   const mkRow = (p) => ({
     customerId: c.customerId, name: c.name, tier: c.tier, industry: c.industry,
-    profitCode: p.pg, profitName: pName(p), salesCode: p.s, salesName: sName(p),
+    profitCode: p.pg, profitName: pName(p), salesCode: p.s, salesName: sName(p), custComm: sName(p),
     sales2025: 0, sales2026: 0,
     major: p.mj, middle: '중분류' + p.s.slice(1), axMajor: p.axM, axMiddle: p.axm,
   });
@@ -103,33 +103,11 @@ for (const c of customers) {
 }
 console.error(`생성: ${customers.length}개사, ${RAW.length}행`);
 
-// ── 상품체계 데이터(TAXO) 결정론적 합성 ──
-// 실제 문서 구조(AX구분(대)/AX구분(중)/대분류/소분류/손익명/고객소통명)를 따르되, 상품체계는 매출데이터(RAW)와
-// 별도로 업로드·관리되는 참조 데이터라는 점을 보이기 위해 손익명 표기를 일부 의도적으로 살짝 다르게 한다
-// (예: '상품군3' vs '상품군3 서비스') — 팝업의 "매출발생" 체크는 taxSimilar()로 유사 매칭한다.
-const TAXO_DEMO = [];
-CATALOG.forEach((p, i) => {
-  TAXO_DEMO.push({
-    axMajor: p.axM, axMiddle: p.axm, major: p.mj,
-    middle: '소분류' + p.s.slice(1),
-    profitName: i % 2 === 1 ? pName(p) + ' 서비스' : pName(p),
-    salesName: sName(p),
-  });
-});
-// 상품체계에는 등록됐지만 아직 매출이 없는 신규 상품(화이트스페이스 데모용)
-['신규1', '신규2', '신규3'].forEach((tag, i) => {
-  TAXO_DEMO.push({
-    axMajor: i % 2 ? 'Legacy' : 'AX', axMiddle: i % 2 ? 'Application' : 'Infra',
-    major: '대분류' + (11 + i), middle: '소분류' + tag,
-    profitName: '상품군' + tag, salesName: '세부상품' + tag,
-  });
-});
-
-// ── 조립 (RAW 데이터만 갈아끼워 데모용/배포용 두 산출물 생성) ──
-function assemble(rawData, taxoData, statusLabel) {
+// ── 조립 (RAW 데이터만 갈아끼워 데모용/배포용 두 산출물 생성. TAXO는 브라우저에서 RAW를 피벗해 채운다) ──
+function assemble(rawData, statusLabel) {
   const PREAMBLE = `
 let RAW=${JSON.stringify(rawData)};
-let TAXO=${JSON.stringify(taxoData)};
+let TAXO=[];
 let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],tiers=[],currentId=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -167,11 +145,11 @@ ${TAB_B_JS}
 }
 
 // 1) 데모용(합성 53개사 포함) — 로컬 검토·시연용
-const outDemo = assemble(RAW, TAXO_DEMO, 'DEFAULT: 메뉴판데이터2.1.csv');
+const outDemo = assemble(RAW, 'DEFAULT: 메뉴판데이터2.1.csv');
 fs.writeFileSync('mockup.html', outDemo);
 console.error('mockup.html(데모용) 작성 완료:', outDemo.length, 'bytes');
 
-// 2) 배포용(RAW 비움, TAXO는 정적참조로 유지) — VDI로 옮겨 실 CSV 업로드로 채우는 용도
-const outVdi = assemble([], TAXO_DEMO, '데이터 없음 · CSV 업로드로 실 데이터를 불러오세요');
+// 2) 배포용(RAW 비움) — VDI로 옮겨 실 CSV 업로드로 채우는 용도. TAXO는 업로드된 RAW를 피벗해 채워진다.
+const outVdi = assemble([], '데이터 없음 · CSV 업로드로 실 데이터를 불러오세요');
 fs.writeFileSync('mockup-vdi.html', outVdi);
 console.error('mockup-vdi.html(배포용, 데이터 없음) 작성 완료:', outVdi.length, 'bytes');

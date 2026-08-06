@@ -6,7 +6,7 @@
     </div>
     <div class="top-actions">
       <button class="btn" id="bTaxonomyBtn">상품분류체계</button>
-      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv"><input hidden type="file" id="bFileTaxo" accept=".csv">
+      <button class="btn upload" id="bUploadBtn">CSV 업로드</button><input hidden type="file" id="bFile" accept=".csv">
       <button class="btn" id="bSaveFileBtn">파일로 저장</button>
       <div class="status" id="bStatus">DEFAULT: 메뉴판데이터2.1.xlsx</div>
     </div>
@@ -22,18 +22,6 @@
           <thead id="bTaxThead"></thead>
           <tbody id="bTaxBody"></tbody>
         </table>
-      </div>
-    </div>
-  </div>
-  <div class="modal-overlay hidden" id="bUploadChooseModal">
-    <div class="modal-box" style="width:min(380px,92vw)">
-      <div class="modal-head">
-        <span>업로드할 데이터 선택</span>
-        <button class="btn" id="bUploadChooseClose">닫기</button>
-      </div>
-      <div class="modal-body" style="display:flex;gap:10px">
-        <button class="btn upload" id="bUploadSalesBtn" style="flex:1">매출데이터</button>
-        <button class="btn upload" id="bUploadTaxoBtn" style="flex:1">상품체계</button>
       </div>
     </div>
   </div>

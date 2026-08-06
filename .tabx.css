@@ -133,15 +133,17 @@ table.mtx tr.subtotal.grand-total td:not(.mtx-prod){color:var(--u-on-dark);font-
 .modal-body{overflow:auto;padding:0 22px 22px}
 table.tax{width:100%;margin:0 auto;border-collapse:collapse;font-size:14px}
 table.tax th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 10px;font-weight:700;font-size:12px;text-align:center;position:sticky;top:0;z-index:1}
-table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border)}
-table.tax th.tax-key,table.tax td.tax-key{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
-table.tax th.tax-key{background:var(--u-primary);color:var(--u-on-primary)}
-table.tax th.tax-used,table.tax td.tax-used{text-align:center}
-table.tax th .tax-count{font-weight:500}
-.tax-mark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;font-weight:800;font-size:13px;line-height:1}
-.tax-mark.on{background:var(--u-primary);color:var(--u-on-primary)}
-.tax-mark.off{border:1px solid var(--u-border)}
-table.tax tr:hover td{background:var(--u-surface-sub)}
+table.tax td{padding:9px 10px;border-bottom:1px solid var(--u-border);text-align:center;vertical-align:middle}
+table.tax th.tax-key{background:var(--u-primary);color:var(--u-on-primary);font-weight:700}
+table.tax td.tax-key{font-weight:700}
+table.tax td.tax-major-ax{background:rgba(28,27,27,.045);color:var(--u-onvariant)}
+table.tax td.tax-major-legacy{background:var(--u-surface-head);color:var(--u-onvariant)}
+table.tax tr.tax-stripe td{background:var(--u-surface-sub)}
+table.tax tr.tax-stripe td.tax-major-ax{background:rgba(28,27,27,.075)}
+table.tax tr.tax-stripe td.tax-major-legacy{background:var(--u-border)}
+table.tax tr:hover td{background:var(--u-primary-tint)!important}
+table.tax tr.tax-row-ax:hover td{background:rgba(28,27,27,.055)!important}
+table.tax tr.tax-row-legacy:hover td{background:rgba(28,27,27,.035)!important}
 
 /* Customer cell: keep the table row geometry aligned with the heatmap cells. */
 table.bc td.cust{display:table-cell!important;vertical-align:middle;width:var(--bc-cust-col-width,230px)!important;max-width:var(--bc-cust-col-width,230px)!important;padding:8px 24px 8px 26px!important;position:sticky}

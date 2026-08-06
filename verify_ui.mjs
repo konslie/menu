@@ -38,21 +38,12 @@ const probe = `<div id="__t"></div><script>
   document.getElementById("bcInd").value="";document.getElementById("bcInd").dispatchEvent(new Event("change"));
   ok("upload_btn_exists",!!document.getElementById("bUploadBtn"));
   ok("file_input_exists",!!document.getElementById("bFile"));
-  ok("taxo_file_input_exists",!!document.getElementById("bFileTaxo"));
   ok("parse_is_function",typeof parse === "function");
-  ok("parseTaxo_is_function",typeof parseTaxo === "function");
+  ok("pivotTaxo_is_function",typeof pivotTaxo === "function");
   ok("dims_is_function",typeof dims === "function");
+  let fileClicked=false; document.getElementById("bFile").click=()=>{fileClicked=true;};
   document.getElementById("bUploadBtn").onclick();
-  ok("choose_modal_visible_after_upload_click",!document.getElementById("bUploadChooseModal").classList.contains("hidden"));
-  let salesClicked=false; document.getElementById("bFile").click=()=>{salesClicked=true;};
-  document.getElementById("bUploadSalesBtn").onclick();
-  ok("sales_choice_triggers_file_click",salesClicked);
-  ok("choose_modal_hidden_after_sales_choice",document.getElementById("bUploadChooseModal").classList.contains("hidden"));
-  document.getElementById("bUploadBtn").onclick();
-  let taxoClicked=false; document.getElementById("bFileTaxo").click=()=>{taxoClicked=true;};
-  document.getElementById("bUploadTaxoBtn").onclick();
-  ok("taxo_choice_triggers_file_click",taxoClicked);
-  ok("choose_modal_hidden_after_taxo_choice",document.getElementById("bUploadChooseModal").classList.contains("hidden"));
+  ok("upload_click_triggers_file_click",fileClicked);
   // 기존 기능 회귀 확인 (개요 드릴다운, 상세)
   document.querySelector("#bNav button[data-p='ov']").click();
   document.querySelector("#bGran button[data-g='cat']").click();
