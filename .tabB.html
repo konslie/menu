@@ -68,7 +68,6 @@
   <div id="bCustomersPane">
     <div class="bc-controls">
       <select id="bcInd"><option value="">전체 업종</option></select>
-      <select id="bcTier"><option value="">전체 Tier</option></select>
       <input id="bcSearch" placeholder="고객명 검색">
       <select id="bcSize"><option value="10">10개씩</option><option value="20" selected>20개씩</option><option value="30">30개씩</option><option value="50">50개씩</option></select>
       <button class="btn expand-btn" id="bcExpandBtn"><span id="bcExpandIcon">▼</span><span id="bcExpandText">전체 펼치기</span></button>
@@ -84,7 +83,7 @@
   <div class="label">고객 상세</div>
   <div class="detail-head">
     <button class="btn" id="bBack">← 목록</button>
-    <span class="name" id="bdName"></span><span class="tier" id="bdTier"></span><span id="bdIndustry"></span>
+    <span class="name" id="bdName"></span><span id="bdIndustry"></span>
     <span class="b-period" id="bdPeriod"></span>
     <div class="detail-actions">
       <button class="btn" id="bCompare">동종 업종과 비교</button>
@@ -92,12 +91,12 @@
     </div>
   </div>
   <div class="b-detail-cards">
-    <div class="card"><small>사용 중 상품</small><b id="bdUsed"></b></div>
+    <div class="card"><small>사용 중 상품</small><b id="bdUsed"></b><small class="card-note">KA 고객 전체가 사용중인 상품 중 해당 고객의 사용 상품 수</small></div>
     <div class="card"><small>미사용 (크로스셀 여지)</small><b id="bdUnused"></b></div>
     <div class="card"><small>추천 기회 상품</small><b id="bdReco"></b></div>
     <div class="card dark"><small>선택 기간 매출</small><b id="bdSales"></b></div>
   </div>
-  <div class="ws-legend reco-legend" style="margin-bottom:14px">추천 로직 : <b>Key Account <span id="bdRecoBase"></span>개 고객이 사용하고 있는 상품 중에서 추천합니다.</b><br>추천 우선순위 : ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택<br>추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
+  <div class="ws-legend reco-legend" style="margin-bottom:14px">추천 로직 : <b>Key Account <span id="bdRecoBase"></span>개 고객이 사용하고 있는 상품 중에서 추천합니다.</b><br>추천 우선순위 : ① 동종 업종에서 침투율이 높은 상품 → ② 동종 업종에서 평균매출이 높은 상품 → ③ 타 업종에서 침투율이 높은 상품 → ④ 타 업종에서 평균매출이 높은 상품 순으로 최대 3개 채택<br>추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
   <div id="bBlocks"></div>
 </section>
 

@@ -207,3 +207,14 @@ node --check verify_tax.mjs
 - 헤더 하단 개수 표기는 `(13종)`처럼 괄호로 감싸고, 라벨을 포함한 `table.tax th` 전체를 가운데정렬로 바꿨다(데이터 행 `td`는 기존대로 왼쪽정렬 유지) — 처음엔 개수(`.tax-count`)만 따로 중앙정렬했으나 라벨과 개수 줄이 서로 어긋나 보여, 헤더 셀 전체를 중앙정렬로 통일했다.
 - 개수 표기는 `손익명`/`고객소통명`/`KA여부` 3개 헤더에만 남기고 `대분류`/`소분류`에서는 제거했다(`bRenderTaxonomy()`, `.tabB.js`).
 - **KA여부 체크 표시**: `disabled` 네이티브 체크박스는 브라우저가 강제로 흐리게(회색) 렌더링해 CSS(`accent-color`/`opacity`)로도 진하게 바꿀 수 없었다(Chromium에서 실측 확인). 대신 커스텀 마크(`.tax-mark`, 버건디 배경+흰 체크 `on` / 테두리만 `off`)로 교체해 브랜드 색상과 통일하고 가독성을 높였다. `verify_tax.mjs`의 체크/미체크 카운트 셀렉터도 `input[type=checkbox]`→`.tax-mark.on`/`.tax-mark.off`로 갱신.
+
+### 2026-08-06 — Tier view 제외, 사용 상품 수 주석, 추천 우선순위 문구 풀어쓰기
+
+- **Tier 화면 노출 제거(부활 가능성 있음, 요청자 확인)**: 업종 구분만으로 충분하다는 판단에 따라 Tier 관련 화면 요소를 전부 제거했다. 데이터 자체(CSV `Tier` 컬럼, `RAW`/`customers`의 `tier` 필드)는 삭제하지 않고 그대로 유지 — 화면에서만 숨겼다. 되살릴 때는 아래를 역순으로 복구하면 된다.
+  - `.tabB.html`: 고객별 현황 컨트롤의 `<select id="bcTier">전체 Tier</select>` 필터, 고객 상세 헤더의 `<span class="tier" id="bdTier">` 배지.
+  - `.tabB.js`: `renderCustomersPane()`의 `t=$('bcTier').value` 필터 조건과 목록 행의 Tier 배지(`tierClass(r.tier)`), `bShowDetail()`의 `$('bdTier')` 대입, 동종 고객 비교 헤더(`peer-head`)의 `<small>${r.tier}</small>`, `bFillFilters()`의 `bcTier` 옵션 채우기, `bcInd`/`bcTier`/`bcSearch` 공통 `onchange` 바인딩에서 `bcTier` 부분.
+  - `.surv.txt`: `dims()`의 `tiers=[...new Set(...)]` 계산과 `tierClass(t)` 함수 — 화면 참조가 없어져 완전히 삭제했다. 복구 시 함수 본체(`function tierClass(t){const m=String(t??'').match(/\d/);return 'tier tier-'+(m?m[0]:'3')}`)를 다시 넣어야 한다.
+  - `build.mjs`: 전역 변수 선언에서 `tiers=[]` 제거 — 복구 시 `customers=[],industries=[],tiers=[],currentId=null` 형태로 되돌린다.
+  - CSS(`.base_css.txt`/`.tabx.css`)의 `.tier`/`.tier-1`/`.tier-2`/`.tier-3` 규칙은 손대지 않고 그대로 남겨뒀다 — 화면 마크업만 복구하면 스타일은 즉시 다시 적용된다.
+- **사용 상품 수 주석**: 고객 상세의 "사용 중 상품" 카드(`nn종 / mm종`)에 `mm종`이 무엇을 의미하는지 헷갈린다는 피드백에 따라 보조 설명을 카드 안에 추가했다(`.tabB.html`의 `bdUsed` 카드, `.card-note` 클래스 신설·`.tabx.css`). `mm종`(`capTotal`, `.surv.txt`의 `cap(c)` 합)은 카탈로그 전체 상품 수가 아니라 **KA 전체 고객이 사용 중인 상품 수**이므로, 문구를 `KA 고객 전체가 사용중인 상품 중 해당 고객의 사용 상품 수`로 정확히 표현했다.
+- **추천 우선순위 문구 풀어쓰기**: `.tabB.html`의 `reco-legend` 안내 문구에서 `① 동종 업종 침투율순`처럼 축약된 4개 우선순위 표현을 `① 동종 업종에서 침투율이 높은 상품`처럼 전부 풀어서 서술하도록 변경(4절 참조).

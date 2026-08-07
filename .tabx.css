@@ -149,3 +149,4 @@ table.tax tr.tax-row-legacy:hover td{background:rgba(28,27,27,.035)!important}
 table.bc td.cust{display:table-cell!important;vertical-align:middle;width:var(--bc-cust-col-width,230px)!important;max-width:var(--bc-cust-col-width,230px)!important;padding:8px 24px 8px 26px!important;position:sticky}
 table.bc td.cust span:first-child{display:block;min-width:0;padding-right:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transform:translateY(-50%)}
+.card-note{display:block;margin-top:2px;font-weight:400}

@@ -1,5 +1,4 @@
-function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,name:r.name,tier:r.tier,industry:r.industry}])).values()];industries=[...new Set(customers.map(x=>x.industry))].sort((a,b)=>industryRank(a)-industryRank(b)||a.localeCompare(b,'ko'));tiers=[...new Set(customers.map(x=>x.tier))].sort();}
-        function tierClass(t){const m=String(t??'').match(/\d/);return 'tier tier-'+(m?m[0]:'3')}
+function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,name:r.name,tier:r.tier,industry:r.industry}])).values()];industries=[...new Set(customers.map(x=>x.industry))].sort((a,b)=>industryRank(a)-industryRank(b)||a.localeCompare(b,'ko'));}
         function cats(){return [...new Set(RAW.filter(r=>r.axMajor&&r.axMiddle).map(axKey))].sort((a,b)=>a.localeCompare(b,'ko'))}
         function majors(){const m={};RAW.forEach(r=>{if(r.axMajor&&r.axMiddle)(m[r.axMajor]??=new Set()).add(r.axMiddle)});const order=['AX','Legacy'];return Object.entries(m).sort((a,b)=>(order.indexOf(a[0])<0?99:order.indexOf(a[0]))-(order.indexOf(b[0])<0?99:order.indexOf(b[0]))).map(([name,s])=>({name,children:[...s].sort().map(label=>({label,key:`${name}|||${label}`}))}))}
         function universe(){const m=new Map;RAW.forEach(r=>{const k=serviceKey(r);if(k&&!m.has(k))m.set(k,{code:k,name:label(r),ax:axKey(r),major:r.major})});return [...m.values()]}

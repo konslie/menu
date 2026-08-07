@@ -108,7 +108,7 @@ function assemble(rawData, statusLabel) {
   const PREAMBLE = `
 let RAW=${JSON.stringify(rawData)};
 let TAXO=[];
-let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],tiers=[],currentId=null;
+let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],currentId=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const CORP=/\\(주\\)|㈜|주식회사|\\(유\\)|\\(유한\\)|유한회사|\\(재\\)|재단법인|\\(사\\)|사단법인|\\(합\\)|합자회사|합명회사/g;

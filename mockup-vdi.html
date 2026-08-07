@@ -244,6 +244,7 @@ table.tax tr.tax-row-legacy:hover td{background:rgba(28,27,27,.035)!important}
 table.bc td.cust{display:table-cell!important;vertical-align:middle;width:var(--bc-cust-col-width,230px)!important;max-width:var(--bc-cust-col-width,230px)!important;padding:8px 24px 8px 26px!important;position:sticky}
 table.bc td.cust span:first-child{display:block;min-width:0;padding-right:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transform:translateY(-50%)}
+.card-note{display:block;margin-top:2px;font-weight:400}
 
 </style></head><body>
 <div id="tabB-wrap">
@@ -317,7 +318,6 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
   <div id="bCustomersPane">
     <div class="bc-controls">
       <select id="bcInd"><option value="">전체 업종</option></select>
-      <select id="bcTier"><option value="">전체 Tier</option></select>
       <input id="bcSearch" placeholder="고객명 검색">
       <select id="bcSize"><option value="10">10개씩</option><option value="20" selected>20개씩</option><option value="30">30개씩</option><option value="50">50개씩</option></select>
       <button class="btn expand-btn" id="bcExpandBtn"><span id="bcExpandIcon">▼</span><span id="bcExpandText">전체 펼치기</span></button>
@@ -333,7 +333,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
   <div class="label">고객 상세</div>
   <div class="detail-head">
     <button class="btn" id="bBack">← 목록</button>
-    <span class="name" id="bdName"></span><span class="tier" id="bdTier"></span><span id="bdIndustry"></span>
+    <span class="name" id="bdName"></span><span id="bdIndustry"></span>
     <span class="b-period" id="bdPeriod"></span>
     <div class="detail-actions">
       <button class="btn" id="bCompare">동종 업종과 비교</button>
@@ -341,12 +341,12 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
     </div>
   </div>
   <div class="b-detail-cards">
-    <div class="card"><small>사용 중 상품</small><b id="bdUsed"></b></div>
+    <div class="card"><small>사용 중 상품</small><b id="bdUsed"></b><small class="card-note">KA 고객 전체가 사용중인 상품 중 해당 고객의 사용 상품 수</small></div>
     <div class="card"><small>미사용 (크로스셀 여지)</small><b id="bdUnused"></b></div>
     <div class="card"><small>추천 기회 상품</small><b id="bdReco"></b></div>
     <div class="card dark"><small>선택 기간 매출</small><b id="bdSales"></b></div>
   </div>
-  <div class="ws-legend reco-legend" style="margin-bottom:14px">추천 로직 : <b>Key Account <span id="bdRecoBase"></span>개 고객이 사용하고 있는 상품 중에서 추천합니다.</b><br>추천 우선순위 : ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택<br>추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
+  <div class="ws-legend reco-legend" style="margin-bottom:14px">추천 로직 : <b>Key Account <span id="bdRecoBase"></span>개 고객이 사용하고 있는 상품 중에서 추천합니다.</b><br>추천 우선순위 : ① 동종 업종에서 침투율이 높은 상품 → ② 동종 업종에서 평균매출이 높은 상품 → ③ 타 업종에서 침투율이 높은 상품 → ④ 타 업종에서 평균매출이 높은 상품 순으로 최대 3개 채택<br>추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
   <div id="bBlocks"></div>
 </section>
 
@@ -388,7 +388,7 @@ table.bc td.cust .tier{position:absolute;right:24px;top:50%;margin-left:0;transf
 
 let RAW=[];
 let TAXO=[];
-let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],tiers=[],currentId=null;
+let view='ax',mode='service',year='2026',page=1,pageSize=20,expanded=false,customers=[],industries=[],currentId=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const CORP=/\(주\)|㈜|주식회사|\(유\)|\(유한\)|유한회사|\(재\)|재단법인|\(사\)|사단법인|\(합\)|합자회사|합명회사/g;
@@ -403,8 +403,7 @@ const catLabel=c=>c&&c.includes('|||')?c.split('|||')[1]:c;
 const INDUSTRY_ORDER=['금융','대기업','온라인/IT','글로벌','공공','SME'];
 const industryRank=x=>{const i=INDUSTRY_ORDER.indexOf(x);return i<0?99:i;};
 
-function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,name:r.name,tier:r.tier,industry:r.industry}])).values()];industries=[...new Set(customers.map(x=>x.industry))].sort((a,b)=>industryRank(a)-industryRank(b)||a.localeCompare(b,'ko'));tiers=[...new Set(customers.map(x=>x.tier))].sort();}
-        function tierClass(t){const m=String(t??'').match(/\d/);return 'tier tier-'+(m?m[0]:'3')}
+function dims(){customers=[...new Map(RAW.map(r=>[r.customerId,{id:r.customerId,name:r.name,tier:r.tier,industry:r.industry}])).values()];industries=[...new Set(customers.map(x=>x.industry))].sort((a,b)=>industryRank(a)-industryRank(b)||a.localeCompare(b,'ko'));}
         function cats(){return [...new Set(RAW.filter(r=>r.axMajor&&r.axMiddle).map(axKey))].sort((a,b)=>a.localeCompare(b,'ko'))}
         function majors(){const m={};RAW.forEach(r=>{if(r.axMajor&&r.axMiddle)(m[r.axMajor]??=new Set()).add(r.axMiddle)});const order=['AX','Legacy'];return Object.entries(m).sort((a,b)=>(order.indexOf(a[0])<0?99:order.indexOf(a[0]))-(order.indexOf(b[0])<0?99:order.indexOf(b[0]))).map(([name,s])=>({name,children:[...s].sort().map(label=>({label,key:`${name}|||${label}`}))}))}
         function universe(){const m=new Map;RAW.forEach(r=>{const k=serviceKey(r);if(k&&!m.has(k))m.set(k,{code:k,name:label(r),ax:axKey(r),major:r.major})});return [...m.values()]}
@@ -567,9 +566,9 @@ function bSyncHeaderSticky(){
 }
 let bcPage=1, bcPageSize=20, bcExpanded=true;
 function renderCustomersPane(){
-  const cs=cats(),ind=$('bcInd').value,t=$('bcTier').value,q=$('bcSearch').value.trim().toLowerCase();
+  const cs=cats(),ind=$('bcInd').value,q=$('bcSearch').value.trim().toLowerCase();
   const max={};cs.forEach(c=>max[c]=Math.max(1,...bAggCache.map(a=>a.data[c].sales)));
-  let all=bAggCache.filter(a=>(!ind||a.industry===ind)&&(!t||a.tier===t)&&(!q||a.name.toLowerCase().includes(q)))
+  let all=bAggCache.filter(a=>(!ind||a.industry===ind)&&(!q||a.name.toLowerCase().includes(q)))
     .sort((a,b)=>industryRank(a.industry)-industryRank(b.industry)||(bMode==='service'?b.usedTotal-a.usedTotal:b.salesTotal-a.salesTotal)||a.name.localeCompare(b.name,'ko'));
   const industryCounts={};all.forEach(a=>{industryCounts[a.industry]=(industryCounts[a.industry]||0)+1;});
   const pages=Math.max(1,Math.ceil(all.length/bcPageSize));
@@ -586,7 +585,7 @@ function renderCustomersPane(){
       const ratio=bMode==='service'?d.used/Math.max(1,d.cap):d.sales/max[c],a=Math.min(.28+ratio*1.1,.98);
       const txt=bMode==='service'?`${d.used}/${d.cap}`:fmt(d.sales);
       return `<td><div class="cell" data-id="${esc(r.id)}" style="background:rgba(155,9,80,${a});color:${a>.45?'#fff':'#9b0950'}">${txt}</div></td>`;}).join('');
-    return g+`<tr><td class="cust" data-id="${esc(r.id)}"><span>${esc(r.name)}</span><span class="${tierClass(r.tier)}">${esc(r.tier)}</span></td>${cells}<td class="total">${bMode==='service'?r.usedTotal+'종':fmt(r.salesTotal)}</td></tr>`;
+    return g+`<tr><td class="cust" data-id="${esc(r.id)}"><span>${esc(r.name)}</span></td>${cells}<td class="total">${bMode==='service'?r.usedTotal+'종':fmt(r.salesTotal)}</td></tr>`;
   }).join('');
   $('bcTbody').querySelectorAll('[data-id]').forEach(e=>e.onclick=()=>bShowDetail(e.dataset.id));
   $('bcPage').textContent=`${bcPage} / ${pages}`;
@@ -602,7 +601,7 @@ function renderCustomersPane(){
 const bRecExpanded=new Set(); // 추천 상품 클릭 시 펼쳐지는 "쓰는 고객사 목록" 상태(상품코드 키)
 function bShowDetail(id){
   if(!id)return;bCurrentId=id;bRefresh();bRecExpanded.clear();const r=agg(id);
-  $('bdName').textContent=r.name;$('bdTier').textContent=r.tier;$('bdTier').className=tierClass(r.tier);$('bdIndustry').textContent=r.industry;$('bdPeriod').textContent=bYearLabel();
+  $('bdName').textContent=r.name;$('bdIndustry').textContent=r.industry;$('bdPeriod').textContent=bYearLabel();
   const keys=[].concat(...majors().map(m=>m.children.map(c=>c.key)));
   const recoTotal=keys.reduce((s,c)=>s+recommended(c,r).length,0);
   $('bdUsed').textContent=`${r.usedTotal}종 / ${r.capTotal}종`;$('bdUnused').textContent=`${r.capTotal-r.usedTotal}종`;
@@ -655,7 +654,7 @@ function bRenderMatrix(ids){
     commonTotal+=common.length;partialTotal+=partial.length;
     const rowHtml=(x,cls)=>{const cells=rs.map(r=>{const it=r.data[c].items.find(y=>y.code===x.code);return `<span class="peer-sales ${it?'own':'miss'}">${it?fmt(it.sales):'미침투'}</span>`;}).join('');
       return `<div class="peer-row ${cls}"><span class="peer-product">${esc(x.name)} <small>${esc(x.code)}</small><span class="mtx-badge ${cls}">${x.owners}/${n}</span></span>${cells}</div>`;};
-    const headers=rs.map(r=>`<span class="peer-head ${r.id===bCurrentId?'me':''}">${esc(r.name)}<small>${esc(r.tier)}</small></span>`).join('');
+    const headers=rs.map(r=>`<span class="peer-head ${r.id===bCurrentId?'me':''}">${esc(r.name)}</span>`).join('');
     body+=`<div class="peer-cat"><div class="peer-top"> <h4>${esc(bAxCatLabel(c))}</h4>${headers}</div>${common.map(x=>rowHtml(x,'common')).join('')+partial.map(x=>rowHtml(x,'partial')).join('')}<div class="peer-row peer-subtotal"><span>${esc(bAxCatLabel(c))} 소계</span>${rs.map(r=>`<span>${fmt(r.data[c].sales)}</span>`).join('')}</div></div>`;
   });
   body+=`<div class="peer-row peer-subtotal peer-grand-total"><span>총 매출(억원)</span>${rs.map(r=>`<span>${fmt(r.salesTotal)}</span>`).join('')}</div>`;
@@ -693,7 +692,7 @@ bSeg('bMode','m',m=>bMode=m);
 $('bNav').querySelectorAll('button[data-p]').forEach(btn=>btn.onclick=()=>{
   $('bNav').querySelectorAll('button[data-p]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   bPane=btn.dataset.p;$('bOverviewPane').hidden=bPane!=='ov';$('bCustomersPane').hidden=bPane!=='cust';renderHome();});
-$('bcInd').onchange=$('bcTier').onchange=$('bcSearch').oninput=()=>{bcPage=1;renderCustomersPane();};
+$('bcInd').onchange=$('bcSearch').oninput=()=>{bcPage=1;renderCustomersPane();};
 $('bcSize').onchange=e=>{bcPageSize=Number(e.target.value);bcPage=1;renderCustomersPane();};
 $('bcExpandBtn').onclick=()=>{bcExpanded=!bcExpanded;if(!bcExpanded)bcPage=1;renderCustomersPane();};
 $('bcPrev').onclick=()=>{bcPage--;renderCustomersPane();};
@@ -773,7 +772,6 @@ $('bSaveFileBtn').onclick=()=>{
 /* ── 필터 채우기 ── */
 function bFillFilters(){
   $('bcInd').innerHTML='<option value="">전체 업종</option>'+industries.map(x=>`<option>${esc(x)}</option>`).join('');
-  $('bcTier').innerHTML='<option value="">전체 Tier</option>'+tiers.map(x=>`<option>${esc(x)}</option>`).join('');
 }
 let bRestored=false;
 try{
@@ -781,7 +779,7 @@ try{
   if(saved){RAW=JSON.parse(saved);bRestored=true;}
 }catch(e){}
 TAXO=pivotTaxo(RAW);
-dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries/tiers 세팅)
+dims();bFillFilters();renderHome();   // 초기 랜딩 (dims: RAW→customers/industries 세팅)
 if(bRestored)$('bStatus').textContent=`저장된 데이터 · ${customers.length}개 고객 적용`;
 
 </script>
