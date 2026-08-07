@@ -22,3 +22,11 @@ TEAM_HANDOFF.html
 
 # 작업 이력 자동 기록
 work_hist/
+
+# 현재 GitHub 관리 대상은 메인 화면과 인수인계 문서뿐
+.claude/
+legacy/
+mockup_v2/*
+!mockup_v2/mockup_v2.html
+더미데이터_매출.csv
+더미데이터_월렛쉐어.csv
