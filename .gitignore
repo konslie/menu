@@ -28,5 +28,8 @@ work_hist/
 legacy/
 mockup_v2/*
 !mockup_v2/mockup_v2.html
+!mockup_v2/mockup_v2-vdi.html
+!mockup_v2/build_mockup_v2.mjs
+!mockup_v2/mockup_v2.template.html
 더미데이터_매출.csv
 더미데이터_월렛쉐어.csv

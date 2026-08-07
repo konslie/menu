@@ -1,0 +1,1036 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Account 메뉴판 — KA 전체 현황</title>
+<style>
+:root{
+  --u-bg:#f4f3ef;--u-surface:#fff;--u-surface-sub:#fafaf9;--u-surface-head:#f5f0e8;
+  --u-carbon:#1c1b1b;--u-onvariant:#5c5a54;--u-outline:#8a8880;
+  --u-border:#e9e8e3;--u-border-strong:#d4d3cc;
+  --u-primary:#b90064;--u-primary-tint:rgba(185,0,100,.04);--u-primary-tint-strong:rgba(185,0,100,.08);
+  --u-on-primary:#faf9f5;--u-dark:#1c1b1b;--u-darkest:#181715;--u-on-dark:#faf9f5;
+  --u-amber:#d97706;--u-amber-tint:#fdf6ee;--u-teal:#0d9488;--u-teal-tint:#edf6f4;--u-green:#15803d;
+  --u-table-gap:18px;--u-table-gap-compact:10px;--u-table-gap-md:12px;--u-table-gap-sm:10px;
+}
+*{box-sizing:border-box}
+body{font-family:Pretendard,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--u-bg);margin:0;padding:40px 24px;color:var(--u-carbon);font-size:17px}
+.screen{max-width:1280px;margin:0 auto 48px;background:var(--u-surface);border-radius:16px;padding:32px 36px;box-shadow:0 1px 2px rgba(28,27,27,.03)}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.feature-actions{display:flex;gap:8px;align-items:flex-start;justify-content:flex-end;flex-wrap:wrap;max-width:420px}
+.feature-actions .btn{height:34px;font-size:13px;color:var(--u-onvariant)}
+.feature-status{width:100%;font-size:12px;color:var(--u-outline);text-align:right}
+.label{font-size:13px;color:var(--u-onvariant);margin-bottom:6px;font-weight:500}
+h1{font-size:24px;font-weight:700;margin:0 0 6px;text-wrap:balance}
+h3{font-size:15px;font-weight:700;margin:0 0 8px;color:var(--u-onvariant)}
+.accent{height:3px;width:56px;background:var(--u-primary);margin-bottom:12px;border-radius:2px}
+.sub{font-size:15px;color:var(--u-onvariant);margin-bottom:14px;line-height:1.6}
+.btn{height:38px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 14px;font-size:15px;color:var(--u-carbon);cursor:pointer;font-family:inherit;transition:border-color .15s,background-color .15s}
+.btn:hover{border-color:var(--u-border-strong);background:var(--u-surface-sub)}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:2px solid var(--u-primary);outline-offset:2px}
+.btn.primary{background:var(--u-primary);border-color:var(--u-primary);color:var(--u-on-primary);font-weight:700}
+.btn.primary:hover{background:#a3005a;border-color:#a3005a}
+.btn.sm{height:32px;font-size:13px;padding:0 11px}
+.seg{display:inline-flex;border:1px solid var(--u-border);border-radius:10px;gap:6px;padding:3px;background:var(--u-surface)}
+.seg button{height:34px;border:0;background:none;padding:0 16px;color:var(--u-onvariant);cursor:pointer;font-size:14px;font-family:inherit;border-radius:8px}
+.seg button.active{background:var(--u-surface);color:var(--u-primary);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--u-primary)}
+.b-period{font-size:13px;color:var(--u-primary);background:var(--u-primary-tint-strong);border-radius:999px;padding:3px 10px;display:inline-block;margin-left:8px;font-weight:700}
+.hint{font-size:13px;color:var(--u-onvariant);margin-top:12px;line-height:1.6}
+small{font-size:13px}
+
+/* KPI 스트립 (항상 상단 고정 노출) */
+.strip{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:1px solid var(--u-border);border-radius:14px;overflow:hidden;margin:22px 0 4px}
+.strip div{flex:1 1 170px;min-width:0;padding:15px 18px;border-right:1px solid var(--u-border);background:var(--u-surface)}
+.strip div:last-child{border-right:0}
+.strip div.hl{background:var(--u-darkest);color:var(--u-on-dark)}
+.strip small{display:block;font-size:13px;color:var(--u-onvariant)}
+.strip div.hl small{color:#c9c7c0}
+.strip b{display:block;font-size:24px;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.15}
+.strip b em{font-style:normal;font-size:14px;color:var(--u-onvariant);font-weight:500}
+.strip div.hl b em{color:#c9c7c0}
+.strip b.accent-num{color:var(--u-primary)}
+
+/* ── 드릴다운 탭 ── */
+.tabs{display:flex;gap:4px;margin:24px 0 0;border-bottom:2px solid var(--u-border)}
+.tabs button{border:0;background:none;padding:11px 20px 12px;font-family:inherit;font-size:15px;font-weight:700;
+  color:var(--u-onvariant);cursor:pointer;border-radius:8px 8px 0 0;position:relative;transition:color .15s,background-color .15s}
+.tabs button:hover{background:var(--u-primary-tint);color:var(--u-carbon)}
+.tabs button:focus-visible{outline:2px solid var(--u-primary);outline-offset:-2px}
+.tabs button.on{color:var(--u-primary)}
+.tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--u-primary)}
+.tabs button small{display:block;font-size:13px;font-weight:500;color:var(--u-outline);margin-top:2px}
+.tabs button.on small{color:var(--u-primary);opacity:.75}
+
+/* 탭 패널 */
+.panel{border:1px solid var(--u-border);border-top:0;border-radius:0 0 14px 14px;padding:20px 22px 22px;background:var(--u-surface)}
+.panel.hidden{display:none}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;min-height:38px}
+.panel-head h3{margin:0}
+.panel-head .axis{font-size:13px;color:var(--u-outline)}
+.mode-bar{display:none;align-items:center}
+.panel-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-left:auto}
+
+/* ── 커버리지 트리 (KA 전체 탭) — mockup.html 상품별 현황 그대로 이식 ── */
+.ws-legend{font-size:13px;color:var(--u-onvariant);margin:10px 0 12px;line-height:1.6}
+.cov-head,.cov-row{display:grid;grid-template-columns:170px 100px 100px minmax(280px,1fr) 32px;align-items:center;gap:var(--u-table-gap-compact)}
+.cov-head{min-height:46px;font-size:13px;color:var(--u-onvariant);font-weight:700;padding:12px 14px 10px;background:var(--u-surface-head);border:1px solid var(--u-border);border-bottom:0;border-radius:12px 12px 0 0;margin:0}
+.cov-head span:nth-child(2),.cov-head span:nth-child(3){text-align:right}
+.cov-head span:nth-child(4){text-align:center}
+.cov-list{border:1px solid var(--u-border);border-top:0;border-radius:0 0 12px 12px;overflow:hidden}
+.cov-row{min-height:52px;padding:11px 14px;border-bottom:1px solid var(--u-border);cursor:pointer;background:var(--u-surface);transition:background-color .15s}
+.cov-row:hover{background:var(--u-surface-sub)}
+.cov-row:last-child{border-bottom:0}
+.cov-name{font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--u-carbon)}
+.cov-cat{font-size:13px;color:var(--u-onvariant);font-weight:500}
+.cov-bar{position:relative;height:14px;background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:5px;overflow:hidden}
+.cov-bar>i{position:absolute;left:0;top:0;bottom:0;background:var(--u-primary);border-radius:4px 0 0 4px}
+.cov-count{font-size:15px;text-align:right;font-variant-numeric:tabular-nums;color:var(--u-carbon)}
+.cov-count b{font-size:16px;font-weight:700}
+.cov-count small{display:block;font-size:12px;color:var(--u-onvariant);font-weight:500;margin-top:1px}
+.cov-coverage{display:grid;grid-template-columns:minmax(100px,1fr) 76px;align-items:center;gap:12px;min-width:0}
+.cov-rev,.cov-avg{font-size:14px;text-align:right;color:var(--u-carbon);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cov-avg{color:var(--u-onvariant)}
+.cov-flag{text-align:center;font-size:14px;color:var(--u-outline)}
+.cov-row.whitespace{background:var(--u-amber-tint)}
+.ws-badge{font-size:12px;font-weight:700;color:#92400e;background:#fdf1de;border-radius:999px;padding:2px 8px;vertical-align:middle}
+.cov-children{grid-column:1/-1;padding:6px 0 4px;border-top:1px solid var(--u-border);background:var(--u-surface-sub)}
+.cov-children .cov-row.level-2 .cov-name{padding-left:20px}
+.cov-children .cov-children .cov-row.level-3 .cov-name{padding-left:40px}
+.cov-detail{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.pen-group{background:var(--u-surface);border:1px solid var(--u-border);border-radius:10px;padding:10px 14px}
+.pen-group.unused{background:var(--u-amber-tint);border-color:var(--u-amber)}
+.pen-label{font-size:13px;font-weight:700;color:var(--u-onvariant);margin-bottom:6px}
+.pen-group.unused .pen-label{color:#92400e}
+.pen-label b{color:var(--u-primary);font-weight:700}
+.pen-group.unused .pen-label b{color:#92400e}
+.pen-ind{display:flex;align-items:baseline;gap:9px;padding:4px 0;flex-wrap:wrap}
+.pen-ind-nm{font-size:13px;font-weight:700;color:var(--u-onvariant);flex:0 0 64px}
+.pen-custs{display:flex;flex-wrap:wrap;gap:5px}
+.pen-custs .chip{border:1px solid var(--u-border-strong);background:var(--u-surface);cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:500;transition:background-color .15s,color .15s}
+.pen-custs .chip:hover{background:var(--u-primary);color:var(--u-on-primary);border-color:var(--u-primary)}
+/* 970~761px 구간: 상품명·수치 칼럼을 줄여 커버리지 막대가 숨 쉴 공간을 확보한다. */
+@media(max-width:970px){
+  .cov-head,.cov-row{grid-template-columns:130px 80px 90px minmax(200px,1fr) 24px;gap:var(--u-table-gap-md)}
+  .cov-name{font-size:14px}
+}
+@media(max-width:760px){
+  .cov-head{display:none}
+  .cov-row{grid-template-columns:1fr auto;grid-template-areas:"name flag" "coverage coverage" "rev avg";row-gap:8px;column-gap:10px}
+  .cov-name{grid-area:name}.cov-coverage{grid-area:coverage}.cov-count{text-align:right}.cov-rev{grid-area:rev;text-align:left}.cov-avg{grid-area:avg;text-align:right}.cov-flag{grid-area:flag}
+}
+
+/* ── 계층 행 리스트 (업종별·고객별 탭에서 사용) ── */
+.hb{margin-top:0;border:1px solid var(--u-border);border-radius:12px;overflow:hidden;background:var(--u-surface)}
+.hb-kids{display:none}
+.g5.open+.hb-kids{display:block}
+
+/* ── 업종·고객 행 (월렛쉐어 + 매출 + 사용상품 + AX/Legacy 4분할) ──
+   전체 지표는 세 컬럼으로 분리하고, AX/Legacy 칩만 모드 토글의 영향을 받는다. */
+.g5-head{display:grid;grid-template-columns:180px 75px 90px 85px 1px repeat(2,minmax(0,1fr)) 1px repeat(2,minmax(0,1fr));column-gap:var(--u-table-gap-compact);row-gap:8px;min-height:46px;padding:10px 8px 8px;
+  align-items:end;background:var(--u-surface-head);border-bottom:1px solid var(--u-border)}
+.g5-head span{font-size:13px;font-weight:700;color:var(--u-onvariant);text-align:center}
+.g5-head span:first-child{text-align:left}
+.g5-head span em{display:block;font-style:normal;font-size:12px;font-weight:500;color:var(--u-outline);margin-top:2px}
+.g5-head .mj{display:block;color:var(--u-primary);font-size:12px;font-weight:700;padding-bottom:0;
+  margin:0;border-bottom:0}
+.g5-head .mj.blank{display:none}
+/* 별도 1px 칸을 써서 구획선이 칩마다 반복되지 않고 행 전체에서 한 줄로 이어지게 한다. */
+.g5-head>.g5-rule,.g5>.g5-rule{display:block;width:1px;min-height:100%;align-self:stretch;background:var(--u-border-strong)}
+.g5-head>span:nth-child(6),.g5-head>span:nth-child(9){position:relative;padding-top:17px}
+.g5-head>span:nth-child(6)>.mj,.g5-head>span:nth-child(9)>.mj{position:absolute;left:0;top:0;width:calc(200% + var(--u-table-gap-compact));text-align:center}
+.g5-head>span:nth-child(7)>span.mj,.g5-head>span:nth-child(10)>span.mj{display:none}
+.g5{display:grid;grid-template-columns:180px 75px 90px 85px 1px repeat(2,minmax(0,1fr)) 1px repeat(2,minmax(0,1fr));column-gap:var(--u-table-gap-compact);row-gap:8px;align-items:center;
+  min-height:52px;padding:7px 8px;border:0;border-bottom:1px solid var(--u-border);border-radius:0;background:none;font-family:inherit;text-align:left;width:100%;
+  cursor:pointer;transition:background-color .15s}
+.g5:hover{background:var(--u-primary-tint)}
+.g5:focus-visible{outline:2px solid var(--u-primary);outline-offset:-2px}
+.g5.lv2 .g5-nm{font-weight:500;font-size:14px;color:var(--u-onvariant)}
+.g5.open{background:var(--u-surface-head)}
+/* 들여쓰기는 g5-nm 안쪽 패딩으로만 준다 — 행 전체(.g5)에 padding-left를 주면 그리드 첫 칼럼 폭이
+   줄어들어, lv1(업종)과 lv2(고객) 행의 히트맵 칩이 서로 다른 위치에서 시작하게 된다. */
+.g5-nm{display:flex;align-items:center;gap:6px;font-weight:700;font-size:15px;min-width:0}
+.g5.lv2 .g5-nm{padding-left:8px}
+.g5-nm .ar{color:var(--u-primary);font-size:13px;transition:transform .18s;flex:none}
+.g5.open .g5-nm .ar{transform:rotate(90deg)}
+.g5-nm .tree{color:var(--u-border-strong);font-size:12px;width:10px;overflow:hidden;flex:none}
+.g5-nm b{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g5-nm small{color:var(--u-onvariant);font-weight:500;min-width:0;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g5-metric{display:flex;align-items:center;justify-content:center;min-width:0;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center}
+.g5-metric.wallet{color:var(--u-carbon)}
+.g5-metric.revenue{color:var(--u-carbon)}
+.g5-metric.products{color:var(--u-primary)}
+/* 히트맵 칩. 칼럼 폭을 꽉 채우면 옆 칩과 색이 맞닿아 붐벼 보이므로 좌우로 살짝 좁혀 여백을 낸다. */
+.g5-c{display:flex;align-items:center;justify-content:center;height:31px;width:calc(100% - 10px);
+  margin:0 5px;border-radius:6px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.g5-c.zero{border:1px solid var(--u-border);color:var(--u-border-strong);font-weight:500;
+  background:repeating-linear-gradient(45deg,var(--u-surface-sub),var(--u-surface-sub) 3px,var(--u-bg) 3px,var(--u-bg) 6px)}
+.g5-c.tot{font-size:14px}
+.g5-c.tot.combo{height:42px;flex-direction:column;gap:2px;line-height:1.05;padding:4px 2px}
+.g5-c.tot.combo b{font-size:13px}
+.g5-c.tot.combo small{font-size:11px;font-weight:600;opacity:.9}
+@media(max-width:1100px){
+  .g5,.g5-head{grid-template-columns:150px 72px 84px 90px 1px repeat(2,minmax(0,1fr)) 1px repeat(2,minmax(0,1fr));column-gap:var(--u-table-gap-compact);row-gap:7px}
+  .g5-head span{font-size:12px}
+  .g5-c{font-size:12px}
+}
+/* 970~761px: 지표 3개와 4분할 칩이 함께 보이도록 폭을 줄인다. */
+@media(max-width:970px){
+  .g5,.g5-head{grid-template-columns:120px 66px 84px 98px 1px repeat(2,minmax(48px,1fr)) 1px repeat(2,minmax(48px,1fr));column-gap:var(--u-table-gap-sm);row-gap:6px}
+  .g5-nm b{font-size:13px}
+  .g5-nm small{display:none}
+  .g5-c{font-size:12px;padding:0 2px}
+  .g5-c.tot{font-size:13px}
+  .g5-metric{font-size:12px}
+}
+
+@media(max-width:760px){
+  .strip div{flex-basis:150px;padding:12px 14px}
+  .strip b{font-size:22px}
+  .strip b em{font-size:12px}
+}
+
+.actions{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;align-items:center}
+.scroller{max-height:620px;overflow-y:auto;margin:0;border:1px solid var(--u-border);border-radius:12px;background:var(--u-surface)}
+.scroller .hb{border:0;border-radius:0}
+.scroller .g5-head{position:sticky;top:0;z-index:1}
+
+/* ── 고객 상세 ── */
+.screen.hidden{display:none}
+.chip{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--u-primary-tint-strong);color:var(--u-primary)}
+.chip.mute{background:var(--u-surface-head);color:var(--u-onvariant)}
+.dt-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dt-nm{font-size:24px;font-weight:700}
+.dt-blk{margin-top:22px}
+.dt-blk h3{display:flex;align-items:baseline;gap:9px;margin:0 0 10px;font-size:16px;color:var(--u-carbon)}
+.dt-blk h3 small{font-size:13px;font-weight:500;color:var(--u-onvariant)}
+.dt-major{font-size:14px;font-weight:700;color:var(--u-primary);margin:26px 0 2px;
+  padding-bottom:7px;border-bottom:2px solid var(--u-primary)}
+.dt-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dt-box{border:1px solid var(--u-border);border-radius:10px;overflow:hidden;background:var(--u-surface)}
+.dt-box-h{padding:9px 13px;background:var(--u-surface-head);font-size:13px;font-weight:700;color:var(--u-onvariant)}
+.dt-box.reco .dt-box-h{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+.dt-r{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 13px;
+  border-top:1px solid var(--u-border);font-size:14px}
+.dt-r.used{justify-content:flex-start;gap:18px}
+.dt-r:first-of-type{border-top:0}
+.dt-r .nm small{color:var(--u-outline);font-weight:500;margin-left:5px}
+.dt-r .val{font-variant-numeric:tabular-nums;font-weight:700;flex:none}
+.dt-r.empty{color:var(--u-outline);justify-content:flex-start}
+.dt-r.rec{cursor:pointer;border:0;border-top:1px solid var(--u-border);width:100%;
+  background:none;font-family:inherit;text-align:left;flex-wrap:wrap;transition:background-color .15s}
+.dt-r.rec:hover{background:var(--u-primary-tint)}
+.dt-r.rec:focus-visible{outline:2px solid var(--u-primary);outline-offset:-2px}
+.dt-meta{font-size:12px;color:var(--u-onvariant);font-weight:500}
+.dt-badge{font-size:12px;font-weight:700;color:var(--u-primary);background:var(--u-primary-tint-strong);
+  border-radius:999px;padding:2px 8px;flex:none}
+.dt-peers{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;padding-top:8px}
+.dt-peers .chip{cursor:pointer;font-weight:500}
+.dt-peers .chip:hover{background:var(--u-primary);color:var(--u-on-primary)}
+.dt-reco-note{margin:14px 0 18px;padding:12px 14px;background:var(--u-primary-tint-strong);
+  border:1px solid rgba(185,0,100,.18);border-left:3px solid var(--u-primary);border-radius:10px;
+  color:var(--u-onvariant);font-size:13px;line-height:1.8}
+.dt-reco-note b{color:var(--u-primary);font-weight:700}
+.detail-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.compare-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.compare-head .name{font-size:20px;font-weight:700}
+.compare-head .grow{margin-left:auto}
+.compare-warn{display:none;margin-top:10px;color:#92400e;font-size:13px;font-weight:700;background:var(--u-amber-tint);
+  border:1px solid var(--u-amber);border-radius:8px;padding:10px 14px}
+.compare-checklist{border:1px solid var(--u-border);border-radius:12px;margin:16px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:hidden}
+.compare-check{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--u-border);min-width:0}
+.compare-check input{height:auto;padding:0;accent-color:var(--u-primary)}
+.compare-check .compare-customer{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.compare-check .compare-meta{margin-left:auto;color:var(--u-onvariant);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.compare-hint{font-size:13px;color:var(--u-onvariant);margin-top:10px;line-height:1.6}
+.compare-view{overflow:auto;border:1px solid var(--u-border);border-radius:12px;margin-top:14px;background:var(--u-surface-sub);padding:16px}
+.peer-grid{width:var(--peer-width);min-width:100%}
+.peer-cat{border-top:1px solid var(--u-border-strong);padding-top:12px;margin-top:14px}
+.peer-cat:first-child{border-top:0;padding-top:0;margin-top:0}
+.peer-top,.peer-row{display:grid;grid-template-columns:var(--peer-cols);width:var(--peer-width);align-items:center}
+.peer-top{padding-bottom:8px;border-bottom:1px solid var(--u-border-strong)}
+.peer-top h4{margin:0;font-size:14px;color:var(--u-onvariant)}
+.peer-head{text-align:center;font-size:14px;font-weight:700;color:var(--u-outline)}
+.peer-head small{display:block;font-size:11px;margin-top:2px}
+.peer-head.me{color:var(--u-primary);font-size:15px}
+.peer-row{min-height:38px;border-bottom:1px solid var(--u-border);font-size:13px}
+.peer-row.common{background:var(--u-teal-tint)}
+.peer-row.partial{background:var(--u-primary-tint)}
+.peer-product{padding-left:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.peer-product small{color:var(--u-outline);font-size:11px;margin-left:3px}
+.peer-sales{text-align:center;font-variant-numeric:tabular-nums}
+.peer-sales.own{font-weight:700;color:var(--u-carbon)}
+.peer-sales.miss{color:var(--u-outline);font-style:italic}
+.peer-subtotal{min-height:40px;border-top:1px solid var(--u-border-strong);border-bottom:1px solid var(--u-border-strong);font-weight:700;background:var(--u-surface-head)}
+.peer-subtotal>span:first-child{padding-left:12px}
+.peer-subtotal>span:not(:first-child){text-align:center;color:var(--u-primary);font-variant-numeric:tabular-nums}
+.peer-grand-total{margin-top:14px;background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}
+.peer-grand-total>span:not(:first-child){color:var(--u-on-dark)}
+.industry-view{margin-top:18px}
+.industry-view h3{font-size:17px;color:var(--u-carbon);margin:0 0 4px}
+.industry-meta{font-size:13px;color:var(--u-onvariant);margin-bottom:10px}
+.industry-note{font-size:13px;color:var(--u-onvariant);background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:8px;padding:10px 12px;margin-bottom:16px}
+.industry-cat{border-top:2px solid var(--u-border-strong);padding-top:12px;margin-top:16px;overflow:auto}
+.industry-cat:first-child{border-top:0;margin-top:0}
+.industry-top,.industry-row{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(3,minmax(120px,1fr));min-width:620px;align-items:center}
+.industry-top{padding-bottom:8px;border-bottom:1px solid var(--u-border-strong)}
+.industry-top h4{margin:0;font-size:14px;color:var(--u-onvariant)}
+.industry-head{text-align:center;font-size:12px;font-weight:700;color:var(--u-outline)}
+.industry-head span{display:block}
+.industry-row{min-height:38px;border-bottom:1px solid var(--u-border);font-size:13px}
+.industry-row:nth-child(even){background:var(--u-surface-sub)}
+.industry-product{padding-left:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.industry-product small{color:var(--u-outline);font-size:11px;margin-left:3px}
+.industry-stats{text-align:center;font-variant-numeric:tabular-nums}
+.industry-stats b{font-weight:700}
+.industry-stats small{color:var(--u-outline);font-size:11px}
+.industry-stats-common{color:var(--u-primary)}
+.industry-owned{display:inline-block;font-size:11px;font-weight:700;color:var(--u-teal);background:var(--u-teal-tint);border-radius:999px;padding:2px 8px}
+.industry-missing{color:var(--u-outline);font-style:italic}
+.modal-overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(28,27,27,.38)}
+.modal-overlay.hidden{display:none}
+.modal-box{width:min(1080px,94vw);max-height:86vh;background:var(--u-surface);border-radius:14px;box-shadow:0 12px 36px rgba(28,27,27,.18);overflow:hidden}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--u-border);font-weight:700}
+.modal-body{max-height:calc(86vh - 62px);overflow:auto;padding:14px 18px}
+.tax-table{width:100%;border-collapse:collapse;font-size:13px;min-width:680px}
+.tax-table th,.tax-table td{padding:9px 10px;border-bottom:1px solid var(--u-border);text-align:left;vertical-align:middle}
+.tax-table th{background:var(--u-surface-head);color:var(--u-onvariant);font-size:12px;position:sticky;top:0;z-index:1}
+.tax-table td[rowspan]{background:var(--u-surface-sub);font-weight:700;color:var(--u-onvariant)}
+.tax-table tbody tr{transition:background-color .12s}
+.tax-table tbody tr:hover td,.tax-table td.tax-active{background:var(--u-primary-tint-strong);color:var(--u-carbon)}
+.upload-message{font-size:14px;line-height:1.7;color:var(--u-onvariant);margin:0}
+@media(max-width:900px){.dt-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.compare-checklist{grid-template-columns:1fr}.compare-check .compare-meta{font-size:11px}.detail-actions{width:100%;margin-left:0}.feature-actions{width:100%;max-width:none;justify-content:flex-start}.feature-status{text-align:left}}
+
+@media(max-width:900px){
+  .h-row,.h-head{grid-template-columns:170px 1fr 1fr;gap:6px}
+}
+
+</style></head><body>
+<section class="screen" id="vTotal">
+  <div class="top">
+    <div>
+      <div class="label">Key Account 메뉴판</div>
+      <div class="accent"></div>
+      <h1>KA 전체 현황<span class="b-period" id="pdT">2026 YTD</span></h1>
+      <p class="sub">Key Account <span id="headCustCount">53</span>개사의 당사 상품 사용 현황입니다.</p>
+    </div>
+    <div class="feature-actions">
+      <button class="btn" id="taxonomyBtn">상품분류체계</button>
+      <button class="btn" id="uploadBtn">CSV 업로드</button><input hidden type="file" id="csvFile" accept=".csv">
+      <button class="btn" id="saveFileBtn">파일로 저장</button>
+      <div class="seg" id="segYear"><button data-y="2026" class="active">2026 YTD</button><button data-y="2025">2025 연간</button></div>
+      <span class="feature-status" id="dataStatus">내장 데이터 · 53개 고객</span>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="taxonomyModal">
+    <div class="modal-box">
+      <div class="modal-head"><span>상품분류체계</span><button class="btn" id="taxonomyClose">닫기</button></div>
+      <div class="modal-body"><table class="tax-table"><thead id="taxonomyHead"></thead><tbody id="taxonomyBody"></tbody></table></div>
+    </div>
+  </div>
+  <div class="modal-overlay hidden" id="uploadDoneModal">
+    <div class="modal-box" style="width:min(420px,92vw)">
+      <div class="modal-head"><span>업로드 완료</span><button class="btn" id="uploadDoneClose">확인</button></div>
+      <div class="modal-body"><p class="upload-message" id="uploadDoneMessage"></p></div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div><small>KA 고객 수</small><b id="cCust"></b></div>
+    <div><small>KA 총매출</small><b id="cRev" class="accent-num"></b></div>
+    <div><small>KA 사용 상품</small><b id="cvKpi" class="accent-num"></b></div>
+    <div><small>월렛쉐어</small><b id="cPen"></b></div>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist">
+    <button role="tab" data-tab="ax" class="on">KA 전체</button>
+    <button role="tab" data-tab="ind">업종별</button>
+    <button role="tab" data-tab="cust">고객별</button>
+  </div>
+
+  <div class="panel" id="pnAx">
+    <div class="panel-head">
+      <h3>상품별 현황</h3>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="seg" id="segGran"><button data-g="cat" class="active">카테고리</button><button data-g="svc">세부상품</button></div>
+      </div>
+    </div>
+    <div class="ws-legend"><span class="ws-badge">화이트스페이스</span> 커버리지(사용 고객사 비율)가 <b>40% 미만</b>인 항목에 표시됩니다 — 크로스셀 기회가 큰 영역입니다.</div>
+    <div class="cov-head"><span>상품</span><span>매출</span><span>평균매출</span><span>커버리지</span><span></span></div>
+    <div class="cov-list" id="hbAx"></div>
+    <p class="hint" id="axAx"></p>
+  </div>
+
+  <div class="panel hidden" id="pnInd">
+    <div class="panel-head">
+      <h3>업종별 사용 상품</h3>
+      <div class="panel-actions" id="indActions">
+        <div class="mode-bar" id="modeBar"><div class="seg" id="segMode"><button data-m="service" class="active">사용상품비중</button><button data-m="sales">매출</button></div></div>
+        <button class="btn sm" id="toggleAll">전체 펼치기</button>
+      </div>
+    </div>
+    <div class="hb" id="hbInd"></div>
+  </div>
+
+  <div class="panel hidden" id="pnCust">
+    <div class="panel-head">
+      <h3>고객별 사용 상품 <small style="font-weight:500;color:var(--u-onvariant)">전체 <span id="custCountLabel">53</span>개사</small></h3>
+      <div class="panel-actions" id="custActions"></div>
+    </div>
+    <div class="scroller"><div class="hb" id="hbCust"></div></div>
+  </div>
+
+</section>
+
+<!-- 고객 상세 — 업종별/고객별에서 고객을 누르면 진입 -->
+<section class="screen hidden" id="vDetail">
+  <div class="dt-head">
+    <button class="btn" id="dtBack">← 목록</button>
+    <span class="dt-nm" id="dtName"></span>
+    <span class="chip mute" id="dtInd"></span>
+    <span class="b-period" id="dtPeriod"></span>
+    <div class="detail-actions">
+      <button class="btn" id="dtCompareIndustry">동종 업종과 비교</button>
+      <button class="btn" id="dtComparePeers">동종 고객과 비교</button>
+    </div>
+  </div>
+  <div class="strip" style="margin-top:18px">
+    <div><small>사용 중 상품</small><b id="dtUsed"></b><div class="sp"><i id="dtUsedBar"></i></div></div>
+    <div><small>미사용 (크로스셀 여지)</small><b id="dtUnused"></b></div>
+    <div><small>추천 기회 상품</small><b id="dtReco"></b></div>
+    <div><small>월렛쉐어</small><b id="dtWallet"></b></div>
+    <div><small>선택 기간 매출</small><b id="dtSales" class="accent-num"></b></div>
+  </div>
+  <div class="dt-reco-note">
+    <div><b>추천 로직</b> : Key Account <b id="dtRecoBase"></b>개 고객이 사용하고 있는 상품 중에서 추천합니다.</div>
+    <div><b>추천 우선순위</b> : ① 동종 업종 침투율순 → ② 동종 업종 평균매출순 → ③ 타 업종 침투율순 → ④ 타 업종 평균매출순으로 최대 3개 채택</div>
+    <div>추천 항목 클릭 시 사용 중인 피어 고객사 목록 표시</div>
+  </div>
+  <div id="dtBlocks"></div>
+</section>
+
+<section class="screen hidden" id="vPeerSelect">
+  <div class="label">동종 고객 비교 대상 선택</div>
+  <div class="compare-head">
+    <button class="btn" id="peerSelectBack">← 고객 상세로</button>
+    <span class="name">비교 대상 선택 <small style="font-size:13px;font-weight:500;color:var(--u-onvariant)">동종 업종 · 2~4개</small></span>
+    <button class="btn primary grow" id="peerCompareGo">비교하기</button>
+  </div>
+  <div class="compare-warn" id="peerCompareWarn">최소 2개, 최대 4개의 고객을 선택하세요.</div>
+  <div class="compare-checklist" id="peerChecks"></div>
+</section>
+
+<section class="screen hidden" id="vPeerResult">
+  <div class="label">동종 고객 비교 · 상품 × 고객 매트릭스</div>
+  <div class="compare-head">
+    <button class="btn" id="peerResultBack">← 대상 선택으로</button>
+    <span class="name">동종 업종 고객간 비교</span><span class="b-period" id="peerComparePeriod"></span>
+  </div>
+  <div class="compare-hint" id="peerCompareSummary"></div>
+  <div class="compare-hint">셀 = 상품별 매출 · <b style="color:var(--u-primary)">기준 고객</b> · <span style="color:var(--u-teal)">초록 음영</span> = 공통 보유 · <span style="color:var(--u-primary)">분홍 음영</span> = 일부만 보유</div>
+  <div class="compare-view" id="peerCompareView"></div>
+</section>
+
+<section class="screen hidden" id="vIndustryResult">
+  <div class="label">업종·고객 비교</div>
+  <div class="compare-head">
+    <button class="btn" id="industryResultBack">← 고객 상세로</button>
+    <span class="name">동종 업종과 비교</span>
+  </div>
+  <div class="industry-view" id="industryCompareView"></div>
+</section>
+
+<script>
+/* VDI 배포본: 사용자가 CSV를 업로드하면 브라우저에서 데이터를 계산한다. */
+const FULL_CATALOG_TOTAL=132;
+const KA_PRODUCT_TOTAL=63;
+const CATALOG_TOTAL=KA_PRODUCT_TOTAL;
+let CATALOG=[];
+const sName=c=>c.name;
+const INDUSTRY_ORDER=[];
+let CUSTOMERS=[];
+let RAW=[];
+let WALLETS={};
+
+/* ── 공용 유틸 ── */
+let YEAR='2026';
+const salesField=()=>YEAR==='2026'?'sales2026':'sales2025';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt0=n=>Math.round(Number(n||0)/1e8).toLocaleString('ko-KR');
+const fmtAmount=n=>{
+  const value=Number(n||0);
+  if(value===0)return '-';
+  const eok=value/1e8;
+  if(Math.abs(value)<1e6){
+    const baek=value/1e6;
+    if(Math.abs(baek)<.01)return `${Math.round(value).toLocaleString('ko-KR')}원`;
+    return `${baek.toFixed(2)}백`;
+  }
+  if(Math.abs(eok)<.5)return `${eok.toFixed(2)}억`;
+  return `${Math.round(eok).toLocaleString('ko-KR')}억`;
+};
+const fmtPct=n=>n==null?'미산정':`${(Number(n)*100).toFixed(1)}%`;
+const AXKEYS=['AX|||Infra','AX|||Application','Legacy|||Infra','Legacy|||Application'];
+const axLabel=k=>k.split('|||')[1];
+const axMajors=()=>[{name:'AX',children:['AX|||Infra','AX|||Application']},{name:'Legacy',children:['Legacy|||Infra','Legacy|||Application']}];
+const indRank=i=>{const x=INDUSTRY_ORDER.indexOf(i);return x<0?99:x};
+
+/* AX/Legacy별 상세 모수는 CSV에서 관측된 상품 기준이다.
+   전체 KA 상품 모수 63종은 상단 KPI와 전체 사용률 분모로 별도 유지한다.
+   M31은 CSV의 상품명 변형을 M2M차량으로 통합해 관측 상품은 62종이 된다. */
+const capByAx={};
+function rebuildCatalogMeta(){
+  AXKEYS.forEach(k=>{capByAx[k]=CATALOG.filter(p=>p.axM+'|||'+p.axm===k).length});
+  TAXO=CATALOG.map(p=>({axMajor:p.axM,axMiddle:p.axm,major:p.major||'',middle:p.middle||'',salesName:p.name||'',custComm:p.custComm||'',code:p.code||p.s}));
+}
+
+function walletFor(id){const w=WALLETS[id];return w&&w.valid?w.share:null}
+/* 고객별 집계: {id,name,industry,usedTotal,salesTotal,wallet,data:{axKey:{used,cap,sales,codes:Set}}} */
+function aggAll(){
+ const f=salesField(),m=new Map();
+ CUSTOMERS.forEach(c=>{const d={};AXKEYS.forEach(k=>d[k]={used:0,cap:capByAx[k],sales:0,codes:new Set()});
+   m.set(c.id,{id:c.id,name:c.name,industry:c.industry,tier:c.tier,wallet:walletFor(c.id),usedTotal:0,salesTotal:0,data:d,codes:new Set()})});
+ RAW.forEach(r=>{const a=m.get(r.custId),k=r.axMajor+'|||'+r.axMiddle,v=Number(r[f]||0);
+   a.data[k].sales+=v;a.salesTotal+=v;
+   if(v>0&&!a.data[k].codes.has(r.salesCode)){a.data[k].codes.add(r.salesCode);a.data[k].used++;a.usedTotal++;a.codes.add(r.salesCode)}});
+ return [...m.values()];
+}
+/* 업종별 소계 */
+function aggIndustry(rows){
+ const m=new Map();
+ INDUSTRY_ORDER.forEach(i=>m.set(i,{industry:i,n:0,salesTotal:0,usedSum:0,codes:new Set(),walletUpls:0,walletMarket:0,walletValid:0,data:{}}));
+ AXKEYS.forEach(k=>INDUSTRY_ORDER.forEach(i=>m.get(i).data[k]={used:0,sales:0,owners:0}));
+ rows.forEach(a=>{const g=m.get(a.industry);if(!g)return;
+   g.n++;g.salesTotal+=a.salesTotal;g.usedSum+=a.usedTotal;a.codes.forEach(c=>g.codes.add(c));
+   const w=WALLETS[a.id];if(w&&w.valid){g.walletUpls+=w.upls;g.walletMarket+=w.total;g.walletValid++}
+   AXKEYS.forEach(k=>{g.data[k].sales+=a.data[k].sales;g.data[k].used+=a.data[k].used;if(a.data[k].used>0)g.data[k].owners++})});
+ return [...m.values()].filter(g=>g.n>0).map(g=>({...g,walletShare:g.walletMarket>0?g.walletUpls/g.walletMarket:null}));
+}
+/* KA 전체 관점 */
+function aggTotal(rows){
+ const codes=new Set();rows.forEach(a=>a.codes.forEach(c=>codes.add(c)));
+ let walletUpls=0,walletMarket=0,walletValid=0;
+ rows.forEach(a=>{const w=WALLETS[a.id];if(w&&w.valid){walletUpls+=w.upls;walletMarket+=w.total;walletValid++}});
+ const perAx=AXKEYS.map(k=>{const cs=new Set();let sales=0,owners=0;
+   rows.forEach(a=>{sales+=a.data[k].sales;if(a.data[k].used>0){owners++;a.data[k].codes.forEach(c=>cs.add(c))}});
+   return {key:k,label:k.replace('|||',' · '),used:cs.size,cap:capByAx[k],sales,owners,n:rows.length}});
+ return {n:rows.length,usedCodes:codes.size,catalog:CATALOG_TOTAL,observedCatalog:CATALOG.length,walletValid,
+   salesTotal:rows.reduce((s,a)=>s+a.salesTotal,0),
+   avgUsed:rows.reduce((s,a)=>s+a.usedTotal,0)/Math.max(1,rows.length),walletShare:walletMarket>0?walletUpls/walletMarket:null,perAx};
+}
+
+/* ── 상품 단위 집계 (중분류 → 상품별 침투율, 고객 상세에서 사용) ──
+   침투율 모수는 53개사. "이 상품을 쓰는 고객이 몇 개사인가"가 상품의 확산도를 보는 자연스러운 축이다. */
+function aggProducts(){
+ const f=salesField(),m=new Map();
+ CATALOG.forEach(p=>m.set(p.s,{code:p.s,name:sName(p),axKey:p.axM+'|||'+p.axm,owners:new Set(),sales:0}));
+ RAW.forEach(r=>{const v=Number(r[f]||0);if(v<=0)return;
+   const t=m.get(r.salesCode);if(!t)return;t.owners.add(r.custId);t.sales+=v});
+ return [...m.values()].map(p=>({...p,ownerCount:p.owners.size,avgSales:p.owners.size?p.sales/p.owners.size:0}));
+}
+
+/* ── 커버리지 트리 (mockup.html의 상품별 현황과 동일 구조) ──
+   모든 레벨에서 used/total = "53개사 중 사용 고객사 수". 대분류·중분류는 대부분 90%대로 뭉치지만,
+   그게 문제가 아니라 정렬(커버리지 낮은순)과 화이트스페이스 배지(40% 미만)로 예외를 부각시키는 방식이다. */
+function axTopRows(rows){
+ return axMajors().map(m=>{
+   let rev=0;const owners=new Set();
+   rows.forEach(a=>{let used=false;m.children.forEach(k=>{const d=a.data[k];rev+=d.sales;if(d.used>0)used=true});
+     if(used)owners.add(a.id)});
+   return {key:m.name,name:m.name,catName:'',used:owners.size,total:rows.length,rev,avgRev:owners.size?rev/owners.size:0,
+     unusedIds:rows.filter(a=>!owners.has(a.id)).map(a=>a.name)};
+ });
+}
+function axMidRows(rows,topKey){
+ const keys=AXKEYS.filter(k=>k.startsWith(topKey+'|||'));
+ return keys.map(k=>{let used=0,rev=0;rows.forEach(a=>{const d=a.data[k];if(d.used>0)used++;rev+=d.sales});
+   return {key:k,name:axLabel(k),catName:'',used,total:rows.length,rev,avgRev:used?rev/used:0,
+     unusedIds:rows.filter(a=>a.data[k].used===0).map(a=>a.name)};
+ });
+}
+/* 리프(세부상품) 행은 침투/미침투 고객을 업종별로 펼쳐 보여줘야 하므로 이름이 아니라 고객 객체를 담는다. */
+function svcRowsInAxKey(rows,axKey){
+ return PRODS.filter(p=>p.axKey===axKey).map(p=>({key:p.code,name:p.name,catName:'',
+   used:p.ownerCount,total:rows.length,rev:p.sales,avgRev:p.avgSales,
+   usedIds:rows.filter(a=>p.owners.has(a.id)),unusedIds:rows.filter(a=>!p.owners.has(a.id))}));
+}
+function svcRowsFlat(rows){
+ return PRODS.map(p=>({key:p.code,name:p.name,catName:axLabel(p.axKey),
+   used:p.ownerCount,total:rows.length,rev:p.sales,avgRev:p.avgSales,
+   usedIds:rows.filter(a=>p.owners.has(a.id)),unusedIds:rows.filter(a=>!p.owners.has(a.id))}));
+}
+const covSortRows=(rows,sort)=>rows.slice().sort((a,b)=>sort==='ws'?(a.used-b.used)||(b.rev-a.rev):(b.used-a.used)||(b.rev-a.rev));
+const covNodeKey=(level,path)=>level+':'+path.join('>');
+function covChildrenOf(rows,level,path){
+ if(level===1)return axMidRows(rows,path[0]);
+ if(level===2)return svcRowsInAxKey(rows,path[1]);
+ return [];
+}
+/* 고객 1개사의 상품 단위 상세: 중분류별 사용중 상품 목록 */
+function aggCust(id){
+ const f=salesField(),base=CUSTOMERS.find(c=>c.id===id),data={};
+ AXKEYS.forEach(k=>data[k]={used:0,cap:capByAx[k],sales:0,items:[]});
+ const byCode=new Map();
+ RAW.filter(r=>r.custId===id).forEach(r=>{const v=Number(r[f]||0);if(v<=0)return;
+   const k=r.axMajor+'|||'+r.axMiddle;
+   if(!byCode.has(r.salesCode))byCode.set(r.salesCode,{code:r.salesCode,displayCode:r.salesDisplayCode||r.salesCode,name:r.salesName,axKey:k,sales:0});
+   byCode.get(r.salesCode).sales+=v});
+ byCode.forEach(x=>{const d=data[x.axKey];d.items.push(x);d.used++;d.sales+=x.sales});
+ AXKEYS.forEach(k=>data[k].items.sort((a,b)=>b.sales-a.sales));
+ return {...base,wallet:walletFor(id),data,
+   usedTotal:AXKEYS.reduce((s,k)=>s+data[k].used,0),
+   capTotal:CATALOG_TOTAL,
+   salesTotal:AXKEYS.reduce((s,k)=>s+data[k].sales,0)};
+}
+/* 추천 상품 — mockup.html의 4단계 우선순위를 그대로 옮김.
+   ① 동종업종 침투율 → ② 동종업종 평균매출 → ③ 타업종 침투율 → ④ 타업종 평균매출, 중분류당 최대 3개. */
+function peerStats(axKey,peers,ownedCodes){
+ const f=salesField(),st=new Map(),ids=new Set(peers.map(p=>p.id));
+ RAW.forEach(r=>{if(!ids.has(r.custId))return;
+   if(r.axMajor+'|||'+r.axMiddle!==axKey)return;
+   const v=Number(r[f]||0);if(v<=0||ownedCodes.has(r.salesCode))return;
+   if(!st.has(r.salesCode))st.set(r.salesCode,{code:r.salesCode,displayCode:r.salesDisplayCode||r.salesCode,name:r.salesName,peerCount:0,peerSales:0,peers:[]});
+   const s=st.get(r.salesCode);
+   if(!s.peers.some(x=>x.id===r.custId)){s.peerCount++;s.peers.push({id:r.custId,name:CUSTOMERS.find(c=>c.id===r.custId).name,sales:v})}
+   else s.peers.find(x=>x.id===r.custId).sales+=v;
+   s.peerSales+=v});
+ return [...st.values()];
+}
+function recommended(axKey,r){
+ const owned=new Set(r.data[axKey].items.map(x=>x.code));
+ const same=peerStats(axKey,CUSTOMERS.filter(c=>c.industry===r.industry&&c.id!==r.id),owned);
+ const cross=peerStats(axKey,CUSTOMERS.filter(c=>c.industry!==r.industry),owned);
+ const avg=x=>x.peerSales/Math.max(1,x.peerCount),out=[];
+ const pick=(list,metric,source,priority)=>{
+   const remain=list.filter(x=>!out.some(y=>y.code===x.code));
+   if(!remain.length||out.length>=3)return;
+   const best=Math.max(...remain.map(metric));
+   remain.filter(x=>metric(x)===best).sort((a,b)=>a.name.localeCompare(b.name,'ko'))
+     .forEach(x=>{if(out.length<3)out.push({...x,source,priority})})};
+ pick(same,x=>x.peerCount,'same',1);pick(same,avg,'same',2);
+ pick(cross,x=>x.peerCount,'cross',3);pick(cross,avg,'cross',4);
+ return out;
+}
+
+/* ── 상태 ── */
+let MODE='service', TAB='ax', ROWS=[], TOT=null, INDS=[], PRODS=[], TAXO=[];
+const OPEN=new Set(); // 펼쳐진 업종 / 중분류 키
+function recalc(){
+  rebuildCatalogMeta();
+  ROWS=aggAll();TOT=aggTotal(ROWS);PRODS=aggProducts();
+  INDS=aggIndustry(ROWS).sort((a,b)=>indRank(a.industry)-indRank(b.industry));
+}
+const periodLabel=()=>YEAR==='2026'?'2026 YTD':'2025 연간';
+const isSvc=()=>MODE==='service';
+
+
+/* mockup.html의 커버리지 행과 동일한 표현: 막대+%, 화이트스페이스 배지, 클릭 시 드릴다운/미사용 고객 목록.
+   40% 미만이면 화이트스페이스로 표시 — bar()의 하드코딩 기준과 covHint 문구를 그대로 옮겼다. */
+const COV_WS=.4;
+/* 침투/미침투 그룹을 업종→고객 2단으로 묶어 보여준다(리프 세부상품 펼침 전용) */
+function penetrationGroup(label,list,cls){
+  if(!list.length)return '';
+  const byInd=new Map();
+  list.forEach(c=>{if(!byInd.has(c.industry))byInd.set(c.industry,[]);byInd.get(c.industry).push(c)});
+  const inds=[...byInd.keys()].sort((a,b)=>indRank(a)-indRank(b));
+  return `<div class="pen-group ${cls}"><div class="pen-label">${label} <b>${list.length}개사</b></div>
+    ${inds.map(ind=>`<div class="pen-ind"><span class="pen-ind-nm">${esc(ind)}</span>
+      <span class="pen-custs">${byInd.get(ind).sort((a,b)=>a.name.localeCompare(b.name,'ko'))
+        .map(c=>`<button class="chip" data-cust="${esc(c.id)}">${esc(c.name)}</button>`).join('')}</span></div>`).join('')}
+  </div>`;
+}
+function covRow(row,level,parentPath){
+  const path=[...parentPath,row.key],isLeaf=level===3;
+  const key=isLeaf?row.key:covNodeKey(level,path);
+  const open=isLeaf?COVEXP.has(key):COVOPEN.has(key);
+  const ratio=row.total?row.used/row.total:0,pct=Math.round(ratio*100),ws=ratio<COV_WS;
+  const opacity=Math.min(.28+ratio*1.1,.98);
+  // 막대는 순수 시각 요소로만 쓴다. 값(%)을 막대 안/밖으로 튀게 만들면 짧은 막대에서 흰 글씨가
+  // 채워지지 않은 배경에 걸쳐 안 보이는 문제가 생긴다. %는 항상 같은 자리(우측 count 칼럼)에 고정해
+  // 스캔 위치가 데이터값과 무관하게 일정하도록 한다.
+  const bar=`<div class="cov-bar"><i style="width:${Math.max(pct,3)}%;background:rgba(155,9,80,${opacity})"></i></div>`;
+  const det=(isLeaf&&open)?`<div class="cov-detail">
+      ${penetrationGroup('침투',row.usedIds,'used')}
+      ${penetrationGroup('미침투 (크로스셀 대상)',row.unusedIds,'unused')}
+    </div>`:'';
+  const statusNote=row.used===0?'선택 기간에 양수 매출이 없어 사용 고객사가 없습니다.':`선택 기간 양수 매출 고객 ${row.used}개사`;
+  const html=`<div class="cov-row level-${level}${ws?' whitespace':''}${!isLeaf?' drillable':''}" data-level="${level}" data-path="${esc(path.join('>'))}" title="${esc(row.name)} · ${statusNote}">
+    <div class="cov-name">${esc(row.name)}${row.catName?`<br><span class="cov-cat">${esc(row.catName)}</span>`:''}</div>
+    <div class="cov-rev">${fmtAmount(row.rev)}</div><div class="cov-avg">${fmtAmount(row.avgRev)}</div><div class="cov-coverage">${bar}<div class="cov-count"><b>${pct}%</b><small>${row.used}/${row.total}개사</small></div></div>
+    <div class="cov-flag">${open?'▲':'▼'}</div>${det}</div>`;
+  let kidsHtml='';
+  if(open&&!isLeaf){
+    const kids=covSortRows(covChildrenOf(ROWS,level,path),COVSORT);
+    kidsHtml=`<div class="cov-children">${kids.map(k=>covRow(k,level+1,path)).join('')}</div>`;
+  }
+  return html+kidsHtml;
+}
+
+/* KPI: 카탈로그 → KA 사용으로 좁히는 단계. 아래 탭 막대의 모수가 여기서 확정된다. */
+function renderKpi(){
+  $('pdT').textContent=periodLabel();
+  $('headCustCount').textContent=TOT.n;
+  $('custCountLabel').textContent=TOT.n;
+  $('cCust').innerHTML=`${TOT.n}<em>개사</em>`;
+  $('cRev').innerHTML=`${fmt0(TOT.salesTotal)}<em>억원</em>`;
+  $('cvKpi').innerHTML=`${TOT.catalog}<em>종 · 전체 상품 ${FULL_CATALOG_TOTAL}종 중</em>`;
+  $('cPen').innerHTML=`${fmtPct(TOT.walletShare)}<em>${TOT.walletValid}/${TOT.n}개사</em>`;
+
+  $('axAx').textContent=GRAN==='svc'
+    ? '세부상품별 매출·평균매출·커버리지입니다. 행을 누르면 미사용 고객을 확인할 수 있습니다.'
+    : 'AX 대분류·중분류별 매출·평균매출·커버리지입니다. 행을 누르면 하위 항목이 펼쳐집니다.';
+}
+
+/* 탭1: mockup.html의 '상품별 현황'과 동일한 커버리지 트리.
+   GRAN='cat' → 대분류(AX/Legacy)→중분류→세부상품 드릴다운. GRAN='svc' → 27개 상품 통합 평탄 리스트.
+   모든 레벨의 축은 "53개사 중 사용 고객사 수" — 대분류가 90%대로 뭉치는 것 자체는 문제가 아니라,
+   정렬(커버리지 낮은순)과 화이트스페이스 음영(40% 미만)으로 예외를 부각시키는 게 원본의 설계다. */
+let GRAN='cat',COVSORT='cov';
+const COVOPEN=new Set(),COVEXP=new Set(); // 펼쳐진 비-리프 노드 / 리프(세부상품) 노드
+/* 기본 화면에서는 대분류를 펼쳐 중분류(Infra/Application)까지만 보여준다. 세부상품 리프는 접힌 채 둔다. */
+function openToMidLevel(){
+  COVOPEN.clear();
+  axTopRows(ROWS).forEach(top=>COVOPEN.add(covNodeKey(1,[top.key])));
+}
+function renderAx(){
+  const rows=covSortRows(GRAN==='svc'?svcRowsFlat(ROWS):axTopRows(ROWS),COVSORT);
+  $('hbAx').innerHTML=rows.map(r=>covRow(r,GRAN==='svc'?3:1,[])).join('');
+  $('hbAx').onclick=e=>{
+    const chip=e.target.closest('.chip');
+    if(chip){showDetail(chip.dataset.cust);return}
+    const rowEl=e.target.closest('.cov-row');if(!rowEl)return;
+    const level=Number(rowEl.dataset.level),path=rowEl.dataset.path.split('>');
+    if(level===3){const k=path[path.length-1];COVEXP.has(k)?COVEXP.delete(k):COVEXP.add(k)}
+    else{const k=covNodeKey(level,path);COVOPEN.has(k)?COVOPEN.delete(k):COVOPEN.add(k)}
+    renderAx()};
+}
+
+/* ── 행 지표: 월렛쉐어 + 매출 + 사용상품 + AX Infra/App + Legacy Infra/App ──
+   AX/Legacy 네 칸만 모드에 따라 사용상품비중과 매출을 전환한다. */
+/* 헤더는 AX / Legacy 대분류를 위에 얹어 계층을 드러낸다 */
+const g5Head=()=>`<div class="g5-head"><span>고객</span>
+  <span>월렛쉐어</span>
+  <span>매출</span>
+  <span>전체상품</span>
+  <span class="g5-rule"></span>
+  <span><span class="mj">AX</span>Infra<em>${isSvc()?`${capByAx[AXKEYS[0]]}개`:''}</em></span>
+  <span><span class="mj blank">·</span>Application<em>${isSvc()?`${capByAx[AXKEYS[1]]}개`:''}</em></span>
+  <span class="g5-rule"></span>
+  <span><span class="mj">Legacy</span>Infra<em>${isSvc()?`${capByAx[AXKEYS[2]]}개`:''}</em></span>
+  <span><span class="mj blank">·</span>Application<em>${isSvc()?`${capByAx[AXKEYS[3]]}개`:''}</em></span>
+  </div>`;
+
+/* 히트맵 셀 — mockup.html의 표현을 그대로 차용.
+   배경 농도 alpha = 0.28 + ratio*1.1 (최대 .98), 값이 0이면 빗금 처리.
+   사용상품비중: ratio = 사용/카탈로그 개수. 매출: ratio = 해당 칸 최댓값 대비(칸끼리 비교되도록). */
+let G5MAX={};
+function setG5Max(list){G5MAX={tot:Math.max(1,...list.map(x=>x.salesTotal))};
+  AXKEYS.forEach(k=>G5MAX[k]=Math.max(1,...list.map(x=>x.d[k].sales)))}
+
+function g5Cell(used,cap,sales,maxSales){
+  const v=isSvc()?used:sales;
+  if(!v)return '<span class="g5-c zero">-</span>';
+  const ratio=isSvc()?used/Math.max(1,cap):sales/Math.max(1,maxSales);
+  const a=Math.min(.28+ratio*1.1,.98);
+  const txt=isSvc()?`${used}/${cap}`:fmtAmount(sales);
+  return `<span class="g5-c" style="background:rgba(155,9,80,${a});color:${a>.45?'#fff':'#9b0950'}">${txt}</span>`;
+}
+function g5Product(used,cap){
+  if(!used)return '<span class="g5-metric products">-</span>';
+  return `<span class="g5-metric products" title="사용상품 ${used}/${cap}">${used}/${cap}</span>`;
+}
+/* d: {axKey:{used,cap,sales}} 형태 · usedTotal/salesTotal 보유 객체 */
+function g5Row(o){
+  const {lv=1,name,sub='',wallet=null,d,usedTotal,salesTotal,tap=false,open=false,key='',tree=false,custId=''}=o;
+  const El=tap?'button':'div';
+  const attr=tap?` data-k="${esc(key)}" aria-expanded="${open}"`:(custId?` data-cust="${esc(custId)}"`:'');
+  const capTotal=CATALOG_TOTAL;
+  return `<${El} class="g5 lv${lv}${open?' open':''}"${attr}>
+    <span class="g5-nm">${tap?'<span class="ar">›</span>':tree?'<span class="tree">└</span>':''}
+      <b>${esc(name)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span>
+    <span class="g5-metric wallet">${fmtPct(wallet)}</span>
+    <span class="g5-metric revenue">${fmtAmount(salesTotal)}</span>
+    ${g5Product(usedTotal,capTotal)}
+    <span class="g5-rule"></span>
+    ${AXKEYS.slice(0,2).map(k=>g5Cell(d[k].used,d[k].cap,d[k].sales,G5MAX[k])).join('')}
+    <span class="g5-rule"></span>
+    ${AXKEYS.slice(2).map(k=>g5Cell(d[k].used,d[k].cap,d[k].sales,G5MAX[k])).join('')}
+  </${El}>`;
+}
+/* 업종 소계는 고객 평균이 아니라 '업종이 쓰는 상품 개수'(codes)를 쓴다.
+   5칸 각 셀이 자기 중분류 카탈로그를 모수로 갖기 때문에 85~96%로 뭉치던 문제가 셀 단위로 분산된다. */
+function indDataFor(g){
+  const list=ROWS.filter(a=>a.industry===g.industry),d={};
+  AXKEYS.forEach(k=>{const cs=new Set();let sales=0;
+    list.forEach(a=>{a.data[k].codes.forEach(c=>cs.add(c));sales+=a.data[k].sales});
+    d[k]={used:cs.size,cap:capByAx[k],sales}});
+  return d;
+}
+function renderInd(){
+  const groups=INDS.map(g=>({g,d:indDataFor(g),salesTotal:g.salesTotal}));
+  // 업종 막대는 업종끼리, 고객 막대는 53개사끼리 비교해야 한다(업종 소계는 고객보다 한 자릿수 크다)
+  const custAll=ROWS.map(a=>({d:a.data,salesTotal:a.salesTotal}));
+  let html=g5Head();
+  for(const {g,d} of groups){
+    const op=OPEN.has(g.industry);
+    setG5Max(groups);
+    html+=g5Row({lv:1,name:g.industry,sub:`${g.n}개사`,wallet:g.walletShare,d,usedTotal:g.codes.size,salesTotal:g.salesTotal,
+      tap:true,open:op,key:g.industry});
+    const kids=ROWS.filter(a=>a.industry===g.industry)
+      .sort((a,b)=>(isSvc()?b.usedTotal-a.usedTotal:b.salesTotal-a.salesTotal)||a.name.localeCompare(b.name,'ko'));
+    setG5Max(custAll);
+    html+=`<div class="hb-kids">${kids.map(a=>g5Row({lv:2,name:a.name,wallet:a.wallet,d:a.data,
+      usedTotal:a.usedTotal,salesTotal:a.salesTotal,tree:true,custId:a.id})).join('')}</div>`;
+  }
+  $('hbInd').innerHTML=html;
+  $('toggleAll').textContent=INDS.every(g=>OPEN.has(g.industry))?'전체 접기':'전체 펼치기';
+  bindG5('hbInd',renderInd);
+}
+
+/* 탭3: 53개사 단일 정렬 */
+function renderCust(){
+  const list=ROWS.slice().sort((a,b)=>(isSvc()?b.usedTotal-a.usedTotal:b.salesTotal-a.salesTotal)||a.name.localeCompare(b.name,'ko'));
+  setG5Max(list.map(a=>({d:a.data,salesTotal:a.salesTotal})));
+  $('hbCust').innerHTML=g5Head()+list.map(a=>g5Row({lv:1,name:a.name,sub:a.industry,wallet:a.wallet,
+    d:a.data,usedTotal:a.usedTotal,salesTotal:a.salesTotal,custId:a.id})).join('');
+  bindG5('hbCust',renderCust);
+}
+function bindG5(id,rerenderFn){
+  $(id).querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;OPEN.has(k)?OPEN.delete(k):OPEN.add(k);rerenderFn()});
+  $(id).querySelectorAll('[data-cust]').forEach(b=>b.onclick=()=>showDetail(b.dataset.cust));
+}
+
+/* ── 고객 상세 ── */
+let CUR=null;                    // 현재 보고 있는 고객 id
+const RECOPEN=new Set();         // 추천 상품 클릭 시 펼쳐지는 '쓰는 고객사' 목록 상태
+const compareScreens=['vTotal','vDetail','vPeerSelect','vPeerResult','vIndustryResult'];
+function showScreen(id){compareScreens.forEach(v=>$(v).classList.toggle('hidden',v!==id));scrollTo(0,0)}
+function showDetail(id){if(!id)return;CUR=id;RECOPEN.clear();renderDetail();showScreen('vDetail')}
+function renderDetail(){
+  const r=aggCust(CUR);
+  $('dtName').textContent=r.name;$('dtInd').textContent=r.industry;$('dtPeriod').textContent=periodLabel();
+  const recoTotal=AXKEYS.reduce((s,k)=>s+recommended(k,r).length,0);
+  $('dtUsed').innerHTML=`${r.usedTotal}<em> / ${r.capTotal}개</em>`;
+  $('dtUsedBar').style.width=Math.round(r.usedTotal/r.capTotal*100)+'%';
+  $('dtUnused').innerHTML=`${r.capTotal-r.usedTotal}<em>종</em>`;
+  $('dtReco').innerHTML=`${recoTotal}<em>종</em>`;
+  $('dtWallet').innerHTML=`${fmtPct(r.wallet)}<em>${r.wallet==null?'WLSR_YN=Y 유효 행 없음':'고객 기준'}</em>`;
+  $('dtSales').innerHTML=`${fmtAmount(r.salesTotal)}`;
+  $('dtRecoBase').textContent=TOT.n;
+  $('dtBlocks').innerHTML=axMajors().map(m=>`<div class="dt-major">${m.name}</div>`
+    +m.children.map(k=>dtBlock(k,r)).join('')).join('');
+  $('dtBlocks').onclick=e=>{
+    const chip=e.target.closest('[data-peer]');
+    if(chip){showDetail(chip.dataset.peer);return}
+    const row=e.target.closest('[data-code]');
+    if(!row)return;
+    const c=row.dataset.code;RECOPEN.has(c)?RECOPEN.delete(c):RECOPEN.add(c);renderDetail()};
+}
+function dtBlock(axKey,r){
+  const d=r.data[axKey],rec=recommended(axKey,r);
+  const used=d.items.length
+    ? d.items.map(x=>`<div class="dt-r used"><span class="nm">${esc(x.name)}<small>${esc(x.displayCode||x.code)}</small></span>
+        <span class="val">${fmtAmount(x.sales)}</span></div>`).join('')
+    : '<div class="dt-r empty">사용 중인 상품 없음</div>';
+  const reco=rec.length
+    ? rec.map(x=>{const avg=x.peerSales/Math.max(1,x.peerCount),op=RECOPEN.has(x.code);
+        return `<button class="dt-r rec" data-code="${esc(x.code)}" aria-expanded="${op}">
+          <span class="nm">${esc(x.name)}<small>${esc(x.displayCode||x.code)}</small></span>
+          <span style="display:flex;align-items:center;gap:7px;flex:none">
+            <span class="dt-meta">${x.priority}순위 · ${x.source==='same'?'동종':'타업종'} ${x.peerCount}개사 · 평균 ${fmtAmount(avg)}</span>
+            <span class="dt-badge">기회</span><span style="color:var(--u-primary);font-size:12px">${op?'▲':'▼'}</span></span>
+          ${op?`<span class="dt-peers">${x.peers.sort((a,b)=>b.sales-a.sales)
+            .map(p=>`<span class="chip" data-peer="${esc(p.id)}">${esc(p.name)} <small>${fmtAmount(p.sales)}</small></span>`).join('')}</span>`:''}
+  </button>`}).join('')
+    : '<div class="dt-r empty">추천 가능한 미사용 상품 없음</div>';
+  return `<div class="dt-blk">
+    <h3>${esc(axLabel(axKey))} <small>${d.used}/${d.cap}개 사용 · 매출 ${fmtAmount(d.sales)}</small></h3>
+    <div class="dt-grid">
+      <div class="dt-box"><div class="dt-box-h">사용 중 상품 ${d.items.length}개</div>${used}</div>
+      <div class="dt-box reco"><div class="dt-box-h">추천 상품 ${rec.length}개</div>${reco}</div>
+    </div></div>`;
+}
+
+/* ── 비교 화면: 상세 고객에서 같은 업종·같은 업종 고객으로 내려간다. ── */
+let COMPARE_BASE_ID=null;
+let PEER_COMPARE_IDS=[];
+function customerRow(id){return ROWS.find(x=>x.id===id)}
+function renderIndustryCompare(id){
+  const target=CUSTOMERS.find(c=>c.id===id),targetRow=customerRow(id);
+  if(!target||!targetRow)return;
+  const peers=CUSTOMERS.filter(c=>c.industry===target.industry),allRows=ROWS;
+  const blocks=AXKEYS.map(axKey=>{
+    const rows=PRODS.filter(p=>p.axKey===axKey).map(p=>({
+      ...p,
+      allOwners:allRows.filter(r=>r.data[axKey].codes.has(p.code)).length,
+      peerOwners:peers.filter(c=>customerRow(c.id)?.data[axKey].codes.has(p.code)).length,
+      owned:targetRow.data[axKey].codes.has(p.code)
+    })).filter(p=>p.allOwners||p.peerOwners||p.owned).sort((a,b)=>b.peerOwners-a.peerOwners||b.allOwners-a.allOwners||a.name.localeCompare(b.name,'ko'));
+    if(!rows.length)return '';
+    return `<div class="industry-cat"><div class="industry-top"><h4>${esc(axLabel(axKey))}</h4><div class="industry-head"><span>전체 KA</span><span>동종 업종</span><span class="industry-target-head">${esc(target.name)}</span></div></div>${rows.map(p=>`<div class="industry-row"><span class="industry-product">${esc(p.name)} <small>${esc(p.code.split('|||')[0])}</small></span><span class="industry-stats">${p.allOwners?`<b>${p.allOwners}/${allRows.length}</b> <small>(${Math.round(p.allOwners/Math.max(1,allRows.length)*100)}%)</small>`:'<span class="industry-missing">미침투</span>'}</span><span class="industry-stats industry-stats-common">${p.peerOwners?`<b>${p.peerOwners}/${peers.length}</b> <small>(${Math.round(p.peerOwners/Math.max(1,peers.length)*100)}%)</small>`:'<span class="industry-missing">미침투</span>'}</span><span class="industry-stats">${p.owned?'<span class="industry-owned">침투</span>':'<span class="industry-missing">미침투</span>'}</span></div>`).join('')}</div>`;
+  }).join('');
+  $('industryCompareView').innerHTML=`<div class="industry-view"><h3>${esc(target.industry)} 업종 상품 현황</h3><div class="industry-meta">업종 고객 ${peers.length}개사 · 기준 고객 ${esc(target.name)} · ${periodLabel()}</div><div class="industry-note">전체 KA는 ${allRows.length}개사, 동종 업종은 ${peers.length}개사 기준입니다. 기준 고객의 상품 보유 여부를 함께 확인할 수 있습니다.</div>${blocks}</div>`;
+  showScreen('vIndustryResult');
+}
+function renderPeerSelect(id){
+  const target=CUSTOMERS.find(c=>c.id===id);if(!target)return;
+  COMPARE_BASE_ID=id;
+  const peers=CUSTOMERS.filter(c=>c.industry===target.industry);
+  $('peerChecks').innerHTML=peers.map(c=>{const a=customerRow(c.id);return `<label class="compare-check"><input type="checkbox" value="${esc(c.id)}" ${c.id===id?'checked':''}><span class="compare-customer">${esc(c.name)}</span><span class="compare-meta">${a?`${a.usedTotal}종 · ${fmtAmount(a.salesTotal)}`:''}</span></label>`}).join('');
+  $('peerCompareWarn').style.display='none';
+  showScreen('vPeerSelect');
+}
+function renderPeerCompare(ids){
+  const selected=ids.map(customerRow).filter(Boolean),n=selected.length;
+  if(n<2||n>4)return;
+  PEER_COMPARE_IDS=ids.slice();
+  let body='',commonTotal=0,partialTotal=0;
+  AXKEYS.forEach(axKey=>{
+    const rows=PRODS.filter(p=>selected.some(r=>r.data[axKey].codes.has(p.code))).map(p=>({...p,owners:selected.filter(r=>r.data[axKey].codes.has(p.code)).length})).sort((a,b)=>b.owners-a.owners||a.name.localeCompare(b.name,'ko'));
+    if(!rows.length)return;
+    const common=rows.filter(p=>p.owners===n),partial=rows.filter(p=>p.owners<n);commonTotal+=common.length;partialTotal+=partial.length;
+    const rowHtml=(p,cls)=>`<div class="peer-row ${cls}"><span class="peer-product">${esc(p.name)} <small>${esc(p.code.split('|||')[0])}</small></span>${selected.map(r=>{const item=aggCust(r.id).data[axKey].items.find(x=>x.code===p.code);return `<span class="peer-sales ${item?'own':'miss'}">${item?fmtAmount(item.sales):'미침투'}</span>`}).join('')}</div>`;
+    const headers=selected.map(r=>`<span class="peer-head ${r.id===COMPARE_BASE_ID?'me':''}">${esc(r.name)}<small>${esc(r.tier)}</small></span>`).join('');
+    body+=`<div class="peer-cat"><div class="peer-top"><h4>${esc(axLabel(axKey))}</h4>${headers}</div>${common.map(p=>rowHtml(p,'common')).join('')}${partial.map(p=>rowHtml(p,'partial')).join('')}<div class="peer-row peer-subtotal"><span>${esc(axLabel(axKey))} 소계</span>${selected.map(r=>`<span>${fmtAmount(r.data[axKey].sales)}</span>`).join('')}</div></div>`;
+  });
+  body+=`<div class="peer-row peer-subtotal peer-grand-total"><span>총 매출</span>${selected.map(r=>`<span>${fmtAmount(r.salesTotal)}</span>`).join('')}</div>`;
+  $('peerComparePeriod').textContent=periodLabel();
+  $('peerCompareSummary').textContent=`선택 고객 ${n}개사 · 공통 보유 상품 ${commonTotal}종 · 차이 상품 ${partialTotal}종`;
+  $('peerCompareView').innerHTML=`<div class="peer-grid" style="--peer-cols:220px repeat(${n},${Math.max(150,Math.min(210,Math.round(700/n)))}px);--peer-width:${220+n*Math.max(150,Math.min(210,Math.round(700/n)))}px">${body}</div>`;
+  showScreen('vPeerResult');
+}
+
+/* ── 상품분류체계 ── */
+function taxonomyRows(){
+  const order={AX:0,Legacy:1};
+  return TAXO.slice().sort((a,b)=>(order[a.axMajor]??9)-(order[b.axMajor]??9)||a.axMiddle.localeCompare(b.axMiddle,'ko')||a.major.localeCompare(b.major,'ko')||a.middle.localeCompare(b.middle,'ko')||a.salesName.localeCompare(b.salesName,'ko'));
+}
+function renderTaxonomy(){
+  const rows=taxonomyRows();
+  $('taxonomyHead').innerHTML='<tr><th>AX구분(대)</th><th>AX구분(중)</th><th>중분류</th><th>매출명</th><th>고객소통명</th></tr>';
+  const majorSpan=[],middleSpan=[];
+  for(let i=0;i<rows.length;i++){
+    if(i>0&&rows[i].axMajor===rows[i-1].axMajor)majorSpan[i]=0;
+    else{let n=1;while(i+n<rows.length&&rows[i+n].axMajor===rows[i].axMajor)n++;majorSpan[i]=n;}
+    const middleKey=`${rows[i].axMajor}|||${rows[i].axMiddle}`;
+    const prev=i?`${rows[i-1].axMajor}|||${rows[i-1].axMiddle}`:'';
+    if(i>0&&middleKey===prev)middleSpan[i]=0;
+    else{let n=1;while(i+n<rows.length&&`${rows[i+n].axMajor}|||${rows[i+n].axMiddle}`===middleKey)n++;middleSpan[i]=n;}
+  }
+  $('taxonomyBody').innerHTML=rows.map((r,i)=>{
+    const middleKey=`${r.axMajor}|||${r.axMiddle}`;
+    const major=majorSpan[i]?`<td class="tax-major" data-tax-major="${esc(r.axMajor)}" rowspan="${majorSpan[i]}">${esc(r.axMajor)}</td>`:'';
+    const axm=middleSpan[i]?`<td class="tax-middle" data-tax-middle="${esc(middleKey)}" rowspan="${middleSpan[i]}">${esc(r.axMiddle)}</td>`:'';
+    return `<tr data-tax-major="${esc(r.axMajor)}" data-tax-middle="${esc(middleKey)}">${major}${axm}<td>${esc(r.middle||r.salesName)}</td><td>${esc(r.salesName)}</td><td>${esc(r.custComm||'-')}</td></tr>`;
+  }).join('');
+  const body=$('taxonomyBody');
+  const clear=()=>body.querySelectorAll('.tax-active').forEach(cell=>cell.classList.remove('tax-active'));
+  body.onmouseover=e=>{
+    const row=e.target.closest('tr');if(!row)return;
+    clear();
+    body.querySelectorAll(`[data-tax-major="${row.dataset.taxMajor}"]`).forEach(cell=>cell.classList.add('tax-active'));
+    body.querySelectorAll(`[data-tax-middle="${row.dataset.taxMiddle}"]`).forEach(cell=>cell.classList.add('tax-active'));
+  };
+  body.onmouseleave=clear;
+}
+
+/* ── CSV 업로드·HTML 저장 ── */
+const uploadRequired=['고객ID','고객명','Tier','업종','매출코드','매출명','25년매출','26년매출','대분류','중분류','AX구분_대','AX구분_중'];
+function parseCsvText(text){
+  const rows=[];let row=[],cell='',quoted=false;const input=text.replace(/^\uFEFF/,'');
+  for(let i=0;i<input.length;i++){
+    const ch=input[i];
+    if(quoted){if(ch==='"'&&input[i+1]==='"'){cell+='"';i++;}else if(ch==='"')quoted=false;else cell+=ch;}
+    else if(ch==='"'&&cell==='')quoted=true;
+    else if(ch===','){row.push(cell);cell='';}
+    else if(ch==='\n'){row.push(cell.replace(/\r$/,''));rows.push(row);row=[];cell='';}
+    else if(ch==='\r'){}
+    else cell+=ch;
+  }
+  if(cell.length||row.length){row.push(cell);rows.push(row);}
+  return rows.filter(r=>r.some(x=>String(x??'').trim()!=='')).map(r=>r.map(x=>String(x??'').trim()));
+}
+function uploadNumber(v){const n=Number(String(v??'').replace(/,/g,'').trim());return Number.isFinite(n)?n:0}
+function normalizeUploadProduct(code,name){return code==='M31'?'M2M차량':name}
+function parseUploadText(text){
+  const matrix=parseCsvText(text);if(!matrix.length)throw Error('CSV를 읽을 수 없습니다.');
+  const headers=matrix[0],missing=uploadRequired.filter(x=>!headers.includes(x));
+  if(missing.length)throw Error(`필수 컬럼 누락: ${missing.join(', ')}`);
+  const ix=Object.fromEntries(headers.map((h,i)=>[h,i]));const get=(r,k)=>r[ix[k]]??'';
+  return matrix.slice(1).filter(r=>String(get(r,'고객ID')).trim()).map(r=>{
+    const code=String(get(r,'매출코드')).trim(),name=normalizeUploadProduct(code,String(get(r,'매출명')).trim());
+    return {custId:String(get(r,'고객ID')).trim(),name:String(get(r,'고객명')).trim(),tier:String(get(r,'Tier')).trim(),industry:String(get(r,'업종')).trim(),salesCode:`${code}|||${name}`,salesDisplayCode:code,salesName:name,custComm:String(get(r,'고객소통명')).trim(),sales2025:uploadNumber(get(r,'25년매출')),sales2026:uploadNumber(get(r,'26년매출')),major:String(get(r,'대분류')).trim(),middle:String(get(r,'중분류')).trim(),axMajor:String(get(r,'AX구분_대')).trim(),axMiddle:String(get(r,'AX구분_중')).trim(),aiStack:String(get(r,'AI Stack')).trim()};
+  });
+}
+function applyUploadedRows(rows,fileName){
+  if(!rows.length)throw Error('고객·상품 데이터가 없습니다.');
+  const cs=[],seenCustomers=new Set();rows.forEach(r=>{if(seenCustomers.has(r.custId))return;seenCustomers.add(r.custId);cs.push({idx:cs.length+1,id:r.custId,name:r.name,tier:r.tier,industry:r.industry})});
+  const products=[],seenProducts=new Set();rows.forEach(r=>{if(seenProducts.has(r.salesCode))return;seenProducts.add(r.salesCode);products.push({s:r.salesCode,code:r.salesDisplayCode,name:r.salesName,custComm:r.custComm,major:r.major,middle:r.middle,aiStack:r.aiStack,axM:r.axMajor,axm:r.axMiddle})});
+  CUSTOMERS=cs;RAW=rows;CATALOG=products;OPEN.clear();COVOPEN.clear();COVEXP.clear();recalc();openToMidLevel();setTab('ax');showScreen('vTotal');$('dataStatus').textContent=`${fileName} · ${cs.length}개 고객 적용`;
+}
+function showUploadDone(message){$('uploadDoneMessage').innerHTML=message;$('uploadDoneModal').classList.remove('hidden')}
+function saveCurrentFile(){
+  const html=document.documentElement.outerHTML;
+  const replace=(source,name,value)=>source.replace(new RegExp(`let ${name}=\\[[\\s\\S]*?\\];`),`let ${name}=${JSON.stringify(value)};`);
+  let out=replace(html,'CATALOG',CATALOG);out=replace(out,'CUSTOMERS',CUSTOMERS);out=replace(out,'RAW',RAW);out=replace(out,'WALLETS',WALLETS);out=replace(out,'TAXO',TAXO);
+  const blob=new Blob(['<!doctype html>\n'+out],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mockup_v2.html';a.click();URL.revokeObjectURL(a.href);
+}
+
+/* 바인딩 */
+function rerender(){renderKpi();({ax:renderAx,ind:renderInd,cust:renderCust})[TAB]()}
+const PANEL={ax:'pnAx',ind:'pnInd',cust:'pnCust'};
+function setTab(t){TAB=t;
+  [...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  Object.entries(PANEL).forEach(([k,id])=>$(id).classList.toggle('hidden',k!==t));
+  const modeBar=$('modeBar');
+  if(t==='ind')$('indActions').prepend(modeBar);
+  if(t==='cust')$('custActions').prepend(modeBar);
+  modeBar.style.display=t==='ax'?'none':'flex';
+  rerender()}
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b)setTab(b.dataset.tab)};
+/* 기간·모드 변경은 상세 화면에도 반영한다(상세를 보는 중에 연도를 바꿔도 값이 갱신되도록). */
+const refreshAll=()=>{rerender();if(CUR&&!$('vDetail').classList.contains('hidden'))renderDetail()};
+$('segYear').onclick=e=>{const b=e.target.closest('button');if(!b)return;YEAR=b.dataset.y;
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('active',x===b));recalc();refreshAll()};
+$('segMode').onclick=e=>{const b=e.target.closest('button');if(!b)return;MODE=b.dataset.m;
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('active',x===b));refreshAll()};
+$('segGran').onclick=e=>{const b=e.target.closest('button');if(!b)return;GRAN=b.dataset.g;
+  COVEXP.clear();if(GRAN==='cat')openToMidLevel();else COVOPEN.clear();
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('active',x===b));renderKpi();renderAx()};
+/* 펼치기/접기 하나로 토글 — 전체를 펼치면 목록이 길어져 하단 버튼은 찾기 어렵다 */
+$('toggleAll').onclick=()=>{
+  const allOpen=INDS.every(g=>OPEN.has(g.industry));
+  OPEN.clear();
+  if(!allOpen)INDS.forEach(g=>OPEN.add(g.industry));
+  renderInd()};
+$('dtBack').onclick=()=>showScreen('vTotal');
+$('dtCompareIndustry').onclick=()=>{COMPARE_BASE_ID=CUR;renderIndustryCompare(CUR)};
+$('dtComparePeers').onclick=()=>renderPeerSelect(CUR);
+$('industryResultBack').onclick=()=>showDetail(COMPARE_BASE_ID||CUR);
+$('peerSelectBack').onclick=()=>showDetail(COMPARE_BASE_ID||CUR);
+$('peerResultBack').onclick=()=>renderPeerSelect(COMPARE_BASE_ID||CUR);
+$('peerCompareGo').onclick=()=>{
+  const ids=[...$('peerChecks').querySelectorAll('input:checked')].map(x=>x.value);
+  if(ids.length<2||ids.length>4){$('peerCompareWarn').style.display='block';return;}
+  $('peerCompareWarn').style.display='none';renderPeerCompare(ids);
+};
+$('taxonomyBtn').onclick=()=>{renderTaxonomy();$('taxonomyModal').classList.remove('hidden')};
+$('taxonomyClose').onclick=()=>$('taxonomyModal').classList.add('hidden');
+$('taxonomyModal').onclick=e=>{if(e.target.id==='taxonomyModal')$('taxonomyModal').classList.add('hidden')};
+$('uploadBtn').onclick=()=>$('csvFile').click();
+$('csvFile').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{applyUploadedRows(parseUploadText(await file.text()),file.name);showUploadDone(`${esc(file.name)} 업로드 완료되었습니다.<br>현재 화면에 적용했습니다.`)}
+  catch(err){alert(err.message);$('dataStatus').textContent='CSV 업로드 실패'}
+  e.target.value='';
+};
+$('uploadDoneClose').onclick=()=>$('uploadDoneModal').classList.add('hidden');
+$('uploadDoneModal').onclick=e=>{if(e.target.id==='uploadDoneModal')$('uploadDoneModal').classList.add('hidden')};
+$('saveFileBtn').onclick=saveCurrentFile;
+
+recalc();openToMidLevel();setTab('ax');showScreen('vTotal');
+
+</script></body></html>
