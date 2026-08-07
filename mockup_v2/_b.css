@@ -1,0 +1,64 @@
+/* ── Option B: 도넛/바 차트 히어로 + 업종 카드 그리드 ── */
+.hero{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:center;margin:20px 0 10px;
+  background:var(--u-darkest);color:var(--u-on-dark);border-radius:16px;padding:28px 32px}
+.donut{position:relative;width:236px;height:236px;margin:0 auto}
+.donut svg{transform:rotate(-90deg);display:block}
+.donut .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut .mid b{font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.donut .mid span{font-size:12px;color:#c9c7c0;margin-top:6px}
+.donut .mid em{font-style:normal;font-size:13px;color:#ff8ec4;font-weight:700;margin-top:3px}
+.hero h2{color:var(--u-on-dark);font-size:15px;margin-bottom:14px;font-weight:500}
+.hero h2 b{font-size:18px}
+.herostats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.herostats div{background:rgba(250,249,245,.07);border-radius:12px;padding:14px 16px}
+.herostats small{display:block;font-size:12px;color:#c9c7c0}
+.herostats b{display:block;font-size:24px;margin-top:5px;font-variant-numeric:tabular-nums}
+.herostats b em{font-style:normal;font-size:13px;color:#c9c7c0;font-weight:500}
+.herolegend{display:flex;gap:18px;margin-top:16px;font-size:12px;color:#c9c7c0;flex-wrap:wrap}
+.herolegend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* AX 가로 바 차트 */
+.bars{margin-top:8px}
+.barrow{display:grid;grid-template-columns:150px 1fr 168px;gap:14px;align-items:center;padding:11px 4px;border-bottom:1px solid var(--u-border)}
+.barrow:last-child{border-bottom:0}
+.barrow .nm{font-size:13px;font-weight:700}
+.barrow .tr{height:22px;border-radius:6px;background:var(--u-surface-sub);border:1px solid var(--u-border);overflow:hidden;position:relative}
+.barrow .tr i{display:block;height:100%;border-radius:5px 0 0 5px}
+.barrow .tr span{position:absolute;top:0;left:9px;line-height:22px;font-size:12px;font-weight:700}
+.barrow .mt{font-size:12px;color:var(--u-onvariant);text-align:right}
+
+/* 업종 카드 그리드 */
+.indgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+.indcard{border:1px solid var(--u-border);border-radius:14px;background:var(--u-surface);padding:18px 20px;cursor:pointer;
+  text-align:left;font-family:inherit;transition:border-color .15s,box-shadow .15s,transform .12s}
+.indcard:hover{border-color:var(--u-primary);box-shadow:0 4px 14px rgba(185,0,100,.10);transform:translateY(-2px)}
+.indcard:focus-visible{outline:2px solid var(--u-primary);outline-offset:2px}
+.indcard .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.indcard .t b{font-size:17px}
+.indcard .t span{font-size:12px;color:var(--u-onvariant)}
+.indcard .ring{display:flex;align-items:center;gap:14px;margin-top:14px}
+.indcard .ring svg{flex:0 0 auto;transform:rotate(-90deg)}
+.indcard .ring .v b{font-size:22px;font-variant-numeric:tabular-nums;display:block;line-height:1.1}
+.indcard .ring .v small{font-size:12px;color:var(--u-onvariant)}
+.indcard .kv{margin-top:14px;padding-top:12px;border-top:1px solid var(--u-border);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.indcard .kv div small{display:block;font-size:12px;color:var(--u-onvariant)}
+.indcard .kv div b{font-size:15px;font-variant-numeric:tabular-nums}
+.indcard .go{margin-top:12px;font-size:12px;color:var(--u-primary);font-weight:700}
+
+.actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+
+/* 고객 카드 리스트 (STEP3 / 전체) */
+.clist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:6px}
+.crow{border:1px solid var(--u-border);border-radius:12px;padding:14px 16px;background:var(--u-surface);display:grid;
+  grid-template-columns:34px 1fr 170px;gap:14px;align-items:center}
+.crow .rk{font-size:13px;font-weight:700;color:var(--u-outline);text-align:center;font-variant-numeric:tabular-nums}
+.crow .nm b{font-size:15px;display:block}
+.crow .nm .mini{display:flex;gap:4px;margin-top:8px}
+.crow .nm .mini i{height:8px;border-radius:3px;flex:1}
+.crow .nm .lab{font-size:12px;color:var(--u-onvariant);margin-top:6px}
+.crow .rt{text-align:right}
+.crow .rt b{font-size:19px;font-variant-numeric:tabular-nums;display:block}
+.crow .rt small{font-size:12px;color:var(--u-onvariant)}
+.crow .rt .g{height:7px;border-radius:4px;background:var(--u-border);overflow:hidden;margin-top:7px}
+.crow .rt .g i{display:block;height:100%;background:var(--u-primary);border-radius:4px}
+@media(max-width:1000px){.hero{grid-template-columns:1fr}.indgrid,.clist{grid-template-columns:1fr}}

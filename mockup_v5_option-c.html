@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>월렛쉐어 시안 C — 히트맵 매트릭스</title>
+<style>
+:root{
+  --u-bg:#f4f3ef;--u-surface:#fff;--u-surface-sub:#fafaf9;--u-surface-head:#f5f0e8;
+  --u-carbon:#1c1b1b;--u-onvariant:#5c5a54;--u-outline:#8a8880;
+  --u-border:#e9e8e3;--u-border-strong:#d4d3cc;
+  --u-primary:#b90064;--u-primary-tint:rgba(185,0,100,.04);--u-primary-tint-strong:rgba(185,0,100,.08);
+  --u-on-primary:#faf9f5;--u-darkest:#181715;--u-on-dark:#faf9f5;
+  --u-amber:#d97706;--u-amber-tint:#fdf6ee;--u-teal:#0d9488;--u-teal-tint:#edf6f4;
+}
+*{box-sizing:border-box}
+body{font-family:Pretendard,-apple-system,'Apple SD Gothic Neo',sans-serif;background:var(--u-bg);margin:0;padding:40px 24px;color:var(--u-carbon);font-size:16px}
+.screen{max-width:1280px;margin:0 auto 28px;background:var(--u-surface);border-radius:16px;padding:32px 36px;box-shadow:0 1px 2px rgba(28,27,27,.03)}
+.label{font-size:12px;color:var(--u-onvariant);margin-bottom:14px;font-weight:500}
+.detail-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:1080px;margin:0 auto}
+.name{font-size:20px;font-weight:700}
+.btn{height:38px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;color:var(--u-carbon);cursor:pointer;font-family:inherit}
+.b-period{font-size:12px;color:var(--u-primary);background:var(--u-primary-tint-strong);border-radius:999px;padding:3px 10px;font-weight:700}
+.wrap{max-width:1080px;margin:0 auto}
+.block{margin:26px 0 0}
+.block h3{font-size:16px;font-weight:700;margin:0 0 4px}
+.block .sub{font-size:13px;color:var(--u-onvariant);margin:0 0 12px}
+.b-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.seg{display:inline-flex;border:1px solid var(--u-border);border-radius:10px;overflow:hidden;gap:6px;padding:3px;background:var(--u-surface)}
+.seg button{height:36px;border:0;background:none;padding:0 16px;color:var(--u-onvariant);cursor:pointer;font-size:13px;font-family:inherit;border-radius:8px}
+.seg button.active{color:var(--u-primary);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--u-primary)}
+.tobe-tag{font-size:12px;font-weight:700;color:var(--u-amber);background:var(--u-amber-tint);border:1px solid var(--u-amber);border-radius:999px;padding:2px 9px;margin-left:8px}
+
+/* KPI */
+.b-detail-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px auto}
+.card{background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:14px;padding:16px}
+.card.dark{background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}
+.card small{color:var(--u-onvariant);font-size:12px;display:block}
+.card.dark small{color:#c9c7c0}
+.card b{display:block;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}
+.card-note{margin-top:6px;color:var(--u-outline)!important;line-height:1.45}
+
+/* 히트맵 매트릭스 — 기존 table.bc 패턴 재사용 */
+.ws-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px}
+table.ws{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;min-width:820px}
+table.ws th{background:var(--u-surface-head);color:var(--u-onvariant);padding:10px 8px;font-weight:700;font-size:14px;text-align:center;border-bottom:1px solid var(--u-border);position:sticky;top:0;z-index:2}
+table.ws th.name-h{text-align:left;padding-left:12px;width:230px;left:0;z-index:3}
+table.ws th small{display:block;font-size:12px;font-weight:400;color:var(--u-outline)}
+table.ws th.me{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+table.ws td{padding:6px 8px;border-bottom:1px solid var(--u-border);font-variant-numeric:tabular-nums}
+table.ws td.nm{padding:8px 12px;font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--u-surface);position:sticky;left:0;z-index:1}
+table.ws td.nm small{display:block;font-size:12px;font-weight:400;color:var(--u-outline)}
+table.ws tr.group td{background:var(--u-surface-sub);color:var(--u-onvariant);font-weight:700;font-size:12px;padding:8px 12px}
+table.ws tr.sum td{border-top:1.5px solid var(--u-carbon);font-weight:700;background:var(--u-surface-head)}
+table.ws tr:hover td.nm{background:var(--u-primary-tint)}
+.cell{height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;font-variant-numeric:tabular-nums}
+.cell.empty{border:1px solid var(--u-border);color:var(--u-outline)}
+.cell.dash{color:var(--u-outline);font-weight:400}
+/* 게이지 열 */
+.g-cell{display:flex;align-items:center;gap:8px}
+.gauge{position:relative;height:16px;flex:1;background:var(--u-border);border-radius:5px;overflow:hidden;min-width:60px}
+.gauge>i{position:absolute;left:0;top:0;bottom:0;background:var(--u-primary);border-radius:5px}
+.g-val{font-size:12px;font-weight:700;width:46px;text-align:right;font-variant-numeric:tabular-nums}
+.badge{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.badge.win{color:var(--u-primary);background:var(--u-primary-tint-strong)}
+.badge.lose{color:var(--u-onvariant);background:var(--u-border)}
+.badge.na{color:#92400e;background:var(--u-amber-tint);border:1px solid var(--u-amber)}
+.legend{font-size:12px;color:var(--u-onvariant);margin-top:12px;line-height:1.8}
+.legend .sw{display:inline-block;width:26px;height:13px;border-radius:3px;vertical-align:-2px;margin:0 3px}
+.hint{font-size:12px;color:var(--u-onvariant);line-height:1.7;margin-top:12px;background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:10px;padding:12px 14px}
+.hint b{color:var(--u-primary)}
+.note{max-width:1080px;margin:0 auto;font-size:12px;color:var(--u-onvariant);line-height:1.8}
+.note h4{font-size:14px;margin:0 0 6px}
+@media(max-width:720px){body{padding:16px 8px}.screen{padding:20px 16px}.b-detail-cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<section class="screen">
+  <div class="label">고객 상세 · 월렛쉐어 시안 C (히트맵 매트릭스 + 게이지)</div>
+  <div class="detail-head">
+    <button class="btn">← 목록</button>
+    <span class="name">월렛쉐어 현황</span>
+    <span class="b-period">2026 YTD</span>
+    <div style="margin-left:auto"><button class="btn">동종 업종과 비교</button></div>
+  </div>
+
+  <div class="wrap">
+    <div class="b-detail-cards">
+      <div class="card"><small>당사 평균 점유율 <span style="color:var(--u-primary)">· 가중평균</span></small><b id="kAvg">—</b><small class="card-note">유효(WLSR_YN=Y) 고객 <b>지갑 총액</b> 기준. 지갑이 큰 고객이 더 크게 반영됩니다.</small></div>
+      <div class="card"><small>당사 평균 점유율 <span style="color:var(--u-primary)">· 단순평균</span></small><b id="kAvgS">—</b><small class="card-note">고객별 점유율을 <b>고객 수로</b> 나눈 값. 소형 고객도 1표씩 동일 반영.</small></div>
+      <div class="card"><small>당사 우위 / 20% 미만</small><b id="kWin">—</b><small class="card-note">당사가 1위인 고객 수 · 점유율 20% 미만(공략 여지 큼) 고객 수</small></div>
+      <div class="card dark"><small>대상 지갑 총액</small><b id="kWallet">—</b><small class="card-note">유효 고객 4사업자 합계</small></div>
+    </div>
+
+    <div class="block">
+      <h3>사업자별 점유율 매트릭스</h3>
+      <p class="sub">행 = 고객(또는 고객×상품), 열 = 사업자. 셀 농도가 진할수록 그 사업자의 점유율이 높습니다.</p>
+      <div class="b-controls">
+        <div class="seg">
+          <button class="active" data-view="cust">고객단위</button>
+          <button data-view="prod">상품단위 <span class="tobe-tag">tobe</span></button>
+        </div>
+        <div class="seg">
+          <button class="active" data-mode="pct">점유율(%)</button>
+          <button data-mode="amt">금액</button>
+        </div>
+      </div>
+
+      <div class="ws-wrap">
+        <table class="ws">
+          <colgroup><col style="width:230px"><col><col><col><col><col style="width:170px"><col style="width:96px"></colgroup>
+          <thead><tr>
+            <th class="name-h" id="hName">고객</th>
+            <th class="me">당사<small>UPLS</small></th>
+            <th>KT</th><th>SK</th><th>기타<small>ETC</small></th>
+            <th>당사 점유율</th><th>상태</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="legend">
+        셀 농도 = 해당 사업자 점유율 (<span class="sw" style="background:rgba(155,9,80,.28)"></span>낮음 →
+        <span class="sw" style="background:rgba(155,9,80,.62)"></span> →
+        <span class="sw" style="background:rgba(155,9,80,.98)"></span>높음) · 기존 고객별 현황 히트맵과 동일한 농도식(<code>0.28 + 비율 × 1.1</code>, 최대 0.98)을 씁니다.<br>
+        <span class="badge win">우위</span> 당사가 1위 · <span class="badge lose">열위</span> 타사가 1위 · <span class="badge na">데이터 없음</span> WLSR_YN=N
+      </div>
+      <div class="hint" id="hint"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <div class="note">
+    <h4>시안 C 장단점</h4>
+    장점 — 기존 메뉴판 <b>고객별 현황 히트맵</b>과 완전히 같은 표/농도 규칙이므로 학습 비용이 0이고, 고객 53개사로 늘려도 그대로 확장된다. 여러 고객·상품을 동시에 훑으며 <b>어디가 취약한지</b> 스캔하기에 가장 강하다. 점유율/금액 토글로 상대·절대 값을 모두 볼 수 있다.<br>
+    단점 — "한 고객의 지갑이 100%로 나뉜다"는 파이 구조가 시각적으로 드러나지 않아 월렛쉐어 개념 전달력은 A/B보다 약하다. 셀 농도만으로는 미세한 차이 판별이 어려워 숫자 병기가 필수다.
+  </div>
+</section>
+
+<script>
+// 합성 월렛쉐어 데이터 (schema/월렛쉐어_합성-고객단위.csv) — 상품단위 합계 = 고객단위 값
+const CUST = [
+  {id:'CIDANON01A407', name:'고객01', ind:'금융',      yn:'Y', UPLS:9019000, KT:5413000,  SK:2169000,  ETC:1809000},
+  {id:'CIDANON02A426', name:'고객02', ind:'금융',      yn:'Y', UPLS:2820000, KT:13552000, SK:13553000, ETC:4645000},
+  {id:'CIDANON10A51E', name:'고객10', ind:'대기업',    yn:'Y', UPLS:3917000, KT:3748000,  SK:2092000,  ETC:1753000},
+  {id:'CIDANON11A53D', name:'고객11', ind:'대기업',    yn:'N', UPLS:0,       KT:0,        SK:0,        ETC:0},
+  {id:'CIDANON19A635', name:'고객19', ind:'온라인/IT', yn:'Y', UPLS:5249000, KT:2324000,  SK:911000,   ETC:436000},
+  {id:'CIDANON20A654', name:'고객20', ind:'온라인/IT', yn:'Y', UPLS:2132000, KT:4556000,  SK:4621000,  ETC:2841000},
+  {id:'CIDANON28A74C', name:'고객28', ind:'글로벌',    yn:'Y', UPLS:835000,  KT:377000,   SK:532000,   ETC:206000},
+  {id:'CIDANON29A76B', name:'고객29', ind:'글로벌',    yn:'N', UPLS:0,       KT:0,        SK:0,        ETC:0},
+  {id:'CIDANON37A863', name:'고객37', ind:'공공',      yn:'Y', UPLS:467000,  KT:3726000,  SK:1422000,  ETC:1195000},
+  {id:'CIDANON46A97A', name:'고객46', ind:'SME',       yn:'Y', UPLS:4877000, KT:3779000,  SK:2551000,  ETC:1633000},
+];
+const PROD = [
+  {id:'CIDANON01A407', name:'고객01', prod:'중분류01', yn:'Y', UPLS:3931000, KT:574000,  SK:794000,  ETC:511000},
+  {id:'CIDANON01A407', name:'고객01', prod:'중분류03', yn:'Y', UPLS:5088000, KT:4839000, SK:1375000, ETC:1298000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류11', yn:'Y', UPLS:2180000, KT:4143000, SK:7119000, ETC:1548000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류17', yn:'Y', UPLS:0,       KT:3681000, SK:2973000, ETC:2086000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류22', yn:'Y', UPLS:158000,  KT:3190000, SK:2105000, ETC:767000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류25', yn:'Y', UPLS:482000,  KT:2538000, SK:1356000, ETC:244000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류25', yn:'Y', UPLS:1014000, KT:1544000, SK:1107000, ETC:1085000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류01', yn:'Y', UPLS:1054000, KT:452000,  SK:278000,  ETC:166000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류03', yn:'Y', UPLS:357000,  KT:942000,  SK:306000,  ETC:225000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류05', yn:'Y', UPLS:1492000, KT:810000,  SK:401000,  ETC:277000},
+  {id:'CIDANON19A635', name:'고객19', prod:'중분류22', yn:'Y', UPLS:2518000, KT:642000,  SK:355000,  ETC:85000},
+  {id:'CIDANON19A635', name:'고객19', prod:'중분류25', yn:'Y', UPLS:2731000, KT:1682000, SK:556000,  ETC:351000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류03', yn:'Y', UPLS:265000,  KT:921000,  SK:905000,  ETC:939000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류05', yn:'Y', UPLS:88000,   KT:1467000, SK:800000,  ETC:505000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류11', yn:'Y', UPLS:620000,  KT:1329000, SK:1780000, ETC:1171000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류17', yn:'Y', UPLS:1159000, KT:839000,  SK:1136000, ETC:226000},
+  {id:'CIDANON28A74C', name:'고객28', prod:'중분류17', yn:'Y', UPLS:425000,  KT:102000,  SK:136000,  ETC:27000},
+  {id:'CIDANON28A74C', name:'고객28', prod:'중분류22', yn:'Y', UPLS:204000,  KT:104000,  SK:114000,  ETC:128000},
+  {id:'CIDANON28A74C', name:'고객28', prod:'중분류25', yn:'Y', UPLS:206000,  KT:171000,  SK:282000,  ETC:51000},
+  {id:'CIDANON37A863', name:'고객37', prod:'중분류11', yn:'Y', UPLS:0,       KT:3098000, SK:973000,  ETC:1069000},
+  {id:'CIDANON37A863', name:'고객37', prod:'중분류17', yn:'Y', UPLS:467000,  KT:628000,  SK:449000,  ETC:126000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류25', yn:'Y', UPLS:2552000, KT:688000,  SK:858000,  ETC:462000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류01', yn:'Y', UPLS:808000,  KT:1968000, SK:671000,  ETC:573000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류03', yn:'Y', UPLS:1067000, KT:454000,  SK:461000,  ETC:218000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류05', yn:'Y', UPLS:450000,  KT:669000,  SK:561000,  ETC:380000},
+];
+const KEYS=['UPLS','KT','SK','ETC'];
+const sum=r=>KEYS.reduce((a,k)=>a+r[k],0);
+const won=n=>n>=10000?Math.round(n/10000).toLocaleString()+'만':n.toLocaleString();
+let view='cust', mode='pct';
+
+// 기존 히트맵과 동일한 농도식
+const alpha=ratio=>Math.min(.98, .28+ratio*1.1);
+function cell(r,k){
+  const t=sum(r);
+  if(r.yn!=='Y') return '<td><div class="cell dash">—</div></td>';
+  if(r[k]<=0) return '<td><div class="cell empty">0</div></td>';
+  const ratio=r[k]/t, a=alpha(ratio);
+  const txt = mode==='pct' ? (ratio*100).toFixed(1)+'%' : won(r[k]);
+  return `<td><div class="cell" style="background:rgba(155,9,80,${a.toFixed(3)});color:${a>.55?'var(--u-on-primary)':'var(--u-carbon)'}" title="${k} ${(ratio*100).toFixed(1)}% / ${r[k].toLocaleString()}원">${txt}</div></td>`;
+}
+function tail(r){
+  if(r.yn!=='Y') return `<td><div class="g-cell"><span class="g-val">—</span></div></td><td style="text-align:center"><span class="badge na">데이터 없음</span></td>`;
+  const t=sum(r), p=r.UPLS/t*100;
+  const win = KEYS.every(k=>r.UPLS>=r[k]);
+  return `<td><div class="g-cell"><span class="gauge"><i style="width:${p}%"></i></span><span class="g-val">${p.toFixed(1)}%</span></div></td>
+    <td style="text-align:center"><span class="badge ${win?'win':'lose'}">${win?'우위':'열위'}</span></td>`;
+}
+const row=(r,label,note,cls='')=>`<tr class="${cls}"><td class="nm">${label}${note?`<small>${note}</small>`:''}</td>${KEYS.map(k=>cell(r,k)).join('')}${tail(r)}</tr>`;
+
+function render(){
+  const $=id=>document.getElementById(id);
+  let html='';
+  if(view==='cust'){
+    $('hName').textContent='고객';
+    html = CUST.map(r=>row(r,r.name,r.ind+' · '+r.id)).join('');
+    const ok=CUST.filter(r=>r.yn==='Y');
+    const agg={yn:'Y'}; KEYS.forEach(k=>agg[k]=ok.reduce((a,r)=>a+r[k],0));
+    html += row(agg,'전체 합계 (가중평균)',`WLSR_YN=Y ${ok.length}개사 지갑 총액 기준`,'sum');
+    $('hint').innerHTML='<b>고객단위 뷰</b> — 열별로 세로 스캔하면 어느 경쟁사가 어느 고객에서 강한지 바로 보입니다. 고객02는 KT·SK가 39.2%씩 양분해 당사가 8.2%에 그치고, 고객37은 KT가 54.7%로 장악했습니다. 반대로 고객19는 당사 58.8%로 우위입니다.<br>고객11·고객29는 <code>WLSR_YN=N</code>이라 전부 <code>—</code>로 비우고 평균·합계에서 제외합니다. 맨 아래 합계 행과 KPI의 <b>가중평균</b>은 지갑이 큰 고객02의 열세가 크게 반영돼, 옆의 <b>단순평균</b>보다 낮게 나옵니다.';
+  }else{
+    $('hName').textContent='고객 · 상품';
+    const byCust={};
+    PROD.forEach(r=>(byCust[r.name]=byCust[r.name]||[]).push(r));
+    Object.entries(byCust).forEach(([name,list])=>{
+      const agg={yn:'Y'}; KEYS.forEach(k=>agg[k]=list.reduce((a,r)=>a+r[k],0));
+      html += `<tr class="group"><td colspan="7">${name} · 상품 ${list.length}종</td></tr>`;
+      html += row(agg,name+' 합계','상품 합산');
+      html += list.map(r=>row(r,'　'+r.prod,'MCLS_NM')).join('');
+    });
+    $('hint').innerHTML='<b>상품단위 확장</b> — 같은 표에 <code>MCLS_NM</code> 행이 고객 아래로 들여쓰여 붙습니다. 각 고객의 상품 행 합계는 고객단위 값과 정확히 일치합니다.<br>고객01은 고객단위로 보면 당사 49.0%로 무난하지만, 상품단위로 쪼개면 중분류01은 67.7%로 우위·중분류03은 40.4%로 접전입니다. 고객02의 중분류17, 고객37의 중분류11은 <b>당사 점유가 0</b>이라 고객단위 뷰가 감추고 있던 취약점이 드러납니다.';
+  }
+  $('rows').innerHTML=html;
+
+  const ok=CUST.filter(r=>r.yn==='Y');
+  const tot=ok.reduce((a,r)=>a+sum(r),0), mine=ok.reduce((a,r)=>a+r.UPLS,0);
+  $('kAvg').textContent=(mine/tot*100).toFixed(1)+'%';                                   // 가중평균
+  $('kAvgS').textContent=(ok.reduce((a,r)=>a+r.UPLS/sum(r)*100,0)/ok.length).toFixed(1)+'%'; // 단순평균
+  $('kWin').textContent=`${ok.filter(r=>KEYS.every(k=>r.UPLS>=r[k])).length} / ${ok.filter(r=>r.UPLS/sum(r)<.2).length}개사`;
+  $('kWallet').textContent=won(tot)+'원';
+}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+  const grp=b.parentElement;
+  grp.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  if(b.dataset.view) view=b.dataset.view; else mode=b.dataset.mode;
+  render();
+});
+render();
+</script>
+</body>
+</html>

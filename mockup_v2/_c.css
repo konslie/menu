@@ -1,0 +1,84 @@
+/* ── Option C: 단일 캔버스 인라인 아코디언 드릴다운 (화면 전환 없이 제자리 확장) ── */
+.stepbar{display:flex;align-items:center;gap:0;margin:18px 0 6px;border:1px solid var(--u-border);border-radius:12px;overflow:hidden;background:var(--u-surface)}
+.stepbar button{flex:1;border:0;border-right:1px solid var(--u-border);background:none;padding:13px 16px;text-align:left;
+  cursor:pointer;font-family:inherit;color:var(--u-onvariant);transition:background-color .15s}
+.stepbar button:last-child{border-right:0}
+.stepbar button:hover:not(:disabled){background:var(--u-primary-tint)}
+.stepbar button:disabled{cursor:default;opacity:.45}
+.stepbar button.on{background:var(--u-primary-tint-strong);color:var(--u-primary)}
+.stepbar button .n{display:inline-block;width:19px;height:19px;line-height:19px;border-radius:50%;background:var(--u-border);
+  color:var(--u-onvariant);text-align:center;font-size:12px;font-weight:700;margin-right:8px}
+.stepbar button.on .n{background:var(--u-primary);color:var(--u-on-primary)}
+.stepbar button b{font-size:13px}
+.stepbar button small{display:block;font-size:12px;margin-top:3px;margin-left:27px;color:var(--u-outline)}
+
+/* KPI 스트립 (항상 상단 고정 노출) */
+.strip{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:1px solid var(--u-border);border-radius:14px;overflow:hidden;margin:14px 0 4px}
+.strip div{flex:1 1 170px;padding:15px 18px;border-right:1px solid var(--u-border);background:var(--u-surface)}
+.strip div:last-child{border-right:0}
+.strip div.hl{background:var(--u-darkest);color:var(--u-on-dark)}
+.strip small{display:block;font-size:12px;color:var(--u-onvariant)}
+.strip div.hl small{color:#c9c7c0}
+.strip b{display:block;font-size:23px;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.15}
+.strip b em{font-style:normal;font-size:13px;color:var(--u-onvariant);font-weight:500}
+.strip div.hl b em{color:#c9c7c0}
+.strip .sp{margin-top:8px;height:7px;border-radius:4px;background:var(--u-border);overflow:hidden}
+.strip div.hl .sp{background:rgba(250,249,245,.16)}
+.strip .sp i{display:block;height:100%;background:var(--u-primary);border-radius:4px}
+.strip div.hl .sp i{background:#ff4d9d}
+
+/* 스택 바 (AX 구분 매출 구성) */
+.stack{display:flex;height:32px;border-radius:8px;overflow:hidden;border:1px solid var(--u-border);margin-top:8px}
+.stack i{display:block;height:100%;position:relative}
+.stack i span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+.stacklg{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--u-onvariant)}
+.stacklg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* 아코디언 업종 행 */
+.acc{border:1px solid var(--u-border);border-radius:12px;overflow:hidden;margin-top:6px}
+.accrow{border-bottom:1px solid var(--u-border)}
+.accrow:last-child{border-bottom:0}
+.acchead{display:grid;grid-template-columns:26px 1fr 88px 200px 116px 116px;gap:12px;align-items:center;width:100%;
+  padding:13px 16px;background:var(--u-surface);border:0;cursor:pointer;font-family:inherit;text-align:left;transition:background-color .15s}
+.acchead:hover{background:var(--u-primary-tint)}
+.acchead:focus-visible{outline:2px solid var(--u-primary);outline-offset:-2px}
+.accrow.open .acchead{background:var(--u-surface-head)}
+.acchead .ar{color:var(--u-primary);font-size:13px;font-weight:700;transition:transform .18s}
+.accrow.open .acchead .ar{transform:rotate(90deg)}
+.acchead .nm{font-size:15px;font-weight:700}
+.acchead .ct{font-size:13px;color:var(--u-onvariant);text-align:center}
+.acchead .bar{height:20px;border-radius:6px;background:var(--u-surface-sub);border:1px solid var(--u-border);overflow:hidden;position:relative}
+.accrow.open .acchead .bar{background:var(--u-surface)}
+.acchead .bar i{display:block;height:100%}
+.acchead .bar span{position:absolute;inset:0 0 0 8px;line-height:20px;font-size:12px;font-weight:700}
+.acchead .num{text-align:right;font-size:14px;font-variant-numeric:tabular-nums;font-weight:700}
+.acchead .num small{display:block;font-size:12px;color:var(--u-onvariant);font-weight:500}
+.accbody{display:none;padding:6px 16px 18px;background:var(--u-surface-sub);border-top:1px solid var(--u-border)}
+.accrow.open .accbody{display:block}
+.accbody table{background:var(--u-surface);border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px var(--u-border)}
+.accbody th{font-size:12px;padding:8px}
+.accbody td{padding:7px 8px;font-size:13px}
+.accbody td.nm{text-align:left;font-weight:700;padding-left:14px}
+.accbody td.c{text-align:center}
+.accbody td.n{text-align:right;padding-right:14px}
+.accbody tr:last-child td{border-bottom:0}
+.accbody .cell{display:inline-block;min-width:46px;padding:3px 7px;border-radius:6px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.accbody .cell.zero{background:repeating-linear-gradient(45deg,var(--u-surface-sub),var(--u-surface-sub) 3px,var(--u-bg) 3px,var(--u-bg) 6px);border:1px solid var(--u-border);color:transparent}
+.accfoot{font-size:12px;color:var(--u-onvariant);margin-top:9px}
+
+.actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;align-items:center}
+
+/* 전체 53개사 (별도 화면) */
+.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:calc(100vh - 280px);margin-top:6px}
+table.bc{min-width:900px;table-layout:fixed}
+table.bc th{position:sticky;top:0;z-index:3;background:var(--u-surface-head);font-size:13px;padding:8px}
+table.bc th.cust-h{text-align:left;padding-left:14px;width:250px;left:0;z-index:4}
+table.bc th.total-h{width:96px}
+table.bc td.cust{position:sticky;left:0;background:var(--u-surface);z-index:1;width:250px;padding-left:14px;font-weight:700;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.bc tbody tr:hover td.cust{background:var(--u-primary-tint)}
+table.bc td.rk{width:44px;text-align:center;color:var(--u-outline);font-size:12px}
+table.bc .cell{height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px}
+table.bc .empty{border:1px solid var(--u-border);background:repeating-linear-gradient(45deg,var(--u-surface-sub),var(--u-surface-sub) 3px,var(--u-bg) 3px,var(--u-bg) 6px)}
+table.bc td.total{text-align:center;font-weight:700;width:96px}
+@media(max-width:1000px){.acchead{grid-template-columns:22px 1fr 76px;row-gap:8px}.acchead .bar,.acchead .num{grid-column:2/-1}}

@@ -1,0 +1,90 @@
+<!-- ═══ STEP 1 ═══ -->
+<section class="screen" id="vTotal">
+  <div class="top">
+    <div>
+      <div class="label">Key Account 메뉴판 / 시안 B</div>
+      <div class="accent"></div>
+      <h1>KA 전체 현황<span class="b-period" id="pdT">2026 YTD</span></h1>
+      <p class="sub">당사 상품 카탈로그 대비 Key Account의 사용 범위를 한 장으로 봅니다.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="seg" id="segYear"><button data-y="2026" class="active">2026 YTD</button><button data-y="2025">2025 연간</button></div>
+      <div class="seg" id="segMode"><button data-m="service" class="active">서비스 수</button><button data-m="sales">매출</button></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="donut" id="donut"></div>
+    <div>
+      <h2>당사 전체 상품 <b id="hCat"></b> 중 Key Account가 사용 중인 상품</h2>
+      <div class="herostats">
+        <div><small>KA 고객 수</small><b id="hCust"></b></div>
+        <div><small>고객당 평균 침투</small><b id="hPen"></b></div>
+        <div><small>KA 총매출</small><b id="hRev"></b></div>
+      </div>
+      <div class="herolegend">
+        <span><i style="background:#ff2d92"></i>KA 사용 상품</span>
+        <span><i style="background:rgba(250,249,245,.18)"></i>미개척(화이트스페이스)</span>
+        <span id="hNote"></span>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:26px">AX 구분별 고객 침투율</h2>
+  <div class="bars" id="axBars"></div>
+
+  <div class="actions">
+    <button class="btn primary" id="goInd">업종별 소계 보기 →</button>
+    <button class="btn" id="goAllA">전체 고객 53개사 보기</button>
+  </div>
+  <p class="hint">침투율은 시장 점유가 아니라 <b>Key Account 53개사 중 사용 비율</b>입니다. 2025는 연간, 2026은 YTD(1~6월)입니다.</p>
+</section>
+
+<!-- ═══ STEP 2 ═══ -->
+<section class="screen hidden" id="vInd">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><b>업종별 소계</b></div>
+  <div class="top">
+    <div><h1>업종별 소계<span class="b-period" id="pdI">2026 YTD</span></h1>
+      <p class="sub">카드를 클릭하면 해당 업종의 고객 리스트로 내려갑니다.</p></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" id="backT">← KA 전체</button>
+      <button class="btn primary" id="goAllB">전체 고객 53개사</button>
+    </div>
+  </div>
+  <div class="indgrid" id="indGrid"></div>
+  <p class="hint">카드의 링 그래프는 <b>그 업종 고객이 평균 몇 종을 쓰는지</b>를 업종 내 사용 가능 상품 종수 대비로 표시합니다.</p>
+</section>
+
+<!-- ═══ STEP 3 ═══ -->
+<section class="screen hidden" id="vCust">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><a data-nav="ind">업종별 소계</a><i>›</i><b id="cbInd"></b></div>
+  <div class="top">
+    <div><h1 id="custTitle"></h1><p class="sub" id="custSub"></p></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" id="backI">← 업종별 소계</button>
+      <button class="btn primary" id="goAllC">전체 고객 53개사</button>
+    </div>
+  </div>
+  <div class="clist" id="cList"></div>
+  <p class="hint">각 카드의 4칸 미니 바는 <b>AX·Infra / AX·Application / Legacy·Infra / Legacy·Application</b> 순의 침투 농도입니다.</p>
+</section>
+
+<!-- ═══ 전체 53개사 ═══ -->
+<section class="screen hidden" id="vAll">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><b>전체 고객 53개사</b></div>
+  <div class="top">
+    <div><h1>전체 고객 53개사<span class="b-period" id="pdA">2026 YTD</span></h1>
+      <p class="sub">업종 그룹 없이 한 기준으로 53개사를 줄 세운 랭킹 뷰입니다.</p></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="seg" id="segSort"><button data-s="service" class="active">서비스 수 순</button><button data-s="sales">매출 순</button></div>
+      <button class="btn" id="backT2">← KA 전체</button>
+    </div>
+  </div>
+  <div class="clist" id="aList"></div>
+</section>
+
+<div class="note">
+  <b>시안 B 장단점</b>
+  장점: 첫 화면 도넛이 "카탈로그 39종 중 27종"이라는 메시지를 한눈에 전달해 경영진 보고용 임팩트가 가장 크고, 업종 카드 그리드는 클릭 타깃이 커서 태블릿/폰에서도 조작이 쉽다.
+  단점: 카드 형식이라 화면당 정보 밀도가 낮아 6개 업종을 정밀하게 수치 비교하려면 스크롤이 필요하고, 기존 히트맵 표를 대체하므로 상품×고객 격자를 한눈에 훑던 사용감은 사라진다.
+</div>

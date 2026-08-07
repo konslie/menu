@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>월렛쉐어 시안 A — 스택 바</title>
+<style>
+:root{
+  --u-bg:#f4f3ef;--u-surface:#fff;--u-surface-sub:#fafaf9;--u-surface-head:#f5f0e8;
+  --u-carbon:#1c1b1b;--u-onvariant:#5c5a54;--u-outline:#8a8880;
+  --u-border:#e9e8e3;--u-border-strong:#d4d3cc;
+  --u-primary:#b90064;--u-primary-tint:rgba(185,0,100,.04);--u-primary-tint-strong:rgba(185,0,100,.08);
+  --u-on-primary:#faf9f5;
+  --u-dark:#1c1b1b;--u-darkest:#181715;--u-on-dark:#faf9f5;
+  --u-amber:#d97706;--u-amber-tint:#fdf6ee;
+  --u-teal:#0d9488;--u-teal-tint:#edf6f4;
+  /* 사업자 색: 당사만 브랜드색, 경쟁사는 중립 회색조로 억제 */
+  --c-upls:#b90064;--c-kt:#8a8880;--c-sk:#b9b7b0;--c-etc:#e0ded7;
+}
+*{box-sizing:border-box}
+body{font-family:Pretendard,-apple-system,'Apple SD Gothic Neo',sans-serif;background:var(--u-bg);margin:0;padding:40px 24px;color:var(--u-carbon);font-size:16px}
+.screen{max-width:1280px;margin:0 auto 28px;background:var(--u-surface);border-radius:16px;padding:32px 36px;box-shadow:0 1px 2px rgba(28,27,27,.03)}
+.label{font-size:12px;color:var(--u-onvariant);margin-bottom:14px;font-weight:500}
+.detail-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:1000px;margin:0 auto}
+.name{font-size:20px;font-weight:700}
+.btn{height:38px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;color:var(--u-carbon);cursor:pointer;font-family:inherit}
+.b-period{font-size:12px;color:var(--u-primary);background:var(--u-primary-tint-strong);border-radius:999px;padding:3px 10px;font-weight:700}
+.wrap{max-width:1000px;margin:0 auto}
+
+/* KPI 카드 */
+.b-detail-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px auto}
+.card{background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:14px;padding:16px}
+.card.dark{background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}
+.card small{color:var(--u-onvariant);font-size:12px;display:block}
+.card.dark small{color:#c9c7c0}
+.card b{display:block;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}
+.card-note{margin-top:6px;color:var(--u-outline)!important;line-height:1.45}
+
+/* 섹션 */
+.block{margin:26px 0 0}
+.block h3{font-size:16px;font-weight:700;margin:0 0 4px}
+.block .sub{font-size:13px;color:var(--u-onvariant);margin:0 0 12px}
+.seg{display:inline-flex;border:1px solid var(--u-border);border-radius:10px;overflow:hidden;gap:6px;padding:3px;background:var(--u-surface)}
+.seg button{height:36px;border:0;background:none;padding:0 16px;color:var(--u-onvariant);cursor:pointer;font-size:13px;font-family:inherit;border-radius:8px}
+.seg button.active{color:var(--u-primary);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--u-primary)}
+
+/* 스택 바 */
+.ws-list{border:1px solid var(--u-border);border-radius:12px;overflow:hidden}
+.ws-head,.ws-row{display:grid;grid-template-columns:200px 1fr 132px;align-items:center;gap:14px;padding:11px 14px}
+.ws-head{background:var(--u-surface-head);color:var(--u-onvariant);font-weight:700;font-size:12px;border-bottom:1px solid var(--u-border)}
+.ws-row{border-bottom:1px solid var(--u-border);background:var(--u-surface)}
+.ws-row:last-child{border-bottom:0}
+.ws-row.total{background:var(--u-surface-sub);font-weight:700;border-top:1.5px solid var(--u-carbon)}
+.ws-name{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-name small{display:block;color:var(--u-outline);font-size:12px;font-weight:400}
+.stack{display:flex;height:26px;border-radius:6px;overflow:hidden;background:var(--u-border)}
+.stack i{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-style:normal;color:#fff;font-variant-numeric:tabular-nums;min-width:0;overflow:hidden;white-space:nowrap}
+.stack i.upls{background:var(--c-upls)}
+.stack i.kt{background:var(--c-kt)}
+.stack i.sk{background:var(--c-sk)}
+.stack i.etc{background:var(--c-etc);color:var(--u-onvariant)}
+.ws-total{text-align:right;font-size:13px;font-variant-numeric:tabular-nums;color:var(--u-onvariant)}
+.ws-total b{font-size:14px;color:var(--u-carbon)}
+.no-data{grid-column:2/4;font-size:12px;color:var(--u-outline);background:var(--u-surface-sub);border:1px dashed var(--u-border-strong);border-radius:6px;height:26px;display:flex;align-items:center;padding:0 10px}
+
+/* 범례 */
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--u-onvariant);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* 상품 드릴다운 */
+.grp-row{background:var(--u-surface-sub);font-weight:700;color:var(--u-onvariant);font-size:12px;padding:8px 14px;border-bottom:1px solid var(--u-border)}
+.ws-row.child .ws-name{padding-left:16px;font-weight:500}
+.tobe-tag{font-size:12px;font-weight:700;color:var(--u-amber);background:var(--u-amber-tint);border:1px solid var(--u-amber);border-radius:999px;padding:2px 9px;margin-left:8px}
+.hint{font-size:12px;color:var(--u-onvariant);line-height:1.7;margin-top:12px;background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:10px;padding:12px 14px}
+.hint b{color:var(--u-primary)}
+.note{max-width:1000px;margin:0 auto;font-size:12px;color:var(--u-onvariant);line-height:1.8}
+.note h4{font-size:14px;margin:0 0 6px}
+.hidden{display:none}
+@media(max-width:720px){
+  body{padding:16px 8px}.screen{padding:20px 16px}
+  .b-detail-cards{grid-template-columns:repeat(2,1fr)}
+  .ws-head{display:none}
+  .ws-row{grid-template-columns:1fr;row-gap:8px}
+  .ws-total{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<section class="screen">
+  <div class="label">고객 상세 · 월렛쉐어 시안 A (스택 바)</div>
+  <div class="detail-head">
+    <button class="btn">← 목록</button>
+    <span class="name">고객01</span><span style="font-size:12px;color:var(--u-onvariant)">금융</span>
+    <span class="b-period">2026 YTD</span>
+    <div style="margin-left:auto"><button class="btn">동종 업종과 비교</button></div>
+  </div>
+
+  <div class="wrap">
+    <div class="b-detail-cards">
+      <div class="card"><small>당사 점유율 <span style="color:var(--u-primary)">· 고객01 단일</span></small><b id="kShare">—</b><small class="card-note">고객 전체 IT/통신 지출 중 당사 비중 (평균 아님, 해당 고객 값)</small></div>
+      <div class="card"><small>1위 사업자</small><b id="kTop">—</b><small class="card-note">해당 고객 지갑 내 최대 점유 사업자</small></div>
+      <div class="card"><small>당사 대비 격차</small><b id="kGap">—</b><small class="card-note">1위와 당사의 점유율 차이</small></div>
+      <div class="card dark"><small>고객 전체 지갑</small><b id="kWallet">—</b><small class="card-note">4개 사업자 합계</small></div>
+    </div>
+
+    <div class="block">
+      <h3>월렛쉐어 <span id="viewTag" style="font-size:12px;font-weight:500;color:var(--u-onvariant)"></span></h3>
+      <p class="sub">고객의 전체 IT/통신 예산(지갑)을 사업자별로 얼마씩 나눠 갖는지 보여줍니다.</p>
+      <div class="seg" style="margin-bottom:12px">
+        <button class="active" data-view="cust">고객단위</button>
+        <button data-view="prod">상품단위 <span class="tobe-tag">tobe</span></button>
+      </div>
+
+      <div class="ws-list" id="list">
+        <div class="ws-head"><span id="hName">고객</span><span>사업자별 점유율</span><span style="text-align:right">지갑 규모</span></div>
+        <div id="rows"></div>
+      </div>
+
+      <div class="legend">
+        <span><i style="background:var(--c-upls)"></i>당사(UPLS)</span>
+        <span><i style="background:var(--c-kt)"></i>KT</span>
+        <span><i style="background:var(--c-sk)"></i>SK</span>
+        <span><i style="background:var(--c-etc);border:1px solid var(--u-border-strong)"></i>기타</span>
+        <span style="color:var(--u-outline)">막대 내 숫자는 점유율(%), 5% 미만 구간은 숫자를 생략합니다.</span>
+      </div>
+
+      <div class="hint" id="hint"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <div class="note">
+    <h4>시안 A 장단점</h4>
+    장점 — 한 막대에 4개 사업자 점유율이 100% 기준으로 정규화돼 들어가므로, 고객·상품을 여러 행으로 나열해도 <b>세로로 바로 비교</b>가 된다. 기존 커버리지 막대(<code>.cov-bar</code>) 패턴을 그대로 재사용해 메뉴판에 이질감 없이 붙는다.<br>
+    단점 — 절대 금액 차이가 막대에서 안 보인다(우측 지갑 규모 열로만 보완). 점유율 5% 미만 구간은 숫자를 못 넣어 얇은 띠로만 남는다.
+  </div>
+</section>
+
+<script>
+// 합성 월렛쉐어 데이터 (schema/월렛쉐어_합성-고객단위.csv)
+// mockup.html 합성 고객 53개사 중 업종별 10개사의 ID/이름 체계를 그대로 사용.
+// 상품단위 합계 = 고객단위 값이 되도록 설계됨.
+const CUST = [
+  {id:'CIDANON01A407', name:'고객01', ind:'금융',      yn:'Y', UPLS:9019000, KT:5413000,  SK:2169000,  ETC:1809000},
+  {id:'CIDANON02A426', name:'고객02', ind:'금융',      yn:'Y', UPLS:2820000, KT:13552000, SK:13553000, ETC:4645000},
+  {id:'CIDANON10A51E', name:'고객10', ind:'대기업',    yn:'Y', UPLS:3917000, KT:3748000,  SK:2092000,  ETC:1753000},
+  {id:'CIDANON11A53D', name:'고객11', ind:'대기업',    yn:'N', UPLS:0,       KT:0,        SK:0,        ETC:0},
+  {id:'CIDANON19A635', name:'고객19', ind:'온라인/IT', yn:'Y', UPLS:5249000, KT:2324000,  SK:911000,   ETC:436000},
+  {id:'CIDANON20A654', name:'고객20', ind:'온라인/IT', yn:'Y', UPLS:2132000, KT:4556000,  SK:4621000,  ETC:2841000},
+  {id:'CIDANON28A74C', name:'고객28', ind:'글로벌',    yn:'Y', UPLS:835000,  KT:377000,   SK:532000,   ETC:206000},
+  {id:'CIDANON29A76B', name:'고객29', ind:'글로벌',    yn:'N', UPLS:0,       KT:0,        SK:0,        ETC:0},
+  {id:'CIDANON37A863', name:'고객37', ind:'공공',      yn:'Y', UPLS:467000,  KT:3726000,  SK:1422000,  ETC:1195000},
+  {id:'CIDANON46A97A', name:'고객46', ind:'SME',       yn:'Y', UPLS:4877000, KT:3779000,  SK:2551000,  ETC:1633000},
+];
+// 상품단위 tobe (schema/월렛쉐어_합성-상품단위.csv) — MCLS_NM은 mockup.html의 중분류 명명 체계
+const PROD = [
+  {id:'CIDANON01A407', name:'고객01', prod:'중분류01', yn:'Y', UPLS:3931000, KT:574000,  SK:794000,  ETC:511000},
+  {id:'CIDANON01A407', name:'고객01', prod:'중분류03', yn:'Y', UPLS:5088000, KT:4839000, SK:1375000, ETC:1298000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류11', yn:'Y', UPLS:2180000, KT:4143000, SK:7119000, ETC:1548000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류17', yn:'Y', UPLS:0,       KT:3681000, SK:2973000, ETC:2086000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류22', yn:'Y', UPLS:158000,  KT:3190000, SK:2105000, ETC:767000},
+  {id:'CIDANON02A426', name:'고객02', prod:'중분류25', yn:'Y', UPLS:482000,  KT:2538000, SK:1356000, ETC:244000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류25', yn:'Y', UPLS:1014000, KT:1544000, SK:1107000, ETC:1085000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류01', yn:'Y', UPLS:1054000, KT:452000,  SK:278000,  ETC:166000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류03', yn:'Y', UPLS:357000,  KT:942000,  SK:306000,  ETC:225000},
+  {id:'CIDANON10A51E', name:'고객10', prod:'중분류05', yn:'Y', UPLS:1492000, KT:810000,  SK:401000,  ETC:277000},
+  {id:'CIDANON19A635', name:'고객19', prod:'중분류22', yn:'Y', UPLS:2518000, KT:642000,  SK:355000,  ETC:85000},
+  {id:'CIDANON19A635', name:'고객19', prod:'중분류25', yn:'Y', UPLS:2731000, KT:1682000, SK:556000,  ETC:351000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류03', yn:'Y', UPLS:265000,  KT:921000,  SK:905000,  ETC:939000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류05', yn:'Y', UPLS:88000,   KT:1467000, SK:800000,  ETC:505000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류11', yn:'Y', UPLS:620000,  KT:1329000, SK:1780000, ETC:1171000},
+  {id:'CIDANON20A654', name:'고객20', prod:'중분류17', yn:'Y', UPLS:1159000, KT:839000,  SK:1136000, ETC:226000},
+  {id:'CIDANON28A74C', name:'고객28', prod:'중분류17', yn:'Y', UPLS:425000,  KT:102000,  SK:136000,  ETC:27000},
+  {id:'CIDANON28A74C', name:'고객28', prod:'중분류22', yn:'Y', UPLS:204000,  KT:104000,  SK:114000,  ETC:128000},
+  {id:'CIDANON28A74C', name:'고객28', prod:'중분류25', yn:'Y', UPLS:206000,  KT:171000,  SK:282000,  ETC:51000},
+  {id:'CIDANON37A863', name:'고객37', prod:'중분류11', yn:'Y', UPLS:0,       KT:3098000, SK:973000,  ETC:1069000},
+  {id:'CIDANON37A863', name:'고객37', prod:'중분류17', yn:'Y', UPLS:467000,  KT:628000,  SK:449000,  ETC:126000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류25', yn:'Y', UPLS:2552000, KT:688000,  SK:858000,  ETC:462000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류01', yn:'Y', UPLS:808000,  KT:1968000, SK:671000,  ETC:573000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류03', yn:'Y', UPLS:1067000, KT:454000,  SK:461000,  ETC:218000},
+  {id:'CIDANON46A97A', name:'고객46', prod:'중분류05', yn:'Y', UPLS:450000,  KT:669000,  SK:561000,  ETC:380000},
+];
+const OPS = [['UPLS','당사','upls'],['KT','KT','kt'],['SK','SK','sk'],['ETC','기타','etc']];
+const sum = r => OPS.reduce((a,[k])=>a+r[k],0);
+const won = n => n>=100000000 ? (n/100000000).toFixed(1)+'억' : n>=10000 ? Math.round(n/10000).toLocaleString()+'만' : n.toLocaleString();
+
+function stack(r){
+  const t = sum(r);
+  if(r.yn!=='Y' || t===0) return '<div class="no-data">월렛쉐어 데이터 없음 (WLSR_YN=N)</div>';
+  return '<div class="stack">'+OPS.map(([k,,cls])=>{
+    const p = r[k]/t*100;
+    if(p<=0) return '';
+    return `<i class="${cls}" style="flex:0 0 ${p}%" title="${k} ${p.toFixed(1)}%">${p>=5?p.toFixed(0)+'%':''}</i>`;
+  }).join('')+'</div>';
+}
+function totalCell(r){
+  const t = sum(r);
+  return r.yn!=='Y' ? '<span class="ws-total">—</span>' : `<span class="ws-total"><b>${won(t)}</b>원</span>`;
+}
+
+function renderCust(){
+  document.getElementById('hName').textContent='고객';
+  document.getElementById('viewTag').textContent='· 고객단위 (현재 데이터)';
+  const rows = CUST.map(r=>`
+    <div class="ws-row"><div class="ws-name">${r.name} <small style="display:inline;margin-left:4px">${r.ind}</small><small>${r.id}</small></div>${stack(r)}${totalCell(r)}</div>`).join('');
+  // 유효(Y) 고객만 합계 → 지갑 규모가 큰 고객이 더 크게 반영되는 가중평균
+  const ok = CUST.filter(r=>r.yn==='Y');
+  const agg = {yn:'Y'}; OPS.forEach(([k])=>agg[k]=ok.reduce((a,r)=>a+r[k],0));
+  document.getElementById('rows').innerHTML = rows +
+    `<div class="ws-row total"><div class="ws-name">전체 합계 <small style="display:inline;margin-left:4px">가중평균</small><small>WLSR_YN=Y ${ok.length}개사 지갑 총액 기준</small></div>${stack(agg)}${totalCell(agg)}</div>`;
+  document.getElementById('hint').innerHTML =
+    '<b>고객단위 뷰</b> — 고객 하나의 전체 지갑을 4개 사업자가 나눠 가진 형태입니다. <code>WLSR_YN=N</code>인 고객(고객11·고객29)은 데이터가 유효하지 않아 막대 대신 안내를 표시하고 합계에서도 제외합니다.<br>맨 아래 합계 행은 <b>지갑 총액 기준 가중평균</b>입니다 — 지갑이 큰 고객02(3,457만원)의 열세가 크게 반영돼, 고객별 점유율을 단순평균한 값보다 낮게 나옵니다.';
+  fillKpi(CUST[0]);
+}
+
+function renderProd(){
+  document.getElementById('hName').textContent='고객 · 상품';
+  document.getElementById('viewTag').textContent='· 상품단위 (tobe, 준비중)';
+  const byCust = {};
+  PROD.forEach(r=>(byCust[r.name]=byCust[r.name]||[]).push(r));
+  let html='';
+  Object.entries(byCust).forEach(([name,list])=>{
+    const agg={yn:'Y'}; OPS.forEach(([k])=>agg[k]=list.reduce((a,r)=>a+r[k],0));
+    html += `<div class="grp-row">${name} · 상품 ${list.length}종</div>`;
+    html += `<div class="ws-row"><div class="ws-name">${name} 합계<small>상품 합산</small></div>${stack(agg)}${totalCell(agg)}</div>`;
+    list.forEach(r=>{
+      html += `<div class="ws-row child"><div class="ws-name">${r.prod}<small>MCLS_NM</small></div>${stack(r)}${totalCell(r)}</div>`;
+    });
+  });
+  document.getElementById('rows').innerHTML = html;
+  document.getElementById('hint').innerHTML =
+    '<b>상품단위 확장</b> — <code>MCLS_NM</code>이 추가되면 같은 막대 컴포넌트를 그대로 쓰면서 고객 아래에 상품 행이 붙습니다. 각 고객의 상품 행 합계는 고객단위 값과 정확히 일치합니다.<br>고객01은 전체로는 당사 49.0%지만 상품별로 보면 중분류01은 67.7%로 우위, 중분류03은 40.4%로 접전입니다. 고객02는 <b>중분류17에서 당사 점유가 0</b>이라 고객단위 8.2%라는 숫자만으로는 안 보이던 공략 지점이 드러납니다.';
+  fillKpi(null);
+}
+
+function fillKpi(r){
+  const $ = id=>document.getElementById(id);
+  if(!r){ ['kShare','kTop','kGap','kWallet'].forEach(id=>$(id).textContent='—'); return; }
+  const t = sum(r), share = r.UPLS/t*100;
+  const top = OPS.map(([k,l])=>({l,v:r[k]})).sort((a,b)=>b.v-a.v)[0];
+  $('kShare').textContent = share.toFixed(1)+'%';
+  $('kTop').textContent = top.l;
+  $('kGap').textContent = (top.v/t*100 - share).toFixed(1)+'%p';
+  $('kWallet').textContent = won(t)+'원';
+}
+
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  b.dataset.view==='cust' ? renderCust() : renderProd();
+});
+renderCust();
+</script>
+</body>
+</html>

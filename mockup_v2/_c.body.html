@@ -1,0 +1,69 @@
+<!-- ═══ 단일 캔버스: STEP1~3을 제자리에서 확장 ═══ -->
+<section class="screen" id="vTotal">
+  <div class="top">
+    <div>
+      <div class="label">Key Account 메뉴판 / 시안 C</div>
+      <div class="accent"></div>
+      <h1>KA 전체 현황<span class="b-period" id="pdT">2026 YTD</span></h1>
+      <p class="sub">화면을 바꾸지 않고 <b>제자리에서 펼쳐</b> 내려가는 방식입니다. 상단 KPI는 항상 보이고, 업종 행을 누르면 그 아래로 고객이 펼쳐집니다.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="seg" id="segYear"><button data-y="2026" class="active">2026 YTD</button><button data-y="2025">2025 연간</button></div>
+      <div class="seg" id="segMode"><button data-m="service" class="active">서비스 수</button><button data-m="sales">매출</button></div>
+    </div>
+  </div>
+
+  <!-- STEP 진행 표시 -->
+  <div class="stepbar" id="stepbar">
+    <button data-step="1"><b><span class="n">1</span>KA 전체</b><small id="sb1"></small></button>
+    <button data-step="2"><b><span class="n">2</span>업종별 소계</b><small id="sb2"></small></button>
+    <button data-step="3" disabled><b><span class="n">3</span>고객별</b><small id="sb3">업종을 선택하세요</small></button>
+  </div>
+
+  <!-- STEP 1: 항상 노출 -->
+  <div class="strip">
+    <div class="hl"><small>당사 상품 카탈로그 중 KA 사용 상품</small><b id="cvKpi"></b>
+      <div class="sp"><i id="cvKpiBar"></i></div></div>
+    <div><small>KA 고객 수</small><b id="cCust"></b></div>
+    <div><small>고객당 평균 침투</small><b id="cPen"></b><div class="sp"><i id="cPenBar"></i></div></div>
+    <div><small>KA 총매출</small><b id="cRev"></b></div>
+  </div>
+
+  <div style="margin-top:18px">
+    <h3 id="stackTitle">AX 구분별 구성</h3>
+    <div class="stack" id="stack"></div>
+    <div class="stacklg" id="stackLg"></div>
+  </div>
+
+  <!-- STEP 2 + 3: 아코디언 -->
+  <h2 style="margin-top:26px">업종별 소계 <small style="font-weight:500;color:var(--u-onvariant)">— 행을 클릭하면 그 자리에서 고객이 펼쳐집니다</small></h2>
+  <div class="acc" id="acc"></div>
+
+  <div class="actions">
+    <button class="btn" id="expandAll">전체 업종 펼치기</button>
+    <button class="btn" id="collapseAll">모두 접기</button>
+    <button class="btn primary" id="goAllA" style="margin-left:auto">전체 고객 53개사 보기 →</button>
+  </div>
+  <p class="hint">침투율은 시장 점유가 아니라 <b>Key Account 53개사 중 사용 비율</b>입니다. 2025는 연간, 2026은 YTD(1~6월)로 기간 길이가 달라 YoY는 표시하지 않습니다.</p>
+</section>
+
+<!-- ═══ 별도: 전체 53개사 ═══ -->
+<section class="screen hidden" id="vAll">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><b>전체 고객 53개사</b></div>
+  <div class="top">
+    <div><h1>전체 고객 53개사<span class="b-period" id="pdA">2026 YTD</span></h1>
+      <p class="sub">업종 그룹 없이 한 기준으로 53개사를 줄 세운 뷰입니다.</p></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="seg" id="segSort"><button data-s="service" class="active">서비스 수 순</button><button data-s="sales">매출 순</button></div>
+      <button class="btn" id="backT2">← KA 전체</button>
+    </div>
+  </div>
+  <div class="bc-wrap"><table class="bc"><thead id="aHead"></thead><tbody id="aBody"></tbody></table></div>
+  <p class="hint">셀 = AX 중분류별 <span id="aCellMeaning"></span> · 빗금 = 미사용.</p>
+</section>
+
+<div class="note">
+  <b>시안 C 장단점</b>
+  장점: 화면 전환이 없어 KPI·업종 소계·고객 리스트를 한 맥락에서 동시에 볼 수 있고, 여러 업종을 동시에 펼쳐 나란히 비교할 수 있어 "뒤로가기"로 길을 잃지 않는다.
+  단점: 3단계를 모두 펼치면 페이지가 매우 길어져 스크롤 부담이 크고, 요청하신 "3 Step 화면 전환"이라는 구조가 시각적으로는 약해져 단계 구분감이 덜하다.
+</div>

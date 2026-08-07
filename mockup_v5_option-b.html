@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>월렛쉐어 시안 B — 도넛 + 상품 카드</title>
+<style>
+:root{
+  --u-bg:#f4f3ef;--u-surface:#fff;--u-surface-sub:#fafaf9;--u-surface-head:#f5f0e8;
+  --u-carbon:#1c1b1b;--u-onvariant:#5c5a54;--u-outline:#8a8880;
+  --u-border:#e9e8e3;--u-border-strong:#d4d3cc;
+  --u-primary:#b90064;--u-primary-tint:rgba(185,0,100,.04);--u-primary-tint-strong:rgba(185,0,100,.08);
+  --u-on-primary:#faf9f5;--u-darkest:#181715;--u-on-dark:#faf9f5;
+  --u-amber:#d97706;--u-amber-tint:#fdf6ee;--u-teal:#0d9488;
+  --c-upls:#b90064;--c-kt:#8a8880;--c-sk:#b9b7b0;--c-etc:#e0ded7;
+}
+*{box-sizing:border-box}
+body{font-family:Pretendard,-apple-system,'Apple SD Gothic Neo',sans-serif;background:var(--u-bg);margin:0;padding:40px 24px;color:var(--u-carbon);font-size:16px}
+.screen{max-width:1280px;margin:0 auto 28px;background:var(--u-surface);border-radius:16px;padding:32px 36px;box-shadow:0 1px 2px rgba(28,27,27,.03)}
+.label{font-size:12px;color:var(--u-onvariant);margin-bottom:14px;font-weight:500}
+.detail-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:1000px;margin:0 auto}
+.name{font-size:20px;font-weight:700}
+.btn{height:38px;border:1px solid var(--u-border);border-radius:8px;background:var(--u-surface);padding:0 12px;font-size:14px;color:var(--u-carbon);cursor:pointer;font-family:inherit}
+.b-period{font-size:12px;color:var(--u-primary);background:var(--u-primary-tint-strong);border-radius:999px;padding:3px 10px;font-weight:700}
+.wrap{max-width:1000px;margin:0 auto}
+.block{margin:26px 0 0}
+.block h3{font-size:16px;font-weight:700;margin:0 0 4px}
+.block .sub{font-size:13px;color:var(--u-onvariant);margin:0 0 12px}
+.seg{display:inline-flex;border:1px solid var(--u-border);border-radius:10px;overflow:hidden;gap:6px;padding:3px;background:var(--u-surface)}
+.seg button{height:36px;border:0;background:none;padding:0 16px;color:var(--u-onvariant);cursor:pointer;font-size:13px;font-family:inherit;border-radius:8px}
+.seg button.active{color:var(--u-primary);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--u-primary)}
+.tobe-tag{font-size:12px;font-weight:700;color:var(--u-amber);background:var(--u-amber-tint);border:1px solid var(--u-amber);border-radius:999px;padding:2px 9px;margin-left:8px}
+
+/* 도넛 메인 */
+.hero{display:grid;grid-template-columns:260px 1fr;gap:26px;align-items:center;background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:14px;padding:22px 24px}
+.donut{position:relative;width:220px;height:220px;margin:0 auto}
+.donut svg{transform:rotate(-90deg);display:block}
+.donut .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut .ctr b{font-size:32px;font-variant-numeric:tabular-nums;line-height:1.1;color:var(--u-primary)}
+.donut .ctr small{font-size:12px;color:var(--u-onvariant);margin-top:2px}
+.donut path{transition:opacity .15s ease}
+.donut.dim path:not(.on){opacity:.35}
+
+/* 사업자 표 */
+table.ops{width:100%;border-collapse:collapse;font-size:14px}
+table.ops th{background:var(--u-surface-head);color:var(--u-onvariant);font-weight:700;font-size:12px;padding:9px 10px;text-align:right;border-bottom:1px solid var(--u-border)}
+table.ops th:first-child{text-align:left}
+table.ops td{padding:9px 10px;border-bottom:1px solid var(--u-border);text-align:right;font-variant-numeric:tabular-nums}
+table.ops td:first-child{text-align:left;font-weight:600}
+table.ops tr:last-child td{border-bottom:0}
+table.ops tr.me td{background:var(--u-primary-tint-strong);color:var(--u-primary);font-weight:700}
+table.ops tr:hover td{background:var(--u-primary-tint);cursor:default}
+.dot{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+/* 게이지 */
+.gauge{position:relative;height:16px;width:120px;background:var(--u-border);border-radius:5px;overflow:hidden;display:inline-block;vertical-align:-3px}
+.gauge>i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+
+/* 상품 카드 그리드 (tobe) */
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.pcard{border:1px solid var(--u-border);border-radius:14px;padding:16px 18px;background:var(--u-surface)}
+.pcard.win{border-color:var(--u-primary);background:var(--u-primary-tint)}
+.pcard.lose{border-color:var(--u-border-strong);background:var(--u-surface-sub)}
+.pcard-head{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.pcard-head b{font-size:15px}
+.pcard-head small{font-size:12px;color:var(--u-outline);margin-left:auto;white-space:nowrap}
+.pcard .mini{display:flex;gap:16px;align-items:center}
+.badge{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px}
+.badge.win{color:var(--u-primary);background:var(--u-primary-tint-strong)}
+.badge.lose{color:var(--u-onvariant);background:var(--u-border)}
+.badge.zero{color:#92400e;background:var(--u-amber-tint);border:1px solid var(--u-amber)}
+.plist{margin-top:10px;font-size:12px;color:var(--u-onvariant);line-height:1.9}
+.plist span{display:flex;justify-content:space-between;gap:8px}
+.plist b{font-variant-numeric:tabular-nums;color:var(--u-carbon)}
+.custpick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{border:1px solid var(--u-border-strong);border-radius:999px;padding:5px 13px;font-size:12px;background:var(--u-surface);cursor:pointer;font-family:inherit}
+.chip.active{background:var(--u-primary);color:var(--u-on-primary);border-color:var(--u-primary);font-weight:700}
+.chip:disabled{color:var(--u-outline);cursor:not-allowed;background:var(--u-surface-sub)}
+.hint{font-size:12px;color:var(--u-onvariant);line-height:1.7;margin-top:12px;background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:10px;padding:12px 14px}
+.hint b{color:var(--u-primary)}
+.nodata{font-size:13px;color:var(--u-onvariant);background:var(--u-amber-tint);border:1px solid var(--u-amber);border-radius:10px;padding:14px 16px}
+.note{max-width:1000px;margin:0 auto;font-size:12px;color:var(--u-onvariant);line-height:1.8}
+.note h4{font-size:14px;margin:0 0 6px}
+.hidden{display:none}
+@media(max-width:720px){body{padding:16px 8px}.screen{padding:20px 16px}.hero{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<section class="screen">
+  <div class="label">고객 상세 · 월렛쉐어 시안 B (도넛 + 상품 카드)</div>
+  <div class="detail-head">
+    <button class="btn">← 목록</button>
+    <span class="name" id="hName">고객1</span>
+    <span class="b-period">2026 YTD</span>
+    <div style="margin-left:auto"><button class="btn">동종 업종과 비교</button></div>
+  </div>
+
+  <div class="wrap">
+    <div class="block">
+      <h3>월렛쉐어</h3>
+      <p class="sub">고객의 전체 IT/통신 예산(지갑)을 사업자별로 얼마씩 나눠 갖는지 보여줍니다. 고객을 골라 확인하세요.</p>
+      <div class="custpick" id="pick"></div>
+      <div class="seg" style="margin-bottom:14px">
+        <button class="active" data-view="cust">고객단위</button>
+        <button data-view="prod">상품단위 <span class="tobe-tag">tobe</span></button>
+      </div>
+
+      <div id="custView">
+        <div class="hero" id="hero"></div>
+      </div>
+
+      <div id="prodView" class="hidden">
+        <div id="pcards"></div>
+      </div>
+
+      <div class="hint" id="hint"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen">
+  <div class="note">
+    <h4>시안 B 장단점</h4>
+    장점 — 도넛 가운데에 <b>당사 점유율 한 숫자</b>가 크게 박혀 "지금 우리 몫이 얼마인가"가 즉시 읽힌다. 표 hover로 해당 조각만 강조되어 사업자별 금액·점유율을 정확히 확인할 수 있고, 상품단위로 넘어가면 상품별 카드로 승/패 상태를 한눈에 스캔한다.<br>
+    단점 — 한 화면에 고객 <b>하나</b>만 보이므로 여러 고객을 나란히 비교할 수 없다(고객 선택 칩으로 전환). 도넛은 4개 조각까지가 한계로, 사업자가 늘면 무너진다.
+  </div>
+</section>
+
+<script>
+// 합성 월렛쉐어 데이터 (schema/월렛쉐어_합성-고객단위.csv) — 상품단위 합계 = 고객단위 값
+const CUST = [
+  {id:'CIDANON01A407', name:'고객01', ind:'금융',      yn:'Y', UPLS:9019000, KT:5413000,  SK:2169000,  ETC:1809000},
+  {id:'CIDANON02A426', name:'고객02', ind:'금융',      yn:'Y', UPLS:2820000, KT:13552000, SK:13553000, ETC:4645000},
+  {id:'CIDANON10A51E', name:'고객10', ind:'대기업',    yn:'Y', UPLS:3917000, KT:3748000,  SK:2092000,  ETC:1753000},
+  {id:'CIDANON11A53D', name:'고객11', ind:'대기업',    yn:'N', UPLS:0,       KT:0,        SK:0,        ETC:0},
+  {id:'CIDANON19A635', name:'고객19', ind:'온라인/IT', yn:'Y', UPLS:5249000, KT:2324000,  SK:911000,   ETC:436000},
+  {id:'CIDANON20A654', name:'고객20', ind:'온라인/IT', yn:'Y', UPLS:2132000, KT:4556000,  SK:4621000,  ETC:2841000},
+  {id:'CIDANON28A74C', name:'고객28', ind:'글로벌',    yn:'Y', UPLS:835000,  KT:377000,   SK:532000,   ETC:206000},
+  {id:'CIDANON29A76B', name:'고객29', ind:'글로벌',    yn:'N', UPLS:0,       KT:0,        SK:0,        ETC:0},
+  {id:'CIDANON37A863', name:'고객37', ind:'공공',      yn:'Y', UPLS:467000,  KT:3726000,  SK:1422000,  ETC:1195000},
+  {id:'CIDANON46A97A', name:'고객46', ind:'SME',       yn:'Y', UPLS:4877000, KT:3779000,  SK:2551000,  ETC:1633000},
+];
+const PROD = [
+  {id:'CIDANON01A407', prod:'중분류01', yn:'Y', UPLS:3931000, KT:574000,  SK:794000,  ETC:511000},
+  {id:'CIDANON01A407', prod:'중분류03', yn:'Y', UPLS:5088000, KT:4839000, SK:1375000, ETC:1298000},
+  {id:'CIDANON02A426', prod:'중분류11', yn:'Y', UPLS:2180000, KT:4143000, SK:7119000, ETC:1548000},
+  {id:'CIDANON02A426', prod:'중분류17', yn:'Y', UPLS:0,       KT:3681000, SK:2973000, ETC:2086000},
+  {id:'CIDANON02A426', prod:'중분류22', yn:'Y', UPLS:158000,  KT:3190000, SK:2105000, ETC:767000},
+  {id:'CIDANON02A426', prod:'중분류25', yn:'Y', UPLS:482000,  KT:2538000, SK:1356000, ETC:244000},
+  {id:'CIDANON10A51E', prod:'중분류25', yn:'Y', UPLS:1014000, KT:1544000, SK:1107000, ETC:1085000},
+  {id:'CIDANON10A51E', prod:'중분류01', yn:'Y', UPLS:1054000, KT:452000,  SK:278000,  ETC:166000},
+  {id:'CIDANON10A51E', prod:'중분류03', yn:'Y', UPLS:357000,  KT:942000,  SK:306000,  ETC:225000},
+  {id:'CIDANON10A51E', prod:'중분류05', yn:'Y', UPLS:1492000, KT:810000,  SK:401000,  ETC:277000},
+  {id:'CIDANON19A635', prod:'중분류22', yn:'Y', UPLS:2518000, KT:642000,  SK:355000,  ETC:85000},
+  {id:'CIDANON19A635', prod:'중분류25', yn:'Y', UPLS:2731000, KT:1682000, SK:556000,  ETC:351000},
+  {id:'CIDANON20A654', prod:'중분류03', yn:'Y', UPLS:265000,  KT:921000,  SK:905000,  ETC:939000},
+  {id:'CIDANON20A654', prod:'중분류05', yn:'Y', UPLS:88000,   KT:1467000, SK:800000,  ETC:505000},
+  {id:'CIDANON20A654', prod:'중분류11', yn:'Y', UPLS:620000,  KT:1329000, SK:1780000, ETC:1171000},
+  {id:'CIDANON20A654', prod:'중분류17', yn:'Y', UPLS:1159000, KT:839000,  SK:1136000, ETC:226000},
+  {id:'CIDANON28A74C', prod:'중분류17', yn:'Y', UPLS:425000,  KT:102000,  SK:136000,  ETC:27000},
+  {id:'CIDANON28A74C', prod:'중분류22', yn:'Y', UPLS:204000,  KT:104000,  SK:114000,  ETC:128000},
+  {id:'CIDANON28A74C', prod:'중분류25', yn:'Y', UPLS:206000,  KT:171000,  SK:282000,  ETC:51000},
+  {id:'CIDANON37A863', prod:'중분류11', yn:'Y', UPLS:0,       KT:3098000, SK:973000,  ETC:1069000},
+  {id:'CIDANON37A863', prod:'중분류17', yn:'Y', UPLS:467000,  KT:628000,  SK:449000,  ETC:126000},
+  {id:'CIDANON46A97A', prod:'중분류25', yn:'Y', UPLS:2552000, KT:688000,  SK:858000,  ETC:462000},
+  {id:'CIDANON46A97A', prod:'중분류01', yn:'Y', UPLS:808000,  KT:1968000, SK:671000,  ETC:573000},
+  {id:'CIDANON46A97A', prod:'중분류03', yn:'Y', UPLS:1067000, KT:454000,  SK:461000,  ETC:218000},
+  {id:'CIDANON46A97A', prod:'중분류05', yn:'Y', UPLS:450000,  KT:669000,  SK:561000,  ETC:380000},
+];
+const OPS=[['UPLS','당사(UPLS)','var(--c-upls)'],['KT','KT','var(--c-kt)'],['SK','SK','var(--c-sk)'],['ETC','기타','var(--c-etc)']];
+const sum=r=>OPS.reduce((a,[k])=>a+r[k],0);
+const won=n=>n>=10000?Math.round(n/10000).toLocaleString()+'만':n.toLocaleString();
+let curId=CUST[0].id, view='cust';
+
+// 도넛: 4조각 SVG arc
+function donut(r,size=220){
+  const t=sum(r), R=size/2, ro=R-4, ri=R-34;
+  let a=0, paths='';
+  OPS.forEach(([k,,col])=>{
+    const frac=r[k]/t; if(frac<=0) return;
+    const a2=a+frac*Math.PI*2, big=frac>.5?1:0;
+    const p=(rad,ang)=>[R+rad*Math.cos(ang), R+rad*Math.sin(ang)];
+    const [x1,y1]=p(ro,a),[x2,y2]=p(ro,a2),[x3,y3]=p(ri,a2),[x4,y4]=p(ri,a);
+    paths+=`<path data-op="${k}" d="M${x1} ${y1}A${ro} ${ro} 0 ${big} 1 ${x2} ${y2}L${x3} ${y3}A${ri} ${ri} 0 ${big} 0 ${x4} ${y4}Z" fill="${col}"/>`;
+    a=a2;
+  });
+  const share=(r.UPLS/t*100);
+  return `<div class="donut" id="donut"><svg width="${size}" height="${size}">${paths}</svg>
+    <div class="ctr"><b>${share.toFixed(1)}%</b><small>당사 점유율</small></div></div>`;
+}
+function opsTable(r){
+  const t=sum(r);
+  const max=Math.max(...OPS.map(([k])=>r[k]));
+  return `<table class="ops"><thead><tr><th>사업자</th><th>금액(원)</th><th>점유율</th><th style="width:140px">비중</th></tr></thead><tbody>`+
+    OPS.map(([k,label,col])=>{
+      const p=r[k]/t*100;
+      return `<tr data-op="${k}" class="${k==='UPLS'?'me':''}">
+        <td><span class="dot" style="background:${col}"></span>${label}${r[k]===max&&k!=='UPLS'?' <span class="badge lose">1위</span>':''}</td>
+        <td>${r[k].toLocaleString()}</td><td>${p.toFixed(1)}%</td>
+        <td><span class="gauge"><i style="width:${p}%;background:${col}"></i></span></td></tr>`;
+    }).join('')+
+    `</tbody></table>`;
+}
+
+function renderCust(){
+  const r=CUST.find(c=>c.id===curId);
+  const hero=document.getElementById('hero');
+  if(r.yn!=='Y'){
+    hero.innerHTML=`<div class="nodata" style="grid-column:1/-1"><b>월렛쉐어 데이터 없음</b> — <code>WLSR_YN=N</code>인 고객은 수집값을 신뢰할 수 없어 점유율을 계산하지 않고, 전체 평균 산출에서도 제외합니다. (${r.name} · ${r.ind} · ${r.id})</div>`;
+  }else{
+    hero.innerHTML=donut(r)+`<div>${opsTable(r)}<p style="font-size:12px;color:var(--u-outline);margin:10px 0 0">고객 전체 지갑 ${won(sum(r))}원 · EPM_GRP_ID ${r.id}</p></div>`;
+    // 표 hover → 도넛 조각 강조
+    hero.querySelectorAll('tr[data-op]').forEach(tr=>{
+      tr.onmouseenter=()=>{const d=document.getElementById('donut');d.classList.add('dim');
+        d.querySelectorAll('path').forEach(p=>p.classList.toggle('on',p.dataset.op===tr.dataset.op));};
+      tr.onmouseleave=()=>document.getElementById('donut').classList.remove('dim');
+    });
+  }
+  document.getElementById('hint').innerHTML='<b>고객단위 뷰</b> — 표의 사업자 행에 마우스를 올리면 도넛에서 해당 조각만 강조됩니다. 이 시안의 도넛 중앙 숫자는 <b>평균이 아니라 선택된 고객 하나의 점유율</b>입니다(가중/단순 평균 논쟁 자체가 없는 구조).<br>고객19는 당사 58.8%로 우위, 고객37은 6.9%로 KT(54.7%)에 크게 밀립니다. 칩으로 고객을 바꿔가며 확인하세요.';
+}
+
+function renderProd(){
+  const list=PROD.filter(p=>p.id===curId);
+  const box=document.getElementById('pcards');
+  if(!list.length){
+    box.innerHTML=`<div class="nodata"><b>상품단위 데이터 없음</b> — tobe 스키마에는 아직 고객1·고객2만 수집돼 있습니다. 실제 도입 시엔 고객단위 뷰로 폴백합니다.</div>`;
+    document.getElementById('hint').innerHTML='<b>상품단위 확장</b> — <code>WLSR_YN=N</code> 고객은 상품단위 행도 없습니다. 실제 도입 시엔 이 화면을 고객단위 뷰로 폴백시키는 게 안전합니다.';
+    return;
+  }
+  box.innerHTML='<div class="pcards">'+list.map(r=>{
+    const t=sum(r), share=r.UPLS/t*100;
+    const top=OPS.map(([k,l])=>({k,l,v:r[k]})).sort((a,b)=>b.v-a.v)[0];
+    const cls = r.UPLS===0?'lose':share>=50?'win':'lose';
+    const badge = r.UPLS===0?'<span class="badge zero">당사 점유 0</span>':share>=50?'<span class="badge win">우위</span>':'<span class="badge lose">열위</span>';
+    return `<div class="pcard ${cls}">
+      <div class="pcard-head"><b>${r.prod}</b>${badge}<small>MCLS_NM</small></div>
+      <div class="mini">${donut(r,110)}<div style="flex:1">
+        <div class="plist">${OPS.map(([k,l,col])=>`<span><span><span class="dot" style="background:${col}"></span>${l}</span><b>${(r[k]/t*100).toFixed(1)}%</b></span>`).join('')}</div>
+      </div></div>
+      <p style="font-size:12px;color:var(--u-outline);margin:10px 0 0">지갑 ${won(t)}원 · 1위 ${top.l}</p>
+    </div>`;
+  }).join('')+'</div>';
+  document.getElementById('hint').innerHTML='<b>상품단위 확장</b> — 고객단위 도넛 하나가 상품 수만큼의 미니 도넛 카드로 쪼개집니다(합계는 고객단위 값과 일치). 카드 테두리/배지로 <b>당사 우위·열위·점유 0</b>을 구분해, 어느 상품부터 공략할지 스캔만으로 판단할 수 있습니다. 고객02·고객37에 <b>당사 점유 0</b> 상품이 있습니다.';
+}
+
+function render(){
+  const cc=CUST.find(c=>c.id===curId);
+  document.getElementById('hName').innerHTML=`${cc.name} <span style="font-size:12px;font-weight:400;color:var(--u-onvariant)">${cc.ind}</span>`;
+  document.getElementById('custView').classList.toggle('hidden',view!=='cust');
+  document.getElementById('prodView').classList.toggle('hidden',view!=='prod');
+  view==='cust'?renderCust():renderProd();
+}
+document.getElementById('pick').innerHTML=CUST.map(c=>
+  `<button class="chip ${c.id===curId?'active':''}" data-id="${c.id}">${c.name}${c.yn==='N'?' (데이터 없음)':''}</button>`).join('');
+document.getElementById('pick').onclick=e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  curId=b.dataset.id;
+  document.querySelectorAll('#pick .chip').forEach(x=>x.classList.toggle('active',x===b));
+  render();
+};
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); view=b.dataset.view; render();
+});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+/* ── Option A: KPI 카드 + 업종 소계 표 + 고객 히트맵 ── */
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 8px}
+.kpi .k{background:var(--u-surface-sub);border:1px solid var(--u-border);border-radius:14px;padding:16px 18px}
+.kpi .k small{color:var(--u-onvariant);font-size:12px;font-weight:500;display:block}
+.kpi .k b{display:block;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi .k b em{font-style:normal;font-size:14px;color:var(--u-onvariant);font-weight:500}
+.kpi .k.dark{background:var(--u-darkest);color:var(--u-on-dark);border-color:var(--u-darkest)}
+.kpi .k.dark small{color:#c9c7c0}
+.kpi .k .note2{font-size:12px;color:var(--u-outline);margin-top:6px}
+.kpi .k.dark .note2{color:#a8a5a0}
+/* 카탈로그 침투 게이지 */
+.gauge{margin-top:10px;height:10px;border-radius:6px;background:var(--u-border);overflow:hidden}
+.gauge i{display:block;height:100%;background:var(--u-primary);border-radius:6px}
+.kpi .k.dark .gauge{background:rgba(250,249,245,.16)}
+.kpi .k.dark .gauge i{background:#ff4d9d}
+
+.axgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 4px}
+.axcard{border:1px solid var(--u-border);border-radius:12px;overflow:hidden;background:var(--u-surface)}
+.axcard .h{background:var(--u-surface-head);padding:9px 12px;font-size:12px;font-weight:700;color:var(--u-onvariant);border-bottom:1px solid var(--u-border)}
+.axcard .bd{padding:12px}
+.axcard .big{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.axcard .big small{font-size:12px;color:var(--u-onvariant);font-weight:500}
+.axcard .bar{margin-top:8px;height:8px;border-radius:5px;background:var(--u-border);overflow:hidden}
+.axcard .bar i{display:block;height:100%;border-radius:5px}
+.axcard .sub2{font-size:12px;color:var(--u-onvariant);margin-top:7px}
+
+.bigcta{display:block;width:100%;margin-top:22px;border:1px dashed var(--u-border-strong);border-radius:14px;background:var(--u-surface-sub);padding:18px 22px;cursor:pointer;text-align:left;font-family:inherit;transition:border-color .15s,background-color .15s}
+.bigcta:hover{border-color:var(--u-primary);background:var(--u-primary-tint)}
+.bigcta strong{display:block;font-size:16px;color:var(--u-carbon)}
+.bigcta span{display:block;font-size:12px;color:var(--u-onvariant);margin-top:4px}
+.bigcta em{float:right;font-style:normal;color:var(--u-primary);font-weight:700;font-size:20px;line-height:1}
+
+table.ind{margin-top:6px}
+table.ind th{white-space:nowrap}
+table.ind td.name{text-align:left;font-weight:700;font-size:14px;padding-left:14px}
+table.ind tbody tr{cursor:pointer;transition:background-color .12s}
+table.ind tbody tr:hover td{background:var(--u-primary-tint)}
+table.ind tr.sum td{background:var(--u-surface-head)!important;font-weight:700;cursor:default;border-top:1px solid var(--u-border-strong)}
+table.ind td.n{text-align:right;padding-right:14px}
+table.ind td.c{text-align:center}
+table.ind .mini{display:inline-block;width:74px;height:8px;border-radius:5px;background:var(--u-border);overflow:hidden;vertical-align:middle;margin-right:7px}
+table.ind .mini i{display:block;height:100%;border-radius:5px}
+table.ind td.go{text-align:right;color:var(--u-primary);font-weight:700;padding-right:14px}
+
+.bc-wrap{overflow:auto;border:1px solid var(--u-border);border-radius:12px;max-height:calc(100vh - 300px);margin-top:6px}
+table.bc{min-width:900px;table-layout:fixed}
+table.bc th{position:sticky;top:0;z-index:3;background:var(--u-surface-head);font-size:13px;padding:8px}
+table.bc th.cust-h{text-align:left;padding-left:14px;width:230px;left:0;z-index:4}
+table.bc th.total-h{width:96px}
+table.bc td.cust{position:sticky;left:0;background:var(--u-surface);z-index:1;width:230px;padding-left:14px;font-weight:700;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.bc tbody tr:hover td.cust{background:var(--u-primary-tint)}
+table.bc td.rk{width:44px;text-align:center;color:var(--u-outline);font-size:12px}
+table.bc .cell{height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px}
+table.bc .empty{border:1px solid var(--u-border);background:repeating-linear-gradient(45deg,var(--u-surface-sub),var(--u-surface-sub) 3px,var(--u-bg) 3px,var(--u-bg) 6px)}
+table.bc td.total{text-align:center;font-weight:700;width:96px}

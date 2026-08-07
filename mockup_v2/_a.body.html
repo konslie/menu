@@ -1,0 +1,115 @@
+<!-- ═══ STEP 1: KA 전체뷰 ═══ -->
+<section class="screen" id="vTotal">
+  <div class="top">
+    <div>
+      <div class="label">Key Account 메뉴판 / 시안 A</div>
+      <div class="accent"></div>
+      <h1>KA 전체 현황<span class="b-period" id="pdT">2026 YTD</span></h1>
+      <p class="sub">당사 전체 상품 카탈로그 중 Key Account가 실제로 쓰고 있는 범위와 매출입니다. 아래 카드를 누르면 업종별 소계로 내려갑니다.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="seg" id="segYear">
+        <button data-y="2026" class="active">2026 YTD</button><button data-y="2025">2025 연간</button>
+      </div>
+      <div class="seg" id="segMode">
+        <button data-m="service" class="active">서비스 수</button><button data-m="sales">매출</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi">
+    <div class="k dark">
+      <small>당사 상품 카탈로그 중 KA 사용 상품</small>
+      <b id="kCat"></b>
+      <div class="gauge"><i id="kCatBar"></i></div>
+      <div class="note2" id="kCatNote"></div>
+    </div>
+    <div class="k">
+      <small>KA 고객 수</small><b id="kCust"></b>
+      <div class="note2">고정 Key Account 명단</div>
+    </div>
+    <div class="k">
+      <small>KA 평균 침투율 (고객당 사용 상품)</small><b id="kPen"></b>
+      <div class="gauge"><i id="kPenBar"></i></div>
+      <div class="note2" id="kPenNote"></div>
+    </div>
+    <div class="k">
+      <small>KA 총매출</small><b id="kRev"></b>
+      <div class="note2" id="kRevNote"></div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:26px">AX 구분별 침투 현황</h2>
+  <div class="axgrid" id="axCards"></div>
+
+  <button class="bigcta" id="goInd"><em>›</em><strong>업종별 소계 보기</strong><span>6개 업종의 고객수·침투율·매출 소계를 표로 비교합니다.</span></button>
+  <button class="bigcta" id="goAllA"><em>›</em><strong>전체 고객 53개사 한눈에 보기</strong><span>업종 그룹 없이 서비스 수 / 매출 기준으로 정렬된 단일 리스트입니다.</span></button>
+
+  <p class="hint">침투율은 시장 점유가 아니라 <b>Key Account 53개사 중 사용 비율</b>입니다. 2025는 연간, 2026은 YTD(1~6월)로 기간 길이가 달라 YoY는 표시하지 않습니다.</p>
+</section>
+
+<!-- ═══ STEP 2: 업종별 소계 ═══ -->
+<section class="screen hidden" id="vInd">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><b>업종별 소계</b></div>
+  <div class="top">
+    <div>
+      <h1>업종별 소계<span class="b-period" id="pdI">2026 YTD</span></h1>
+      <p class="sub">행을 클릭하면 해당 업종의 고객 리스트로 내려갑니다.</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" id="backT">← KA 전체</button>
+      <button class="btn primary" id="goAllB">전체 고객 53개사</button>
+    </div>
+  </div>
+  <table class="ind">
+    <thead><tr>
+      <th style="text-align:left;padding-left:14px">업종</th><th>고객수</th>
+      <th style="width:230px">침투율 (평균 사용 상품 / 사용가능)</th>
+      <th>업종 사용 상품 종수</th><th>매출(억원)</th><th>고객당 평균매출</th><th></th>
+    </tr></thead>
+    <tbody id="indBody"></tbody>
+  </table>
+  <p class="hint">「업종 사용 상품 종수」는 그 업종 고객 중 <b>누구든 하나라도 쓰는</b> 상품의 고유 개수입니다(합계가 아니라 유니크 기준이므로 소계 행의 단순 합과 다릅니다).</p>
+</section>
+
+<!-- ═══ STEP 3: 고객별 ═══ -->
+<section class="screen hidden" id="vCust">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><a data-nav="ind">업종별 소계</a><i>›</i><b id="cbInd"></b></div>
+  <div class="top">
+    <div>
+      <h1 id="custTitle"></h1>
+      <p class="sub" id="custSub"></p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" id="backI">← 업종별 소계</button>
+      <button class="btn primary" id="goAllC">전체 고객 53개사</button>
+    </div>
+  </div>
+  <div class="bc-wrap"><table class="bc"><thead id="cHead"></thead><tbody id="cBody"></tbody></table></div>
+  <p class="hint">셀 = 선택 기간의 AX 중분류별 <span id="cCellMeaning"></span> · 빗금 = 미사용.</p>
+</section>
+
+<!-- ═══ 별도: 전체 53개사 ═══ -->
+<section class="screen hidden" id="vAll">
+  <div class="crumb"><a data-nav="total">KA 전체</a><i>›</i><b>전체 고객 53개사</b></div>
+  <div class="top">
+    <div>
+      <h1>전체 고객 53개사<span class="b-period" id="pdA">2026 YTD</span></h1>
+      <p class="sub">업종 그룹 없이 정렬 기준 하나로 53개사를 줄 세운 뷰입니다.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="seg" id="segSort">
+        <button data-s="service" class="active">서비스 수 순</button><button data-s="sales">매출 순</button>
+      </div>
+      <button class="btn" id="backT2">← KA 전체</button>
+    </div>
+  </div>
+  <div class="bc-wrap"><table class="bc"><thead id="aHead"></thead><tbody id="aBody"></tbody></table></div>
+  <p class="hint">업종은 고객명 옆 배지로만 표시합니다. 정렬 기준을 바꾸면 순위가 즉시 재계산됩니다.</p>
+</section>
+
+<div class="note">
+  <b>시안 A 장단점</b>
+  장점: 기존 화면(KPI 카드 + 히트맵)과 톤이 가장 가까워 학습비용이 거의 없고, 업종 소계를 표로 보여줘 6개 업종을 숫자로 정확히 비교하기 쉽다.
+  단점: 첫 화면이 숫자 카드 위주라 시각적 임팩트가 약하고, 업종 표는 정보량이 많아 경영진이 훑기에는 다소 빽빽하다.
+</div>
